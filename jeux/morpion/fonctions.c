@@ -56,3 +56,17 @@ int verifierVictoire() {
 
     return victoire;
 }
+
+int grillePleine() {
+    int pleine = GRILLE_PLEINE;
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (grille[i][j] == ' ') {
+                pleine = GRILLE_NON_PLEINE;
+            }
+        }
+    }
+
+    return pleine;
+}
