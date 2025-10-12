@@ -2,6 +2,9 @@
 #include "morpion.h"
 
 char grille[3][3];
+int victoires_x = 0;
+int victoires_o = 0;
+int matchs_nuls = 0;
 
 void initialiserGrille() {
     for (int i = 0; i < 3; i++) {
@@ -71,7 +74,7 @@ int grillePleine() {
     return pleine;
 }
 
-int demanderRejouer(){
+int demanderRejouer() {
     char reponse;
     int rejouer = NE_PAS_REJOUER;
 
@@ -84,10 +87,6 @@ int demanderRejouer(){
 
     return rejouer;
 }
-
-int victoires_x = 0;
-int victoires_o = 0;
-int matchs_nuls = 0;
 
 void afficherScores() {
     printf("\n========== SCORES ==========\n");
