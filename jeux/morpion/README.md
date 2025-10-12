@@ -366,15 +366,3 @@ printf("Texte : ");
 **Solution :** Vérifiez que les fonctions `verifierVictoire()` et `grillePleine()` utilisent des `return` immédiats et non des variables intermédiaires.
 
 ---
-
-
-## Contribution
-
-Pour contribuer :
-
-1. Forkez le projet
-2. Créez une branche (`git checkout -b feature/amelioration`)
-3. Commitez vos changements (`git commit -m 'feat: ajout fonctionnalité'`)
-4. Pushez vers la branche (`git push origin feature/amelioration`)
-5. Ouvrez une Pull Request
-
