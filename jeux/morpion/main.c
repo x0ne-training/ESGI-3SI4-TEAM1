@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "morpion.h"
 
-int main() {
+int main(void) {
     int ligne, colonne;
     char joueur;
     int victoire;
@@ -19,7 +19,7 @@ int main() {
 
             printf("\nJoueur %c, entrez ligne (1-3) : ", joueur);
             scanf("%d", &ligne);
-            printf("Entrez colonne (1-3) : ", colonne);
+            printf("Entrez colonne (1-3) : ");
             scanf("%d", &colonne);
 
             ligne--;
