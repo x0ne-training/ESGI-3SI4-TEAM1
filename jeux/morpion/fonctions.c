@@ -35,43 +35,43 @@ void afficherGrille() {
 }
 
 int verifierVictoire() {
-    int victoire = PAS_VICTOIRE;
-
+    // Vérifie les lignes
     for (int i = 0; i < 3; i++) {
         if (grille[i][0] != ' ' && grille[i][0] == grille[i][1] && grille[i][1] == grille[i][2]) {
-            victoire = VICTOIRE;
+            return VICTOIRE;
         }
     }
 
+    // Vérifie les colonnes
     for (int j = 0; j < 3; j++) {
         if (grille[0][j] != ' ' && grille[0][j] == grille[1][j] && grille[1][j] == grille[2][j]) {
-            victoire = VICTOIRE;
+            return VICTOIRE;
         }
     }
 
+    // Vérifie diagonale descendante
     if (grille[0][0] != ' ' && grille[0][0] == grille[1][1] && grille[1][1] == grille[2][2]) {
-        victoire = VICTOIRE;
+        return VICTOIRE;
     }
 
+    // Vérifie diagonale montante
     if (grille[0][2] != ' ' && grille[0][2] == grille[1][1] && grille[1][1] == grille[2][0]) {
-        victoire = VICTOIRE;
+        return VICTOIRE;
     }
 
-    return victoire;
+    return PAS_VICTOIRE;
 }
 
 int grillePleine() {
-    int pleine = GRILLE_PLEINE;
-
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             if (grille[i][j] == ' ') {
-                pleine = GRILLE_NON_PLEINE;
+                return GRILLE_NON_PLEINE;
             }
         }
     }
 
-    return pleine;
+    return GRILLE_PLEINE;
 }
 
 int demanderRejouer() {
