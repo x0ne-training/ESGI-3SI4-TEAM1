@@ -70,3 +70,29 @@ int grillePleine() {
 
     return pleine;
 }
+
+int demanderRejouer(){
+    char reponse;
+    int rejouer = NE_PAS_REJOUER;
+
+    printf("\nVoulez-vous rejouer ? (o/n) : ");
+    scanf(" %c", &reponse);
+
+    if (reponse == 'o' || reponse == 'O') {
+        rejouer = REJOUER;
+    }
+
+    return rejouer;
+}
+
+int victoires_x = 0;
+int victoires_o = 0;
+int matchs_nuls = 0;
+
+void afficherScores() {
+    printf("\n========== SCORES ==========\n");
+    printf("%sJoueur X : %d victoires%s\n", ROUGE, victoires_x, RESET);
+    printf("%sJoueur O : %d victoires%s\n", BLEU, victoires_o, RESET);
+    printf("Matchs nuls : %d\n", matchs_nuls);
+    printf("============================\n");
+}
