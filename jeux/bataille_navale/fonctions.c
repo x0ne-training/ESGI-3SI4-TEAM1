@@ -12,3 +12,10 @@ const BateauInfo BATEAUX[NB_BATEAUX] = {
         {3, "Sous-marin"},
         {2, "Torpilleur"}
 };
+
+void init_plateau(Case p[TAILLE][TAILLE]) {
+    for (int i=0;i<TAILLE;i++)
+        for (int j=0;j<TAILLE;j++)
+            p[i][j] = VIDE;
+}
+
