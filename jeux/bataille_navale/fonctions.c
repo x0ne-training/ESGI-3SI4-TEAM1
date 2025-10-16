@@ -114,3 +114,74 @@ bool tirer(Case cible[TAILLE][TAILLE], Case attaquant[TAILLE][TAILLE], int x, in
     }
 }
 
+int compte_cases_bateau(Case p[TAILLE][TAILLE], int x, int y) {
+    // recherche BFS de la composante de bateau (BATEAU ou TOUCHÉ)
+    bool vus[TAILLE][TAILLE] = {0};
+    Case cible = p[x][y];
+    if (!(cible==BATEAU || cible==TOUCHÉ)) return 0;
+    int qx[TAILLE*TAILLE], qy[TAILLE*TAILLE];
+    int qh=0, qt=0;
+    qx[qt]=x; qy[qt]=y; qt++; vus[x][y]=true;
+    int cnt = 0;
+    while (qh<qt) {
+        int cx = qx[qh], cy = qy[qh]; qh++;
+        if (p[cx][cy]==BATEAU || p[cx][cy]==TOUCHÉ) cnt++;
+        int dirs[4][2] = {{1,0},{-1,0},{0,1},{0,-1}};
+        for (int d=0;d<4;d++) {
+            int nx = cx + dirs[d][0];
+            int ny = cy + dirs[d][1];
+            if (coord_valide(nx,ny) && !vus[nx][ny] && (p[nx][ny]==BATEAU || p[nx][ny]==TOUCHÉ)) {
+                vus[nx][ny] = true;
+                qx[qt]=nx; qy[qt]=ny; qt++;
+            }
+        }
+    }
+    return cnt;
+}
+
+void maj_coules(Case p[TAILLE][TAILLE]) {
+    // pour chaque case TOUCHÉ, si sa composante n'a plus de BATEAU (tous sont TOUCHÉ), on met COULÉ
+    bool vus[TAILLE][TAILLE] = {0};
+    for (int i=0;i<TAILLE;i++) for (int j=0;j<TAILLE;j++) {
+            if (!vus[i][j] && (p[i][j]==BATEAU || p[i][j]==TOUCHÉ)) {
+                // recherche composante
+                int qx[TAILLE*TAILLE], qy[TAILLE*TAILLE];
+                int qh=0, qt=0;
+                qx[qt]=i; qy[qt]=j; qt++; vus[i][j]=true;
+                bool anyBateau=false;
+                while (qh<qt) {
+                    int cx = qx[qh], cy = qy[qh]; qh++;
+                    if (p[cx][cy] == BATEAU) anyBateau = true;
+                    int dirs[4][2] = {{1,0},{-1,0},{0,1},{0,-1}};
+                    for (int d=0;d<4;d++) {
+                        int nx = cx + dirs[d][0];
+                        int ny = cy + dirs[d][1];
+                        if (coord_valide(nx,ny) && !vus[nx][ny] && (p[nx][ny]==BATEAU || p[nx][ny]==TOUCHÉ)) {
+                            vus[nx][ny] = true;
+                            qx[qt]=nx; qy[qt]=ny; qt++;
+                        }
+                    }
+                }
+                if (!anyBateau) {
+                    // couler la composante: marquer COULÉ toutes les cases TOUCHÉ/ BATEAU (devra être TOUCHÉ toute si coulé)
+                    for (int k=0;k<qt;k++) {
+                        int cx = qx[k], cy = qy[k];
+                        if (p[cx][cy] == TOUCHÉ || p[cx][cy] == BATEAU) p[cx][cy] = COULÉ;
+                    }
+                }
+            }
+        }
+}
+
+bool tous_coulés(Case p[TAILLE][TAILLE]) {
+    for (int i=0;i<TAILLE;i++) for (int j=0;j<TAILLE;j++)
+            if (p[i][j] == BATEAU) return false;
+    return true;
+}
+
+void clear_input_buffer(void) {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {}
+}
+
+
