@@ -25,11 +25,18 @@ typedef struct {
 
 extern const BateauInfo BATEAUX[NB_BATEAUX];
 
-
+void init_plateau(Case p[TAILLE][TAILLE]);
+void afficher_plateau(Case p[TAILLE][TAILLE], bool cacher); // cacher=true pour ne pas montrer les bateaux
+bool placer_bateau_alea(Case p[TAILLE][TAILLE], int taille);
+bool place_bateau_user(Case p[TAILLE][TAILLE], int taille, int x, int y, char dir);
+bool tous_coulés(Case p[TAILLE][TAILLE]);
+bool tirer(Case cible[TAILLE][TAILLE], Case attaquant[TAILLE][TAILLE], int x, int y);
+int compte_cases_bateau(Case p[TAILLE][TAILLE], int x, int y);
+void maj_coules(Case p[TAILLE][TAILLE]);
+bool coord_valide(int x, int y);
+void clear_input_buffer(void);
 
 
 
 
 #endif
-x
-};
