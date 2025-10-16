@@ -14,6 +14,11 @@ typedef enum {
     COULÉ
 } Case;
 
-#endif
+typedef struct {
+    int x, y;
+} Point;
 
+
+#endif
+x
 };
