@@ -95,3 +95,22 @@ bool placer_bateau_alea(Case p[TAILLE][TAILLE], int taille) {
     }
     return false;
 }
+
+bool tirer(Case cible[TAILLE][TAILLE], Case attaquant[TAILLE][TAILLE], int x, int y) {
+    if (!coord_valide(x,y)) return false;
+    Case v = cible[x][y];
+    if (v == BATEAU) {
+        cible[x][y] = TOUCHÉ;
+        attaquant[x][y] = TOUCHÉ;
+        maj_coules(cible);
+        return true;
+    } else if (v == VIDE) {
+        cible[x][y] = MANQUÉ;
+        attaquant[x][y] = MANQUÉ;
+        return false;
+    } else {
+        // case déjà tirée
+        return false;
+    }
+}
+
