@@ -64,3 +64,34 @@ bool peut_placer(Case p[TAILLE][TAILLE], int taille, int x, int y, char dir) {
     }
     return true;
 }
+
+bool place_bateau_user(Case p[TAILLE][TAILLE], int taille, int x, int y, char dir) {
+    if (!peut_placer(p, taille, x, y, dir)) return false;
+    int dx = 0, dy = 0;
+    if (dir == 'h' || dir == 'H') dx = -1;
+    else if (dir == 'b' || dir == 'B') dx = 1;
+    else if (dir == 'g' || dir == 'G') dy = -1;
+    else if (dir == 'd' || dir == 'D') dy = 1;
+
+    for (int k=0;k<taille;k++) {
+        int nx = x + dx*k;
+        int ny = y + dy*k;
+        p[nx][ny] = BATEAU;
+    }
+    return true;
+}
+
+bool placer_bateau_alea(Case p[TAILLE][TAILLE], int taille) {
+    int tries = 0;
+    while (tries++ < 2000) {
+        int x = rand()%TAILLE;
+        int y = rand()%TAILLE;
+        char dirs[4] = {'h','b','g','d'};
+        char dir = dirs[rand()%4];
+        if (peut_placer(p, taille, x, y, dir)) {
+            place_bateau_user(p, taille, x, y, dir);
+            return true;
+        }
+    }
+    return false;
+}
