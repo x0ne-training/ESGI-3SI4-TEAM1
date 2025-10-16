@@ -18,6 +18,17 @@ typedef struct {
     int x, y;
 } Point;
 
+typedef struct {
+    int taille;
+    char nom[16];
+} BateauInfo;
+
+extern const BateauInfo BATEAUX[NB_BATEAUX];
+
+
+
+
+
 
 #endif
 x
