@@ -36,7 +36,4 @@ void maj_coules(Case p[TAILLE][TAILLE]);
 bool coord_valide(int x, int y);
 void clear_input_buffer(void);
 
-
-
-
 #endif
