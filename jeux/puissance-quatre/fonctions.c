@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "puissance4.h"
+#include "puissance-quatre.h"
 
 char grille[LIGNES][COLONNES];
 int victoires_rouge = 0;

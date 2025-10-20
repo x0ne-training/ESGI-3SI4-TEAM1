@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "puissance4.h"
+#include "puissance-quatre.h"
 
 int main(void) {
     int colonne;

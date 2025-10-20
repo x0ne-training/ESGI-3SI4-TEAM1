@@ -8,10 +8,10 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 
-main.o: main.c puissance4.h
+main.o: main.c puissance-quatre.h
 	$(CC) $(CFLAGS) -c main.c
 
-fonctions.o: fonctions.c puissance4.h
+fonctions.o: fonctions.c puissance-quatre.h
 	$(CC) $(CFLAGS) -c fonctions.c
 
 clean:
