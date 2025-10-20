@@ -14,6 +14,8 @@ void initialiserGrille() {
     }
 }
 
+// possible: mettre tout en anglais
+
 void afficherGrille() {
     printf("\n");
     printf("  1   2   3   4   5   6   7\n");
