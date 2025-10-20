@@ -3,7 +3,7 @@
 
 #define ROUGE "\033[1;31m" // pour afficher le texte en rouge
 #define JAUNE "\033[1;33m" // pour afficher le texte en jaune
-#define RESET "\033[0m" // pour afficher le texte en couleur normale 
+#define RESET "\033[0m" // pour afficher le texte en couleur normale g
 
 #define LIGNES 6
 #define COLONNES 7
