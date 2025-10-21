@@ -38,3 +38,12 @@ balle.penup()
 balle.goto(0, 0)
 balle.dx = 0.2  # vitesse horizontale
 balle.dy = 0.2  # vitesse verticale
+
+# Affichage du score
+affichage = turtle.Turtle()
+affichage.speed(0)
+affichage.color("white")
+affichage.penup()
+affichage.hideturtle()
+affichage.goto(0, 260)
+affichage.write("Gauche: 0  Droite: 0", align="center", font=("Courier", 24, "normal"))
