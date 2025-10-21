@@ -18,5 +18,10 @@
 #define REJOUER 1
 #define NE_PAS_REJOUER 0
 
+typedef struct {
+    int valeur;
+    char couleur;
+    int retiree;
+} Carte;
 
 #endif
