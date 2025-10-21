@@ -105,3 +105,21 @@ while True:
         score_gauche += 1
         affichage.clear()
         affichage.write(f"Gauche: {score_gauche}  Droite: {score_droite}", align="center", font=("Courier", 24, "normal"))
+
+    # Balle à gauche
+    if balle.xcor() < -390:
+        balle.goto(0, 0)
+        balle.dx *= -1
+        score_droite += 1
+        affichage.clear()
+        affichage.write(f"Gauche: {score_gauche}  Droite: {score_droite}", align="center", font=("Courier", 24, "normal"))
+
+    # Collision avec raquette droite
+    if (340 < balle.xcor() < 350) and (raquette_droite.ycor() - 50 < balle.ycor() < raquette_droite.ycor() + 50):
+        balle.setx(340)
+        balle.dx *= -1
+
+    # Collision avec raquette gauche
+    if (-350 < balle.xcor() < -340) and (raquette_gauche.ycor() - 50 < balle.ycor() < raquette_gauche.ycor() + 50):
+        balle.setx(-340)
+        balle.dx *= -1
