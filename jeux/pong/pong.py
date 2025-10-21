@@ -47,3 +47,28 @@ affichage.penup()
 affichage.hideturtle()
 affichage.goto(0, 260)
 affichage.write("Gauche: 0  Droite: 0", align="center", font=("Courier", 24, "normal"))
+
+# Fonctions pour déplacer les raquettes
+def raquette_gauche_haut():
+    y = raquette_gauche.ycor()
+    if y < 250:
+        y += 20
+    raquette_gauche.sety(y)
+
+def raquette_gauche_bas():
+    y = raquette_gauche.ycor()
+    if y > -240:
+        y -= 20
+    raquette_gauche.sety(y)
+
+def raquette_droite_haut():
+    y = raquette_droite.ycor()
+    if y < 250:
+        y += 20
+    raquette_droite.sety(y)
+
+def raquette_droite_bas():
+    y = raquette_droite.ycor()
+    if y > -240:
+        y -= 20
+    raquette_droite.sety(y)
