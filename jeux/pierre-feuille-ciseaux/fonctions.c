@@ -1,18 +1,13 @@
-#include <stdio.h
-#include <stdlib.h>
-#include <time.h>
-#include "pfc.h"
 
 int victoires_joueur = 0;
 int victoires_ordi = 0;
 int egalites = 0;
 
-int choixOrdinateur(){
+int choixOrdinateur() {
     int choix;
     choix = (rand() % 3) + 1;
     return choix;
 }
-
 
 int determinerGagnant(int choix_joueur, int choix_ordi) {
     int resultat;
@@ -31,4 +26,33 @@ int determinerGagnant(int choix_joueur, int choix_ordi) {
 
     resultat = ORDI_GAGNE;
     return resultat;
+}
+
+void afficherChoix(int choix, char* nom) {
+    printf("%s a choisi : ", nom);
+
+    if (choix == PIERRE) {
+        printf("%sPierre%s", BLEU, RESET);
+    } else if (choix == FEUILLE) {
+        printf("%sFeuille%s", VERT, RESET);
+    } else if (choix == CISEAUX) {
+        printf("%sCiseaux%s", ROUGE, RESET);
+    }
+
+    printf("\n");
+}
+
+void afficherResultat(int resultat) {
+    printf("\n");
+
+    if (resultat == JOUEUR_GAGNE) {
+        printf("%sVous avez gagne !%s\n", VERT, RESET);
+        victoires_joueur++;
+    } else if (resultat == ORDI_GAGNE) {
+        printf("%sL'ordinateur a gagne !%s\n", ROUGE, RESET);
+        victoires_ordi++;
+    } else {
+        printf("%sEgalite !%s\n", BLEU, RESET);
+        egalites++;
+    }
 }
