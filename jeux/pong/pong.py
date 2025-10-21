@@ -72,3 +72,36 @@ def raquette_droite_bas():
     if y > -240:
         y -= 20
     raquette_droite.sety(y)
+
+# Assignation des touches
+fenetre.listen()
+fenetre.onkeypress(raquette_gauche_haut, "z")
+fenetre.onkeypress(raquette_gauche_bas, "s")
+fenetre.onkeypress(raquette_droite_haut, "Up")
+fenetre.onkeypress(raquette_droite_bas, "Down")
+
+# Boucle principale du jeu
+while True:
+    fenetre.update()
+
+    # Déplacement de la balle
+    balle.setx(balle.xcor() + balle.dx)
+    balle.sety(balle.ycor() + balle.dy)
+
+    # Bord haut
+    if balle.ycor() > 290:
+        balle.sety(290)
+        balle.dy *= -1
+
+    # Bord bas
+    if balle.ycor() < -290:
+        balle.sety(-290)
+        balle.dy *= -1
+
+    # Balle à droite
+    if balle.xcor() > 390:
+        balle.goto(0, 0)
+        balle.dx *= -1
+        score_gauche += 1
+        affichage.clear()
+        affichage.write(f"Gauche: {score_gauche}  Droite: {score_droite}", align="center", font=("Courier", 24, "normal"))
