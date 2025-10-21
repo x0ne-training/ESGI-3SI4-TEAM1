@@ -13,3 +13,22 @@ int choixOrdinateur(){
     return choix;
 }
 
+
+int determinerGagnant(int choix_joueur, int choix_ordi) {
+    int resultat;
+
+    if (choix_joueur == choix_ordi) {
+        resultat = EGALITE;
+        return resultat;
+    }
+
+    if ((choix_joueur == PIERRE && choix_ordi == CISEAUX) ||
+        (choix_joueur == FEUILLE && choix_ordi == PIERRE) ||
+        (choix_joueur == CISEAUX && choix_ordi == FEUILLE)) {
+        resultat = JOUEUR_GAGNE;
+        return resultat;
+    }
+
+    resultat = ORDI_GAGNE;
+    return resultat;
+}
