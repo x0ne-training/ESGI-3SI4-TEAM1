@@ -55,7 +55,6 @@ void initialiserJeu() {
 
 void afficherCarte(Carte carte) {
     char* couleur_texte;
-    char valeur_char[3];
 
     if (carte.retiree) {
         printf("   ");
