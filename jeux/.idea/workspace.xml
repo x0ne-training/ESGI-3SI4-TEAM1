@@ -22,7 +22,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cb2e33df-cda4-4a42-800f-772e4363c070" name="Changes" comment="add: définition des variable d'environnements">
-      <change beforePath="$PROJECT_DIR$/pierre-feuille-ciseaux/fonctions.c" beforeDir="false" afterPath="$PROJECT_DIR$/pierre-feuille-ciseaux/fonctions.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pierre-feuille-ciseaux/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/pierre-feuille-ciseaux/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,7 +81,7 @@
       <workItem from="1760939818228" duration="1037000" />
       <workItem from="1760946698654" duration="3057000" />
       <workItem from="1760981859966" duration="1000" />
-      <workItem from="1761026268705" duration="447000" />
+      <workItem from="1761026268705" duration="2253000" />
     </task>
     <task id="LOCAL-00001" summary="add: définition des variable d'environnements">
       <option name="closed" value="true" />

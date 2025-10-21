@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include "pfc.h"
 
 int victoires_joueur = 0;
 int victoires_ordi = 0;
