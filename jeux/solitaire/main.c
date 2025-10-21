@@ -91,7 +91,4 @@ int main(void) {
         rejouer = demanderRejouer();
     }
 
-    printf("\nMerci d'avoir joue !\n");
-
-    return 0;
 }
