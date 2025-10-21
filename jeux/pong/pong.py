@@ -28,3 +28,13 @@ raquette_droite.color("red")
 raquette_droite.shapesize(stretch_wid=5, stretch_len=1)
 raquette_droite.penup()
 raquette_droite.goto(350, 0)
+
+# Balle
+balle = turtle.Turtle()
+balle.speed(0)
+balle.shape("circle")
+balle.color("white")
+balle.penup()
+balle.goto(0, 0)
+balle.dx = 0.2  # vitesse horizontale
+balle.dy = 0.2  # vitesse verticale
