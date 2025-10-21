@@ -56,3 +56,25 @@ void afficherResultat(int resultat) {
         egalites++;
     }
 }
+
+void afficherScores() {
+    printf("\n========== SCORES ==========\n");
+    printf("%sVous : %d victoires%s\n", VERT, victoires_joueur, RESET);
+    printf("%sOrdinateur : %d victoires%s\n", ROUGE, victoires_ordi, RESET);
+    printf("Egalites : %d\n", egalites);
+    printf("============================\n");
+}
+
+int demanderRejouer() {
+    char reponse;
+    int rejouer = NE_PAS_REJOUER;
+
+    printf("\nVoulez-vous rejouer ? (o/n) : ");
+    scanf(" %c", &reponse);
+
+    if (reponse == 'o' || reponse == 'O') {
+        rejouer = REJOUER;
+    }
+
+    return rejouer;
+}
