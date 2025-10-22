@@ -1,10 +1,8 @@
 import random
 
-# === PARTIE CREATION DU TERRAIN ===
-
 def creation_terrain(rows: int, cols: int):
     """Crée une grille vide avec des cases prêtes à être remplies."""
-    return [[{'mine': False, 'adj': 0} for _ in range(cols)] for _ in range(rows)]
+    return [[{'mine': False, 'adj': 0, 'revealed': False} for _ in range(cols)] for _ in range(rows)]
 
 
 def placement_mines(board, rows: int, cols: int, mines: int, safe_pos=None):
@@ -17,7 +15,7 @@ def placement_mines(board, rows: int, cols: int, mines: int, safe_pos=None):
     
     positions = [(r, c) for r in range(rows) for c in range(cols)]
     if safe_pos:
-        # on retire la position sûre + ses voisins immédiats pour éviter une mine collée dès le départ
+        # on retire la position sûre + ses voisins immédiats
         sx, sy = safe_pos
         positions = [(r, c) for r, c in positions if abs(r - sx) > 1 or abs(c - sy) > 1]
     
@@ -82,13 +80,41 @@ def choix_joueur(rows, cols):
             print("⚠️ Format invalide. Exemple : 3,5")
 
 
-def reveler_case(terrain, affichage, r, c):
-    """Révèle la case choisie par le joueur."""
-    cell = terrain[r][c]
-    if cell['mine']:
+def reveler_case(terrain, affichage, r, c, rows, cols):
+    """
+    Révèle la case choisie.
+    Si c'est un 0, révèle aussi toutes les zones de 0 connectées.
+    """
+    if terrain[r][c]['mine']:
         affichage[r][c] = '💥'
         print("💣 BOOM ! Tu as touché une mine !")
         return False
-    else:
-        affichage[r][c] = str(cell['adj'])
+    
+    # Si la case est déjà révélée, on ne refait rien
+    if terrain[r][c]['revealed']:
         return True
+
+    # Révélation récursive (BFS)
+    to_reveal = [(r, c)]
+    directions = [(-1,-1), (-1,0), (-1,1),
+                  (0,-1),         (0,1),
+                  (1,-1),  (1,0), (1,1)]
+
+    while to_reveal:
+        x, y = to_reveal.pop()
+        cell = terrain[x][y]
+        if cell['revealed']:
+            continue
+        cell['revealed'] = True
+        affichage[x][y] = str(cell['adj'])
+
+        if cell['adj'] == 0:
+            # si c'est un 0, on révèle les voisins
+            for dx, dy in directions:
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < rows and 0 <= ny < cols:
+                    neighbor = terrain[nx][ny]
+                    if not neighbor['revealed'] and not neighbor['mine']:
+                        to_reveal.append((nx, ny))
+    return True
+
