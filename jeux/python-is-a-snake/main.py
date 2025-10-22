@@ -33,6 +33,13 @@ class Snake:
                              CELL_SIZE, CELL_SIZE)
             pygame.draw.rect(surface, GREEN, rect)
 
+    def move(self):
+        head_x, head_y = self.body[0]
+        dir_x, dir_y = self.direction
+        new_head = (head_x + dir_x, head_y + dir_y)
+        self.body.insert(0, new_head)
+        self.body.pop()
+
 snake = Snake()
 
 
@@ -44,6 +51,7 @@ while running:
             running = False
     
     WINDOW.fill(BLACK)
+    snake.move()
     snake.draw(WINDOW)
     pygame.display.flip()
     CLOCK.tick(10)
