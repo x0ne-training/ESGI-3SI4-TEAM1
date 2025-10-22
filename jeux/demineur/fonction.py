@@ -16,8 +16,10 @@ def placement_mines(board, rows: int, cols: int, mines: int, safe_pos=None):
         raise ValueError("Trop de mines pour la taille du terrain.")
     
     positions = [(r, c) for r in range(rows) for c in range(cols)]
-    if safe_pos and safe_pos in positions:
-        positions.remove(safe_pos)
+    if safe_pos:
+        # on retire la position sûre + ses voisins immédiats pour éviter une mine collée dès le départ
+        sx, sy = safe_pos
+        positions = [(r, c) for r, c in positions if abs(r - sx) > 1 or abs(c - sy) > 1]
     
     mines_placees = random.sample(positions, mines)
     for r, c in mines_placees:
@@ -32,6 +34,7 @@ def calcul_adj(board, rows: int, cols: int):
     for r in range(rows):
         for c in range(cols):
             if board[r][c]['mine']:
+                board[r][c]['adj'] = -1
                 continue
             count = 0
             for dr, dc in directions:
@@ -50,7 +53,7 @@ def creation_affichage(rows: int, cols: int):
 
 def afficher_terrain_visible(affichage):
     """Affiche le tableau du joueur."""
-    print("  " + " ".join(f"{i:2}" for i in range(len(affichage[0]))))
+    print("   " + " ".join(f"{i:2}" for i in range(len(affichage[0]))))
     for i, row in enumerate(affichage):
         print(f"{i:2} " + " ".join(row))
     print()
@@ -81,10 +84,11 @@ def choix_joueur(rows, cols):
 
 def reveler_case(terrain, affichage, r, c):
     """Révèle la case choisie par le joueur."""
-    if terrain[r][c]['mine']:
+    cell = terrain[r][c]
+    if cell['mine']:
         affichage[r][c] = '💥'
         print("💣 BOOM ! Tu as touché une mine !")
         return False
     else:
-        affichage[r][c] = str(terrain[r][c]['adj'])
+        affichage[r][c] = str(cell['adj'])
         return True
