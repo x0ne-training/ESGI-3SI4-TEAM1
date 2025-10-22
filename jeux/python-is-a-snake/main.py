@@ -47,6 +47,15 @@ snake = Snake()
 running = True
 while running:
     for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP and snake.direction != (0, 1):
+                snake.direction = (0, -1)
+            elif event.key == pygame.K_DOWN and snake.direction != (0, -1):
+                snake.direction = (0, 1)
+            elif event.key == pygame.K_LEFT and snake.direction != (1, 0):
+                snake.direction = (-1, 0)
+            elif event.key == pygame.K_RIGHT and snake.direction != (-1, 0):
+                snake.direction = (1, 0)
         if event.type == pygame.QUIT:
             running = False
     
