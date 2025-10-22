@@ -118,3 +118,10 @@ def reveler_case(terrain, affichage, r, c, rows, cols):
                         to_reveal.append((nx, ny))
     return True
 
+def verifier_victoire(terrain, affichage):
+    """Retourne True si toutes les cases sans mine ont été révélées."""
+    for r in range(len(terrain)):
+        for c in range(len(terrain[0])):
+            if not terrain[r][c]['mine'] and affichage[r][c] == '/':
+                return False
+    return True
