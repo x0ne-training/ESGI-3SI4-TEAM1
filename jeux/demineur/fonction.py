@@ -50,7 +50,7 @@ def creation_affichage(rows: int, cols: int):
 
 def afficher_terrain_visible(affichage):
     """Affiche le tableau du joueur."""
-    print("   " + " ".join(f"{i:2}" for i in range(len(affichage[0]))))
+    print("  " + " ".join(f"{i:2}" for i in range(len(affichage[0]))))
     for i, row in enumerate(affichage):
         print(f"{i:2} " + " ".join(row))
     print()
