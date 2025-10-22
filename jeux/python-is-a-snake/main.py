@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 
 pygame.init()
 
@@ -46,8 +47,19 @@ class Snake:
             return True
         return False
 
+    def check_collision(self):
+        head = self.body[0]
+        # Collision avec les murs
+        if (head[0] < 0 or head[0] >= GRID_WIDTH or 
+            head[1] < 0 or head[1] >= GRID_HEIGHT):
+            return True
+        # Collision avec soi-même
+        if head in self.body[1:]:
+            return True
+        return False
 
-import random
+
+
 
 class Food:
     def __init__(self):
@@ -84,7 +96,10 @@ while running:
 
             if snake.eat(food):
                 food.position = food.random_position()
-                
+
+            if snake.check_collision():
+                running = False
+
         if event.type == pygame.QUIT:
             running = False
     
