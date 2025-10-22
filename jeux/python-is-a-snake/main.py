@@ -4,6 +4,9 @@ import random
 
 pygame.init()
 
+FONT = pygame.font.Font(None, 36)
+score = 0
+
 # Constantes
 WIDTH, HEIGHT = 600, 600
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -96,6 +99,7 @@ while running:
 
             if snake.eat(food):
                 food.position = food.random_position()
+                score += 10
 
             if snake.check_collision():
                 running = False
@@ -107,6 +111,8 @@ while running:
     snake.move()
     snake.draw(WINDOW)
     food.draw(WINDOW)
+    score_text = FONT.render(f"Score: {score}", True, WHITE)
+    WINDOW.blit(score_text, (10, 10))
     pygame.display.flip()
     CLOCK.tick(10)
 
