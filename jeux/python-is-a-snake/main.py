@@ -21,6 +21,21 @@ GRID_WIDTH = WIDTH // CELL_SIZE
 GRID_HEIGHT = HEIGHT // CELL_SIZE
 
 
+class Snake:
+    def __init__(self):
+        self.body = [(GRID_WIDTH // 2, GRID_HEIGHT // 2)]
+        self.direction = (1, 0)
+    
+    def draw(self, surface):
+        for segment in self.body:
+            rect = pygame.Rect(segment[0] * CELL_SIZE, 
+                             segment[1] * CELL_SIZE, 
+                             CELL_SIZE, CELL_SIZE)
+            pygame.draw.rect(surface, GREEN, rect)
+
+snake = Snake()
+
+
 # Boucle principale
 running = True
 while running:
@@ -29,6 +44,7 @@ while running:
             running = False
     
     WINDOW.fill(BLACK)
+    snake.draw(WINDOW)
     pygame.display.flip()
     CLOCK.tick(10)
 
