@@ -40,6 +40,12 @@ class Snake:
         self.body.insert(0, new_head)
         self.body.pop()
 
+    def eat(self, food):
+        if self.body[0] == food.position:
+            self.body.append(self.body[-1])
+            return True
+        return False
+
 
 import random
 
@@ -75,6 +81,10 @@ while running:
                 snake.direction = (-1, 0)
             elif event.key == pygame.K_RIGHT and snake.direction != (-1, 0):
                 snake.direction = (1, 0)
+
+            if snake.eat(food):
+                food.position = food.random_position()
+                
         if event.type == pygame.QUIT:
             running = False
     
