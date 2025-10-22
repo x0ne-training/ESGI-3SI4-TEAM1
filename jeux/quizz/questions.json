@@ -1,0 +1,47 @@
+[
+    {
+        "question": "Quelle planète est la plus proche du Soleil ?",
+        "choices": ["Vénus", "Mercure", "Terre", "Mars"],
+        "answer":"Mercure"
+    },
+    {
+        "question":"Combien y a-t-il de continent sur Terre ?",
+        "choices":["4", "5", "6", "7"],
+        "answer":"7"
+    },
+    {
+        "question":"Qui a peint la Joconde ?",
+        "choices":["Michel Ange", "Raphaël", "Léonard de Vinci"],
+        "answer": "Léonard de Vinci"
+    },
+    {
+        "question":"Combien de jours y a-t-il dans une année bissextile ?",
+        "choices":["364","365","366","367"],
+        "answer":"366"
+    },
+    {
+        "question":"Quelle est la monnaie du Japon ?",
+        "choices":["Won", "Yen", "Yuan"],
+        "answer":"Yen"
+    },
+    {
+        "question":"Quand a eu lieu la Révolution Française ?",
+        "choices":["1776","1789","1800", "1809"],
+        "answer":"1789"
+    },
+    {
+        "question":"Qui est le créateur de Mario ?",
+        "choices":["Shigeru Myamoto", "Hideo Kojima", "Masahiro Sakurai"],
+        "answer": "Shigeru Myamoto"
+    },
+    {
+        "question":"Quelle entreprise a créé la console PlayStation ?",
+        "choices":["Sony", "Nitendo", "Microsoft", "Sega"],
+        "answer":"Sony"
+    },
+    {
+    "question": "Quel Pokémon porte le numéro 25 dans le Pokédex ?",
+    "choices": ["Pikachu", "Bulbizarre", "Mew", "Rondoudou"],
+    "answer": "Pikachu"
+    }
+]
