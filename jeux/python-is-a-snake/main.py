@@ -40,6 +40,25 @@ class Snake:
         self.body.insert(0, new_head)
         self.body.pop()
 
+
+import random
+
+class Food:
+    def __init__(self):
+        self.position = self.random_position()
+    
+    def random_position(self):
+        x = random.randint(0, GRID_WIDTH - 1)
+        y = random.randint(0, GRID_HEIGHT - 1)
+        return (x, y)
+    
+    def draw(self, surface):
+        rect = pygame.Rect(self.position[0] * CELL_SIZE,
+                          self.position[1] * CELL_SIZE,
+                          CELL_SIZE, CELL_SIZE)
+        pygame.draw.rect(surface, RED, rect)
+
+food = Food()
 snake = Snake()
 
 
@@ -62,6 +81,7 @@ while running:
     WINDOW.fill(BLACK)
     snake.move()
     snake.draw(WINDOW)
+    food.draw(WINDOW)
     pygame.display.flip()
     CLOCK.tick(10)
 
