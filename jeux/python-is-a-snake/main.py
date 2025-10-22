@@ -83,6 +83,27 @@ food = Food()
 snake = Snake()
 
 
+def game_over_screen():
+    WINDOW.fill(BLACK)
+    game_over_text = FONT.render("GAME OVER!", True, RED)
+    score_text = FONT.render(f"Score Final: {score}", True, WHITE)
+    restart_text = FONT.render("Appuyez sur ESPACE pour rejouer", True, WHITE)
+    
+    WINDOW.blit(game_over_text, (WIDTH//2 - 100, HEIGHT//2 - 50))
+    WINDOW.blit(score_text, (WIDTH//2 - 100, HEIGHT//2))
+    WINDOW.blit(restart_text, (WIDTH//2 - 200, HEIGHT//2 + 50))
+    pygame.display.flip()
+    
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    return True
+    return False
+
 # Boucle principale
 running = True
 while running:
@@ -102,7 +123,12 @@ while running:
                 score += 10
 
             if snake.check_collision():
-                running = False
+                if game_over_screen():
+                    snake = Snake()
+                    food = Food()
+                    score = 0
+                else:
+                    running = False
 
         if event.type == pygame.QUIT:
             running = False
