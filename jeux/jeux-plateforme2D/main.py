@@ -40,11 +40,15 @@ def load_images_from_folder(folder):
     return images
 
 # Chargement des animations
-idle_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\idle")  # dossier "idle/"
-run_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\run")    # dossier "run/"
+idle_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\idle")
+run_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\run")
+jump_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\jump")
+fall_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\fall")
 
 print(f"✅ {len(idle_images)} images d'idle chargées")
 print(f"✅ {len(run_images)} images de run chargées")
+print(f"✅ {len(jump_images)} images de jump chargées")
+print(f"✅ {len(fall_images)} images de fall chargées")
 
 # Position du joueur
 player_x = 100
@@ -98,28 +102,28 @@ while running:
         player_velocity_y = 0
         on_ground = True
 
-    # Sélection de l’animation
-    current_animation = run_images if moving else idle_images
+    if not on_ground:
+        if player_velocity_y < 0:
+            current_animation = jump_images
+        else:
+            current_animation = fall_images
+    else:
+        current_animation = run_images if moving else idle_images
 
-    # Sécurité : éviter crash si animation vide
-    current_animation = run_images if moving else idle_images
-
+# Vérification et animation
     if len(current_animation) == 0:
         print("⚠️ Aucune image dans current_animation !")
         current_frame = pygame.Surface((50, 50))
         current_frame.fill((255, 0, 0))  # carré rouge de secours
     else:
-        # On met à jour le compteur d’animation
         animation_counter += 1
         if animation_counter >= ANIMATION_DELAY:
             animation_counter = 0
             frame_index = (frame_index + 1) % len(current_animation)
 
-    # Assure que frame_index est dans les limites
     frame_index %= len(current_animation)
     current_frame = current_animation[frame_index]
 
-    # Flip horizontal si regarde à gauche
     if not facing_right:
         current_frame = pygame.transform.flip(current_frame, True, False)
 
