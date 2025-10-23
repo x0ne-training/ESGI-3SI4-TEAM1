@@ -104,4 +104,56 @@ void init_questions(void) {
 int get_questions_count(void) {
     return questions_count;
 }
-    
+
+const Question* get_question(int idx) {
+    if (idx < 0 || idx >= questions_count) return NULL;
+    return &questions[idx];
+}
+
+// 50/50 : renvoie 1 si ok et place dans out_choices deux indices (dont la bonne)
+int joker_5050(int qidx, int out_choices[]) {
+    if (jokers_used_5050) return 0;
+    const Question *q = get_question(qidx);
+    if (!q) return 0;
+
+    int good = q->correct;
+    // choisir un mauvais au hasard
+    int bads[3], nb = 0;
+    for (int i = 0; i < MAX_CHOICES; ++i) {
+        if (i != good) bads[nb++] = i;
+    }
+    int r = rand() % nb;
+    out_choices[0] = good;
+    out_choices[1] = bads[r];
+    jokers_used_5050 = 1;
+    return 1;
+}
+
+void joker_phone(int qidx) {
+    if (jokers_used_phone) {
+        printf("Vous avez déjà utilisé l'appel à un ami.\n");
+        return;
+    }
+    const Question *q = get_question(qidx);
+    if (!q) return;
+    printf("Vous appelez un ami...\n");
+    // simulation : ami a 70% de chance de donner la bonne réponse si question facile (indice < 10), sinon 50%
+    int prob = (qidx < 8) ? 70 : 50;
+    int r = rand() % 100;
+    int guess;
+    if (r < prob) guess = q->correct;
+    else {
+        // choisit une mauvaise au hasard
+        int cand;
+        do { cand = rand() % MAX_CHOICES; } while (cand == q->correct);
+        guess = cand;
+    }
+    printf("Votre ami pense que la réponse est : %c) %s\n", 'A' + guess, q->choices[guess]);
+    jokers_used_phone = 1;
+}
+
+void joker_audience(int qidx) {
+    if (jokers_used_audience) {
+        printf("Vous avez déjà utilisé le sondage du public.\n");
+        return;
+    }
