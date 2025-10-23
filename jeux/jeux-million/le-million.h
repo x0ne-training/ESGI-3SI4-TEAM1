@@ -11,8 +11,3 @@ typedef struct {
 } Question;
 } Question;
 
-void afficher_question(Question q, int numero);
-char demander_reponse();
-int verifier_reponse(Question q, char rep);
-
-#endif
