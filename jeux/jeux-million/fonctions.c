@@ -157,3 +157,66 @@ void joker_audience(int qidx) {
         printf("Vous avez déjà utilisé le sondage du public.\n");
         return;
     }
+    const Question *q = get_question(qidx);
+    if (!q) return;
+    printf("Le public vote...\n");
+    // Simule des pourcentages. Bonne réponse a entre 40-80% selon difficulté.
+    int base;
+    if (qidx < 6) base = 70;
+    else if (qidx < 12) base = 55;
+    else base = 40;
+
+    int remaining = 100 - base;
+    int p[4] = {0,0,0,0};
+    p[q->correct] = base;
+    // répartir remaining sur les 3 mauvaises
+    int r1 = rand() % (remaining + 1);
+    int r2 = rand() % (remaining + 1 - r1);
+    p[(q->correct + 1) % 4] = r1;
+    p[(q->correct + 2) % 4] = r2;
+    p[(q->correct + 3) % 4] = remaining - r1 - r2;
+
+    printf("Résultats du public :\n");
+    for (int i = 0; i < 4; ++i) {
+        printf(" %c) %s : %d%%\n", 'A'+i, q->choices[i], p[i]);
+    }
+    jokers_used_audience = 1;
+}
+
+// Affiche une question ; removed_mask: bits 0..3 : si bit à 1 => cacher
+void print_question(const Question *q, int removed_mask) {
+    printf("\n%s\n", q->question);
+    for (int i = 0; i < MAX_CHOICES; ++i) {
+        if (removed_mask & (1 << i)) {
+            printf(" %c) ---\n", 'A' + i);
+        } else {
+            printf(" %c) %s\n", 'A' + i, q->choices[i]);
+        }
+    }
+}
+
+// Demande le choix utilisateur. removed_mask masque les choix indisponibles.
+// Retourne 0..3 si choix, -1 si abandon, -2 si joker, -3 si erreur
+int ask_user_choice(const Question *q, int removed_mask) {
+    char line[128];
+    while (1) {
+        printf("\nEntrez A/B/C/D pour répondre, J pour jokers, Q pour quitter : ");
+        if (!fgets(line, sizeof(line), stdin)) return -3;
+        // skip spaces and uppercase
+        char c = '\0';
+        for (int i = 0; line[i]; ++i) {
+            if (!isspace((unsigned char)line[i])) { c = toupper((unsigned char)line[i]); break; }
+        }
+        if (c == 'Q') return -1;
+        if (c == 'J') return -2;
+        if (c >= 'A' && c <= 'D') {
+            int idx = c - 'A';
+            if (removed_mask & (1 << idx)) {
+                printf("Choix non disponible (sélection supprimée). Choisissez autre chose.\n");
+                continue;
+            }
+            return idx;
+        }
+        printf("Entrée invalide.\n");
+    }
+}
