@@ -9,4 +9,3 @@ Ce projet est un petit jeu en C inspiré de "Qui veut gagner des millions ?".
 - `Makefile` : pour compiler.
 - `README.md` : (ce fichier).
 
-## Compilation

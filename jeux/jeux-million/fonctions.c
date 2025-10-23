@@ -197,7 +197,7 @@ void print_question(const Question *q, int removed_mask) {
 
 // Demande le choix utilisateur. removed_mask masque les choix indisponibles.
 // Retourne 0..3 si choix, -1 si abandon, -2 si joker, -3 si erreur
-int ask_user_choice(const Question *q, int removed_mask) {
+int ask_user_choice(int removed_mask) {
     char line[128];
     while (1) {
         printf("\nEntrez A/B/C/D pour répondre, J pour jokers, Q pour quitter : ");
