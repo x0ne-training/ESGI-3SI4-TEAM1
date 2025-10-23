@@ -1,4 +1,7 @@
+#ifndef LE_MILLION_H
+#define LE_MILLION_H
 
+#define MAX_QUESTIONS 10
 
 typedef struct {
     char question[256];
