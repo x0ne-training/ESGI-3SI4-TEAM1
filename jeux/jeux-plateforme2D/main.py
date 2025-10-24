@@ -13,7 +13,7 @@ GROUND_Y = HEIGHT - 50
 PLAYER_SPEED = 5
 GRAVITY = 1
 JUMP_STRENGTH = -15
-ANIMATION_DELAY = 5
+ANIMATION_DELAY = 5  # Animation plus fluide
 DASH_SPEED = 12
 DASH_DURATION = 15  # frames
 DASH_COOLDOWN = 300
@@ -51,10 +51,18 @@ dash_images = load_images_from_folder(os.path.join(base_path, "dash"))
 dash_attack_images = load_images_from_folder(os.path.join(base_path, "dash_attack"))
 
 # --- VARIABLES ---
+if len(attack_images) == 0:
+    print("⚠️ Aucune image d'attaque trouvée ! Vérifie ton dossier 'attack/'.")
+if len(dash_attack_images) == 0:
+    print("⚠️ Aucune image de dash attack trouvée ! Vérifie ton dossier 'dash_attack/'.")
+
+ATTACK_DURATION = max(len(attack_images) * ANIMATION_DELAY, 20)
+player_health = 100
+max_health = 100
+
 attacking = False
 attack_frame_index = 0
 attack_timer = 0
-ATTACK_DURATION = len(attack_images) * ANIMATION_DELAY
 
 player_x = 100
 player_y = GROUND_Y - 50
@@ -105,6 +113,7 @@ platforms = [
 # --- BOUCLE PRINCIPALE ---
 clock = pygame.time.Clock()
 running = True
+
 while running:
     clock.tick(60)
     for event in pygame.event.get():
@@ -115,7 +124,7 @@ while running:
     moving = False
     player_velocity_x = 0
 
-    # --- INPUTS ---
+    # --- GESTION DES ENTRÉES ---
     if keys[pygame.K_LEFT]:
         player_velocity_x = -PLAYER_SPEED
         moving = True
@@ -127,32 +136,40 @@ while running:
     if keys[pygame.K_UP] and on_ground:
         player_velocity_y = JUMP_STRENGTH
         on_ground = False
-    if keys[pygame.K_a] and not attacking:
+
+    # --- ATTAQUE NORMALE ---
+    if keys[pygame.K_a] and not attacking and not dashing and not dashing_attack:
         attacking = True
         attack_timer = ATTACK_DURATION
         attack_frame_index = 0
         animation_counter = 0
+        print("🗡️ ATTACK TRIGGERED")
+
     crouching = keys[pygame.K_DOWN] and on_ground and not attacking
 
-    # --- DASH ATTACK (d + a + flèche) ---
+    # --- COOLDOWNS ---
     if dash_attack_cooldown_timer > 0:
         dash_attack_cooldown_timer -= 1
     if dash_cooldown_timer > 0:
         dash_cooldown_timer -= 1
 
-    if keys[pygame.K_d] and keys[pygame.K_a] and on_ground and not dashing_attack and dash_attack_cooldown_timer == 0:
+    # --- DASH ATTACK (Z + flèche) ---
+    if keys[pygame.K_z] and on_ground and not dashing_attack and dash_attack_cooldown_timer == 0:
+        attacking = False  # Interrompt attaque normale
         if keys[pygame.K_LEFT]:
             dashing_attack = True
             dash_attack_timer = DASH_ATTACK_DURATION
             dash_attack_direction = -1
             dash_attack_cooldown_timer = DASH_ATTACK_COOLDOWN
+            print("⚡ DASH ATTACK GAUCHE")
         elif keys[pygame.K_RIGHT]:
             dashing_attack = True
             dash_attack_timer = DASH_ATTACK_DURATION
             dash_attack_direction = 1
             dash_attack_cooldown_timer = DASH_ATTACK_COOLDOWN
+            print("⚡ DASH ATTACK DROITE")
 
-    # --- DASH NORMAL (d + flèche)
+    # --- DASH NORMAL (D + flèche) ---
     if keys[pygame.K_d] and on_ground and not dashing and not dashing_attack and dash_cooldown_timer == 0:
         if keys[pygame.K_LEFT]:
             dashing = True
@@ -171,28 +188,49 @@ while running:
         dash_attack_timer -= 1
         if dash_attack_timer <= 0:
             dashing_attack = False
+            frame_index = 0
     elif dashing:
         player_velocity_x = dash_direction * DASH_SPEED
         dash_timer -= 1
         if dash_timer <= 0:
             dashing = False
+            frame_index = 0
 
     # --- ANIMATION ---
     previous_animation = current_animation
 
-    if dashing_attack and len(dash_attack_images) > 0:
+    if dashing_attack:
         current_animation = dash_attack_images
-    elif attacking and len(attack_images) > 0:
-        attack_timer -= 1
-        animation_counter += 1
-        if animation_counter >= ANIMATION_DELAY:
-            animation_counter = 0
-            attack_frame_index = (attack_frame_index + 1) % len(attack_images)
-        current_frame = attack_images[attack_frame_index]
+        if len(current_animation) == 0:
+            current_frame = pygame.Surface((50, 50))
+            current_frame.fill((255, 128, 0))
+        else:
+            animation_counter += 1
+            if animation_counter >= ANIMATION_DELAY:
+                animation_counter = 0
+                frame_index = (frame_index + 1) % len(current_animation)
+            current_frame = current_animation[frame_index]
+        if not facing_right:
+            current_frame = pygame.transform.flip(current_frame, True, False)
+
+    elif attacking:
+        current_animation = attack_images
+        if len(current_animation) == 0:
+            current_frame = pygame.Surface((50, 50))
+            current_frame.fill((255, 0, 0))
+        else:
+            attack_timer -= 1
+            animation_counter += 1
+            if animation_counter >= ANIMATION_DELAY:
+                animation_counter = 0
+                attack_frame_index = (attack_frame_index + 1) % len(current_animation)
+            current_frame = current_animation[attack_frame_index]
         if not facing_right:
             current_frame = pygame.transform.flip(current_frame, True, False)
         if attack_timer <= 0:
             attacking = False
+            attack_frame_index = 0
+
     else:
         if dashing and len(dash_images) > 0:
             current_animation = dash_images
@@ -205,21 +243,21 @@ while running:
         else:
             current_animation = run_images if moving else idle_images
 
-    if current_animation is not previous_animation:
-        frame_index = 0
-        animation_counter = 0
-
-    if len(current_animation) == 0:
-        current_frame = pygame.Surface((50, 50))
-        current_frame.fill((255, 0, 0))
-    else:
-        animation_counter += 1
-        if animation_counter >= ANIMATION_DELAY:
+        if current_animation is not previous_animation:
+            frame_index = 0
             animation_counter = 0
-            frame_index = (frame_index + 1) % len(current_animation)
-        current_frame = current_animation[frame_index]
-        if not facing_right:
-            current_frame = pygame.transform.flip(current_frame, True, False)
+
+        if len(current_animation) == 0:
+            current_frame = pygame.Surface((50, 50))
+            current_frame.fill((255, 0, 0))
+        else:
+            animation_counter += 1
+            if animation_counter >= ANIMATION_DELAY:
+                animation_counter = 0
+                frame_index = (frame_index + 1) % len(current_animation)
+            current_frame = current_animation[frame_index]
+            if not facing_right:
+                current_frame = pygame.transform.flip(current_frame, True, False)
 
     # --- PHYSIQUE ---
     player_x += player_velocity_x
@@ -272,32 +310,25 @@ while running:
     for platform in platforms:
         platform.draw(screen, scroll_x)
     screen.blit(current_frame, (player_x - scroll_x, player_y))
-    # --- BARRE DE STAMINA / COOLDOWN ---
+
+    # --- BARRES ---
     bar_width = 50
     bar_height = 5
     bar_x = player_x - scroll_x
-    bar_y = player_y - 10  # légèrement au-dessus du joueur
+    bar_y = player_y - 10
 
-# On prend le cooldown le plus long entre dash et dash attack
     max_cooldown = max(DASH_COOLDOWN, DASH_ATTACK_COOLDOWN)
     current_cooldown = max(dash_cooldown_timer, dash_attack_cooldown_timer)
-
     ratio = current_cooldown / max_cooldown
-    pygame.draw.rect(screen, (0, 0, 0), (bar_x, bar_y, bar_width, bar_height))  # fond noir
-    pygame.draw.rect(screen, (0, 0, 255), (bar_x, bar_y, bar_width * ratio, bar_height))  # bleu
+    pygame.draw.rect(screen, (0, 0, 0), (bar_x, bar_y, bar_width, bar_height))
+    pygame.draw.rect(screen, (0, 0, 255), (bar_x, bar_y, bar_width * ratio, bar_height))
 
-    # --- BARRE DE VIE ---
-    player_health = 100  # tu peux le mettre en haut du code pour le gérer globalement
-    max_health = 100
-
-    health_bar_width = 50
-    health_bar_height = 5
+    # Barre de vie
     health_bar_x = player_x - scroll_x
-    health_bar_y = player_y - 20  # au-dessus de la barre de cooldown
-
+    health_bar_y = player_y - 20
     health_ratio = player_health / max_health
-    pygame.draw.rect(screen, (0, 0, 0), (health_bar_x, health_bar_y, health_bar_width, health_bar_height))  # fond noir
-    pygame.draw.rect(screen, (0, 255, 0), (health_bar_x, health_bar_y, health_bar_width * health_ratio, health_bar_height))  # vert
+    pygame.draw.rect(screen, (0, 0, 0), (health_bar_x, health_bar_y, bar_width, bar_height))
+    pygame.draw.rect(screen, (0, 255, 0), (health_bar_x, health_bar_y, bar_width * health_ratio, bar_height))
 
     pygame.display.flip()
 
