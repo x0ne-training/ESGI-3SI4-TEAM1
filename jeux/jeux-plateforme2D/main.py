@@ -51,11 +51,17 @@ class Platform:
         return self.rect.move(-scroll_x, 0)
 
 platforms = [
-    Platform(0, GROUND_Y, 2000, 50),
+    Platform(0, GROUND_Y, 3000, 50),
     Platform(300, GROUND_Y - 100, 100, 20),
-    Platform(600, GROUND_Y - 150, 150, 20),
-    Platform(900, GROUND_Y - 200, 100, 20),
-    Platform(1300, GROUND_Y - 120, 200, 20),
+    Platform(500, GROUND_Y - 150, 150, 20),
+    Platform(700, GROUND_Y - 180, 100, 20),
+    Platform(900, GROUND_Y - 120, 200, 20),
+    Platform(1200, GROUND_Y - 180, 120, 20),
+    Platform(1350, GROUND_Y - 250, 100, 20),
+    Platform(1500, GROUND_Y - 150, 100, 20),
+    Platform(1700, GROUND_Y - 100, 200, 20),
+    Platform(2000, GROUND_Y - 180, 150, 20),
+    Platform(2300, GROUND_Y - 150, 200, 20),
 ]
 
 player_x = 100
@@ -101,15 +107,15 @@ while running:
     player_rect = pygame.Rect(player_x, player_y, 50, 50)
 
     for platform in platforms:
-        plat_rect = platform.get_rect(scroll_x)
-        if player_rect.colliderect(plat_rect):
+        if player_rect.colliderect(platform.rect):
             if player_velocity_x > 0:
-                player_x = plat_rect.left - 50
+                player_x = platform.rect.left - 50
             elif player_velocity_x < 0:
-                player_x = plat_rect.right
+                player_x = platform.rect.right
             player_rect.x = player_x
 
-    player_x = max(0, min(player_x, 2000 - 50))
+
+    player_x = max(0, min(player_x, 3000 - 50))
     player_rect.x = player_x
 
     player_velocity_y += GRAVITY
@@ -118,13 +124,17 @@ while running:
 
     on_ground = False
     for platform in platforms:
-        plat_rect = platform.get_rect(scroll_x)
-        if player_rect.colliderect(plat_rect):
-            if player_velocity_y > 0 and player_rect.bottom - player_velocity_y <= plat_rect.top:
-                player_y = plat_rect.top - 50
+        if player_rect.colliderect(platform.rect):
+            if player_velocity_y > 0 and player_rect.bottom - player_velocity_y <= platform.rect.top +10:
+                player_y = platform.rect.top - 50
                 player_velocity_y = 0
                 on_ground = True
                 player_rect.y = player_y
+            elif player_velocity_y < 0 and player_rect.top - player_velocity_y >= platform.rect.bottom:
+                player_y = platform.rect.bottom
+                player_velocity_y = 0
+                player_rect.y = player_y
+
 
     if player_y > HEIGHT + 100:
         player_x = 100
