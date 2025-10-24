@@ -7,6 +7,8 @@ typedef struct Node {
     struct Node* right;
 } Node;
 
-
+Node* createNode(char* question);
+void play(Node* root);
+void freeTree(Node* root);
 
 #endif
