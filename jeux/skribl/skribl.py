@@ -90,3 +90,24 @@ def save_as_ps():
         messagebox.showerror('Erreur', f'Impossible d’enregistrer : {e}')
 
 tk.Button(frame, text='Sauvegarder (PS)', command=save_as_ps).pack(side=tk.LEFT, padx=5)
+
+try:
+    from PIL import Image
+except ImportError:
+    Image = None
+
+def save_as_png():
+    file = filedialog.asksaveasfilename(defaultextension='.png', filetypes=[('PNG', '*.png')])
+    if not file:
+        return
+    ps_file = file.replace('.png', '.ps')
+    canvas.postscript(file=ps_file, colormode='color')
+    if Image:
+        img = Image.open(ps_file)
+        img.save(file, 'PNG')
+        os.remove(ps_file)
+        messagebox.showinfo('Sauvegarde', f'Image enregistrée sous {file}')
+    else:
+        messagebox.showwarning('Attention', 'Pillow non installé. Fichier .ps créé.')
+
+tk.Button(frame, text='Sauvegarder (PNG)', command=save_as_png).pack(side=tk.LEFT, padx=5)
