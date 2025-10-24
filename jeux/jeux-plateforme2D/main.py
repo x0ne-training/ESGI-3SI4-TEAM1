@@ -37,8 +37,14 @@ idle_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\E
 run_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\run")
 jump_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\jump")
 fall_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\fall")
+attack_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\attack")
 
-print(f"Idle: {len(idle_images)} Run: {len(run_images)} Jump: {len(jump_images)} Fall: {len(fall_images)}")
+print(f"Idle: {len(idle_images)} Run: {len(run_images)} Jump: {len(jump_images)} Fall: {len(fall_images)} Attack: {len(attack_images)}")
+
+attacking = False
+attack_frame_index = 0
+attack_timer = 0
+ATTACK_DURATION = len(attack_images) * ANIMATION_DELAY
 
 class Platform:
     def __init__(self, x, y, width, height):
@@ -102,6 +108,56 @@ while running:
     if keys[pygame.K_SPACE] and on_ground:
         player_velocity_y = JUMP_STRENGTH
         on_ground = False
+    if keys[pygame.K_a] and not attacking:
+        attacking = True
+        attack_timer = ATTACK_DURATION
+        attack_frame_index = 0
+        animation_counter = 0
+    
+    if attacking and len(attack_images) > 0:
+        attack_timer -= 1
+        animation_counter += 1
+
+        if animation_counter >= ANIMATION_DELAY:
+            animation_counter = 0
+            attack_frame_index = (attack_frame_index + 1) % len(attack_images)
+
+        current_frame = attack_images[attack_frame_index]
+
+        if not facing_right:
+            current_frame = pygame.transform.flip(current_frame, True, False)
+
+        if attack_timer <= 0:
+            attacking = False
+
+    else:
+    # Animation normale (idle, run, jump, fall)
+        previous_animation = current_animation  # sauvegarde
+        if not on_ground:
+            if player_velocity_y < 0:
+                current_animation = jump_images
+            else:
+                current_animation = fall_images
+        else:
+            current_animation = run_images if moving else idle_images
+
+    # 🔹 Réinitialiser l’index si on change d’animation
+        if current_animation is not previous_animation:
+            frame_index = 0
+            animation_counter = 0
+
+
+        if len(current_animation) == 0:
+            current_frame = pygame.Surface((50, 50))
+            current_frame.fill((255, 0, 0))
+        else:
+            animation_counter += 1
+            if animation_counter >= ANIMATION_DELAY:
+                animation_counter = 0
+                frame_index = (frame_index + 1) % len(current_animation)
+            current_frame = current_animation[frame_index]
+            if not facing_right:
+                current_frame = pygame.transform.flip(current_frame, True, False)
 
     player_x += player_velocity_x
     player_rect = pygame.Rect(player_x, player_y, 50, 50)
@@ -149,34 +205,14 @@ while running:
         scroll_x = player_x - WIDTH * 0.3
     scroll_x = max(0, scroll_x)
 
-    if not on_ground:
-        if player_velocity_y < 0:
-            current_animation = jump_images
-        else:
-            current_animation = fall_images
-    else:
-        current_animation = run_images if moving else idle_images
-
-    if len(current_animation) == 0:
-        current_frame = pygame.Surface((50, 50))
-        current_frame.fill((255, 0, 0))
-    else:
-        animation_counter += 1
-        if animation_counter >= ANIMATION_DELAY:
-            animation_counter = 0
-            frame_index = (frame_index + 1) % len(current_animation)
-        frame_index %= len(current_animation)
-        current_frame = current_animation[frame_index]
-        if not facing_right: 
-            current_frame = pygame.transform.flip(current_frame, True, False)
-
+    # --- DESSIN ---
     screen.fill(background_color)
 
     for platform in platforms:
         platform.draw(screen, scroll_x)
 
     screen.blit(current_frame, (player_x - scroll_x, player_y))
-
     pygame.display.flip()
+
 
 pygame.quit()
