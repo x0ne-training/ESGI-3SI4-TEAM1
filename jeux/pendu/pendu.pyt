@@ -173,6 +173,25 @@ def jouer_une_partie(vies_max: int = 6):
             lettres_ratees_norm.add(coup_norm)
             vies -= 1
             print("❌ Mauvaise lettre.")
+          
+def menu():
+    print("=" * 40)
+    print("     🎮  PENDU (console, FR)  🎮")
+    print("=" * 40)
+    while True:
+        print("\n1) Jouer")
+        print("2) Quitter")
+        choix = input("Choix : ").strip()
+        if choix == "1":
+            jouer_une_partie()
+        elif choix == "2":
+            print("À bientôt 👋")
+            break
+        else:
+            print("Choix invalide.")
+
+if __name__ == "__main__":
+    menu()
 
 
 
