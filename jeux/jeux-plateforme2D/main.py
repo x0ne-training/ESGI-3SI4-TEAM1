@@ -286,6 +286,19 @@ while running:
     pygame.draw.rect(screen, (0, 0, 0), (bar_x, bar_y, bar_width, bar_height))  # fond noir
     pygame.draw.rect(screen, (0, 0, 255), (bar_x, bar_y, bar_width * ratio, bar_height))  # bleu
 
+    # --- BARRE DE VIE ---
+    player_health = 100  # tu peux le mettre en haut du code pour le gérer globalement
+    max_health = 100
+
+    health_bar_width = 50
+    health_bar_height = 5
+    health_bar_x = player_x - scroll_x
+    health_bar_y = player_y - 20  # au-dessus de la barre de cooldown
+
+    health_ratio = player_health / max_health
+    pygame.draw.rect(screen, (0, 0, 0), (health_bar_x, health_bar_y, health_bar_width, health_bar_height))  # fond noir
+    pygame.draw.rect(screen, (0, 255, 0), (health_bar_x, health_bar_y, health_bar_width * health_ratio, health_bar_height))  # vert
+
     pygame.display.flip()
 
 pygame.quit()
