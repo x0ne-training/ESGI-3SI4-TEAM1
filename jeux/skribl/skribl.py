@@ -51,3 +51,27 @@ tk.Button(frame, text='Gomme', command=toggle_eraser).pack(side=tk.LEFT, padx=5)
 color = 'white' if eraser_on else current_color
 canvas.create_oval(x - r, y - r, x + r, y + r, fill=color, outline=color)
 
+history = []
+current_stroke = []
+
+def start_draw(event):
+    global current_stroke
+    current_stroke = []
+    draw(event)
+
+def draw(event):
+    x, y = event.x, event.y
+    r = brush_size.get()
+    color = 'white' if eraser_on else current_color
+    item = canvas.create_oval(x - r, y - r, x + r, y + r, fill=color, outline=color)
+    current_stroke.append(item)
+
+def stop_draw(event):
+    history.append(current_stroke)
+
+canvas.bind('<Button-1>', start_draw)
+canvas.bind('<B1-Motion>', draw)
+canvas.bind('<ButtonRelease-1>', stop_draw)
+
+tk.Button(frame, text='Annuler', command=lambda: [canvas.delete(i) for i in history.pop() if history]).pack(side=tk.LEFT, padx=5)
+
