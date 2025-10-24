@@ -27,3 +27,10 @@ frame = tk.Frame(root)
 frame.pack(side=tk.TOP, fill=tk.X)
 for c in colors:
     tk.Button(frame, bg=c, width=2, command=lambda col=c: set_color(col)).pack(side=tk.LEFT)
+
+canvas.create_oval(x - r, y - r, x + r, y + r, fill=current_color, outline=current_color)
+
+from tkinter import colorchooser
+
+tk.Button(frame, text='Autre couleur', command=lambda: set_color(colorchooser.askcolor()[1])).pack(side=tk.LEFT, padx=5)
+
