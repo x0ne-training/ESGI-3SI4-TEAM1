@@ -15,3 +15,15 @@ def draw(event):
     canvas.create_oval(x - r, y - r, x + r, y + r, fill='black', outline='black')
 
 canvas.bind('<B1-Motion>', draw)
+
+colors = ['black', 'red', 'green', 'blue', 'yellow', 'orange', 'purple']
+current_color = 'black'
+
+def set_color(c):
+    global current_color
+    current_color = c
+
+frame = tk.Frame(root)
+frame.pack(side=tk.TOP, fill=tk.X)
+for c in colors:
+    tk.Button(frame, bg=c, width=2, command=lambda col=c: set_color(col)).pack(side=tk.LEFT)
