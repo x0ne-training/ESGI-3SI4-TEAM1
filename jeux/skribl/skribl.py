@@ -40,3 +40,14 @@ size_slider.pack(side=tk.LEFT, padx=5)
 
 r = brush_size.get()
 
+eraser_on = False
+
+def toggle_eraser():
+    global eraser_on
+    eraser_on = not eraser_on
+
+tk.Button(frame, text='Gomme', command=toggle_eraser).pack(side=tk.LEFT, padx=5)
+
+color = 'white' if eraser_on else current_color
+canvas.create_oval(x - r, y - r, x + r, y + r, fill=color, outline=color)
+
