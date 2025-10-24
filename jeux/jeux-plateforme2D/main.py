@@ -3,19 +3,20 @@ import os
 
 pygame.init()
 
+# --- CONFIGURATION ---
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Jeu plateforme scrolling")
 
-background_color = (135, 206, 235)
-
+BACKGROUND_COLOR = (135, 206, 235)
 GROUND_Y = HEIGHT - 50
 PLAYER_SPEED = 5
 GRAVITY = 1
 JUMP_STRENGTH = -15
 ANIMATION_DELAY = 5
 
-def load_images_from_folder(folder):
+# --- FONCTION DE CHARGEMENT ---
+def load_images_from_folder(folder, size=(50, 50)):
     if not os.path.exists(folder):
         print(f"❌ Dossier introuvable : {folder}")
         return []
@@ -24,28 +25,29 @@ def load_images_from_folder(folder):
         if filename.endswith(".png"):
             path = os.path.join(folder, filename)
             try:
-                image = pygame.image.load(path).convert_alpha()
-                image = pygame.transform.scale(image, (50, 50))
-                images.append(image)
+                img = pygame.image.load(path).convert_alpha()
+                img = pygame.transform.scale(img, size)
+                images.append(img)
             except Exception as e:
                 print(f"⚠️ Erreur chargement {filename}: {e}")
     return images
 
-# Chargement des animations
+# --- CHARGEMENT DES ANIMATIONS ---
 idle_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\idle")
 run_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\run")
 jump_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\jump")
 fall_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\fall")
 attack_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\attack")
 crouch_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\crouch")
+slide_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\slide")
 
-print(f"Idle: {len(idle_images)} Run: {len(run_images)} Jump: {len(jump_images)} Fall: {len(fall_images)} Attack: {len(attack_images)} Crouch: {len(crouch_images)}")
+print(f"Idle: {len(idle_images)} Run: {len(run_images)} Jump: {len(jump_images)} Fall: {len(fall_images)} Attack: {len(attack_images)} Crouch: {len(crouch_images)} Slide: {len(slide_images)}")
 
-# Variables globales
+# --- CONSTANTES & VARIABLES ---
 attacking = False
 attack_frame_index = 0
 attack_timer = 0
-ATTACK_DURATION = max(len(attack_images) * ANIMATION_DELAY, 1)
+ATTACK_DURATION = len(attack_images) * ANIMATION_DELAY
 
 player_x = 100
 player_y = GROUND_Y - 50
@@ -58,15 +60,16 @@ facing_right = True
 frame_index = 0
 animation_counter = 0
 current_animation = idle_images
-
 scroll_x = 0
 
+# --- PLATEFORMES ---
 class Platform:
     def __init__(self, x, y, width, height):
         self.rect = pygame.Rect(x, y, width, height)
-
     def draw(self, surface, scroll_x):
         pygame.draw.rect(surface, (139, 69, 19), self.rect.move(-scroll_x, 0))
+    def get_rect(self, scroll_x):
+        return self.rect.move(-scroll_x, 0)
 
 platforms = [
     Platform(0, GROUND_Y, 3000, 50),
@@ -82,13 +85,11 @@ platforms = [
     Platform(2300, GROUND_Y - 150, 200, 20),
 ]
 
+# --- BOUCLE PRINCIPALE ---
 clock = pygame.time.Clock()
 running = True
-
 while running:
     clock.tick(60)
-
-    # ---- INPUT ----
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -97,6 +98,7 @@ while running:
     moving = False
     player_velocity_x = 0
 
+    # --- INPUTS ---
     if keys[pygame.K_LEFT]:
         player_velocity_x = -PLAYER_SPEED
         moving = True
@@ -105,7 +107,7 @@ while running:
         player_velocity_x = PLAYER_SPEED
         moving = True
         facing_right = True
-    if keys[pygame.K_UP] and on_ground and not crouching:
+    if keys[pygame.K_UP] and on_ground:
         player_velocity_y = JUMP_STRENGTH
         on_ground = False
     if keys[pygame.K_a] and not attacking:
@@ -113,14 +115,13 @@ while running:
         attack_timer = ATTACK_DURATION
         attack_frame_index = 0
         animation_counter = 0
-    if keys[pygame.K_DOWN] and on_ground and not attacking:
-        crouching = True
-    else:
-        crouching = False
+    crouching = keys[pygame.K_DOWN] and on_ground and not attacking
 
-    # ---- ANIMATION ----
+    # --- ANIMATION ---
+    previous_animation = current_animation
+
     if attacking and len(attack_images) > 0:
-        # Attaque prioritaire
+        # ATTACK PRIORITAIRE
         attack_timer -= 1
         animation_counter += 1
         if animation_counter >= ANIMATION_DELAY:
@@ -132,20 +133,22 @@ while running:
         if attack_timer <= 0:
             attacking = False
     else:
-        # Animations normales
-        previous_animation = current_animation
-        if crouching:
+        # PRIORITE SLIDE > CROUCH > JUMP/FALL > RUN/IDLE
+        if crouching and moving and len(slide_images) > 0:
+            current_animation = slide_images
+        elif crouching:
             current_animation = crouch_images
         elif not on_ground:
             current_animation = jump_images if player_velocity_y < 0 else fall_images
         else:
             current_animation = run_images if moving else idle_images
 
-        # Reset index si changement
+        # Réinitialiser l’index si changement d’animation
         if current_animation is not previous_animation:
             frame_index = 0
             animation_counter = 0
 
+        # Sécurité si animation vide
         if len(current_animation) == 0:
             current_frame = pygame.Surface((50, 50))
             current_frame.fill((255, 0, 0))
@@ -154,12 +157,11 @@ while running:
             if animation_counter >= ANIMATION_DELAY:
                 animation_counter = 0
                 frame_index = (frame_index + 1) % len(current_animation)
-            frame_index %= len(current_animation)
             current_frame = current_animation[frame_index]
             if not facing_right:
                 current_frame = pygame.transform.flip(current_frame, True, False)
 
-    # ---- MOUVEMENT ----
+    # --- PHYSIQUE ---
     player_x += player_velocity_x
     player_rect = pygame.Rect(player_x, player_y, 50, 50)
 
@@ -195,16 +197,18 @@ while running:
         player_x = 100
         player_y = GROUND_Y - 50
         player_velocity_y = 0
+        player_rect.x = player_x
+        player_rect.y = player_y
 
-    # ---- SCROLL ----
+    # --- SCROLLING ---
     if player_x - scroll_x > WIDTH * 0.6:
         scroll_x = player_x - WIDTH * 0.6
     elif player_x - scroll_x < WIDTH * 0.3:
         scroll_x = player_x - WIDTH * 0.3
     scroll_x = max(0, scroll_x)
 
-    # ---- DESSIN ----
-    screen.fill(background_color)
+    # --- DESSIN ---
+    screen.fill(BACKGROUND_COLOR)
     for platform in platforms:
         platform.draw(screen, scroll_x)
     screen.blit(current_frame, (player_x - scroll_x, player_y))
