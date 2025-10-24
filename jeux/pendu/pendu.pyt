@@ -95,7 +95,14 @@ def afficher_etat(mot_affiche: str, lettres_ratees: set[str], vies_restantes: in
     print(f"Vies restantes : {vies_restantes}")
     print("-" * 40)
 
-    
+def generer_mot(mots: list[str]) -> tuple[str, str]:
+    """Choisit un mot au hasard et renvoie (mot_original, mot_normalise)."""
+    mot = random.choice(mots).lower()
+    mot_normalise = strip_accents(mot)
+    return mot, mot_normalise  # renvoie le mot original + sa version sans accents
+
+
+
 
 
 
