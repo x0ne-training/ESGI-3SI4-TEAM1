@@ -39,9 +39,4 @@ void play(Node* root) {
     }
 }
 
-void freeTree(Node* root) {
-    if (root == NULL) return;
-    freeTree(root->left);
-    freeTree(root->right);
-    free(root);
-}
+
