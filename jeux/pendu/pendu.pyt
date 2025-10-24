@@ -114,6 +114,25 @@ def construire_masque(mot_original: str, lettres_trouvees_norm: set[str]) -> str
             res.append(ch)
     return " ".join(res)
 
+def demander_coup(lettres_deja: set[str]) -> str:
+    """Demande au joueur une lettre ou un mot complet."""
+    while True:
+        entree = input("Propose une lettre ou un mot entier : ").strip().lower()
+        if not entree:
+            print("Entrée vide. Réessaie.")
+            continue
+        entree_norm = strip_accents(entree)
+        if len(entree_norm) == 1 and entree_norm.isalpha():
+            if entree_norm in lettres_deja:
+                print("Tu as déjà essayé cette lettre. Réessaie.")
+                continue
+            return entree
+        elif len(entree_norm) >= 2 and entree_norm.replace(" ", "").isalpha():
+            return entree
+        else:
+            print("Entrée invalide. Réessaie.")
+
+
 
 
 
