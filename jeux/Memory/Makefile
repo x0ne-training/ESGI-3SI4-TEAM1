@@ -1,3 +1,7 @@
+CC = gcc
+CFLAGS = -Wall -Wextra -g
+OBJ = main.o fonctions.o
+TARGET = memory_game
 
 all: $(TARGET)
 
