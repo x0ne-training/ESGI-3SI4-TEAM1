@@ -84,6 +84,19 @@ def charger_mots() -> list[str]:
         mots = [ligne.strip() for ligne in f if ligne.strip()]
     return mots
 
+def afficher_etat(mot_affiche: str, lettres_ratees: set[str], vies_restantes: int):
+    """Affiche le pendu ASCII et l'état actuel du mot."""
+    vies_perdues = (len(ASCII_PENDU) - 1) - vies_restantes
+    vies_perdues = max(0, min(vies_perdues, len(ASCII_PENDU) - 1))
+    print(ASCII_PENDU[vies_perdues])
+    print(f"Mot : {mot_affiche}")
+    if lettres_ratees:
+        print("Lettres fausses :", " ".join(sorted(lettres_ratees)))
+    print(f"Vies restantes : {vies_restantes}")
+    print("-" * 40)
+
+    
+
 
 
 
