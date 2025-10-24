@@ -101,6 +101,19 @@ def generer_mot(mots: list[str]) -> tuple[str, str]:
     mot_normalise = strip_accents(mot)
     return mot, mot_normalise  # renvoie le mot original + sa version sans accents
 
+def construire_masque(mot_original: str, lettres_trouvees_norm: set[str]) -> str:
+    """Construit l'affichage du mot avec les lettres découvertes."""
+    res = []
+    for ch in mot_original:
+        if ch.isalpha():
+            if strip_accents(ch) in lettres_trouvees_norm:
+                res.append(ch)
+            else:
+                res.append("_")
+        else:
+            res.append(ch)
+    return " ".join(res)
+
 
 
 
