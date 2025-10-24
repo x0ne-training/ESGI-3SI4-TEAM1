@@ -38,11 +38,7 @@ int main() {
         }
     }
 
-    if (partie_terminee(&jeu)) {
-        afficher_plateau(&jeu);
-        printf("\n=== PARTIE TERMINEE ===\n");
-        printf("Les %s ont gagné!\n", jeu.joueur_courant == 2 ? "Blancs" : "Noirs");
-    }
+    if (pa
 
     return 0;
 }
