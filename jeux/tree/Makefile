@@ -13,6 +13,3 @@ main.o: main.c fonctions.h
 
 fonctions.o: fonctions.c fonctions.h
 	$(CC) $(CFLAGS) -c fonctions.c
-
-clean:
-	rm -f $(OBJ) $(TARGET)
