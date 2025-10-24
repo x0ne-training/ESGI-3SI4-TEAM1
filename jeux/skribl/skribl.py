@@ -34,3 +34,9 @@ from tkinter import colorchooser
 
 tk.Button(frame, text='Autre couleur', command=lambda: set_color(colorchooser.askcolor()[1])).pack(side=tk.LEFT, padx=5)
 
+brush_size = tk.IntVar(value=5)
+size_slider = tk.Scale(frame, from_=1, to=30, orient='horizontal', variable=brush_size, label='Taille')
+size_slider.pack(side=tk.LEFT, padx=5)
+
+r = brush_size.get()
+
