@@ -18,6 +18,12 @@
 #define DAME_N 11
 #define ROI_N 12
 
+typedef struct {
+    int plateau[TAILLE][TAILLE];
+    int joueur_courant; // 1 = blancs, 2 = noirs
+    int partie_finie;
+} Jeu;
+
 
 
 #endif
