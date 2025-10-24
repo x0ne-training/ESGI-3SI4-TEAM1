@@ -109,3 +109,35 @@ int est_mouvement_valide(Jeu *jeu, int x1, int y1, int x2, int y2) {
 
     if (piece == DAME_B || piece == DAME_N) {
         if (x1 == x2 || y1 == y2 || abs(x2 - x1) == abs(y2 - y1)) return 1;
+    }
+
+    if (piece == ROI_B || piece == ROI_N) {
+        if (abs(x2 - x1) <= 1 && abs(y2 - y1) <= 1) return 1;
+    }
+
+    return 0;
+}
+
+int deplacer_piece(Jeu *jeu, int x1, int y1, int x2, int y2) {
+    if (!est_mouvement_valide(jeu, x1, y1, x2, y2)) {
+        return 0;
+    }
+
+    int piece_capturee = jeu->plateau[x2][y2];
+    if (piece_capturee == ROI_B || piece_capturee == ROI_N) {
+        jeu->partie_finie = 1;
+    }
+
+    jeu->plateau[x2][y2] = jeu->plateau[x1][y1];
+    jeu->plateau[x1][y1] = VIDE;
+
+    return 1;
+}
+
+void changer_joueur(Jeu *jeu) {
+    jeu->joueur_courant = (jeu->joueur_courant == 1) ? 2 : 1;
+}
+
+int partie_terminee(Jeu *jeu) {
+    return jeu->partie_finie;
+}
