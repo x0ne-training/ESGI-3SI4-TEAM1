@@ -1,10 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-void tour_joueur();
-void tour_ordi();
-int poser_carte(int joueur);
-int annoncer_carte(int joueur);
-int verifier_mentir(int vrai, int annonce);
+void play_game();
+void display_card(const char *value, const char *suit);
 
 #endif

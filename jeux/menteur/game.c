@@ -1,63 +1,69 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <string.h>
 #include "game.h"
-#include "utils.h"
-#include "score.h"
 
-void tour_joueur() {
-    printf("\n--- Tour du joueur ---\n");
-    int carte = poser_carte(1);
-    int annonce = annoncer_carte(1);
-    int mensonge = verifier_mentir(carte, annonce);
-
-    if(mensonge) {
-        printf("Vous avez menti ! L'ordinateur dit menteur !\n");
-        perdre_vie_joueur();
-    } else {
-        printf("Annonce correcte ! Vous gardez vos vies.\n");
-    }
+void display_card(const char *value, const char *suit) {
+    printf("┌─────────┐\n");
+    printf("│%-2s       │\n", value);
+    printf("│         │\n");
+    printf("│    %s    │\n", suit);
+    printf("│         │\n");
+    printf("│       %-2s│\n", value);
+    printf("└─────────┘\n");
 }
 
-void tour_ordi() {
-    printf("\n--- Tour de l'ordinateur ---\n");
-    int carte = poser_carte(2);
-    int annonce = annoncer_carte(2);
-    printf("L'ordinateur annonce : %s\n", nom_carte(annonce));
+int random_choice(int n) {
+    return rand() % n;
+}
 
-    int mensonge = verifier_mentir(carte, annonce);
-    int joueur_intervient = hasard(0,1);
+void play_game() {
+    srand(time(NULL));
 
-    if(joueur_intervient) {
-        if(mensonge) {
-            printf("Vous avez dit menteur et aviez raison ! L'ordinateur perd une vie.\n");
-            perdre_vie_ordi();
+    int playerLives = 3;
+    int computerLives = 3;
+    int round = 1;
+
+    printf("=== Jeu du Menteur ===\n");
+    printf("Chaque joueur commence avec 3 vies.\n");
+
+    while (playerLives > 0 && computerLives > 0) {
+        printf("\n--- Tour %d ---\n", round);
+
+        // Le joueur annonce sa carte
+        char announcedValue[10];
+        printf("Annoncez la valeur de votre carte (ex: As, Roi, 7, etc.) : ");
+        scanf("%9s", announcedValue);
+
+        printf("Vous posez une carte annoncée comme un %s !\n", announcedValue);
+        printf("Votre carte :\n");
+        display_card(announcedValue, "♠");
+
+        // Décision aléatoire de l’ordinateur (1/3 de chance de dire menteur)
+        int computerSaysLiar = random_choice(3) == 0;
+
+        if (computerSaysLiar) {
+            printf("\n🤖 L'ordinateur dit : \"Menteur !\"\n");
+
+            int youWereLying = random_choice(2); // 50 % de chance de mentir
+            if (youWereLying) {
+                printf("💀 Vous mentiez ! Vous perdez 1 vie.\n");
+                playerLives--;
+            } else {
+                printf("😎 Vous disiez la vérité ! L'ordinateur perd 1 vie.\n");
+                computerLives--;
+            }
         } else {
-            printf("Vous avez dit menteur mais l'ordinateur disait vrai ! Vous perdez une vie.\n");
-            perdre_vie_joueur();
+            printf("\n🤖 L'ordinateur vous croit.\n");
         }
-    } else {
-        printf("Vous laissez passer.\n");
-    }
-}
 
-int poser_carte(int joueur) {
-    if(joueur == 1) {
-        printf("Choisissez une carte (1-13) : ");
-        return lire_entier();
-    } else {
-        return hasard(1,13);
+        printf("Vies restantes — Vous : %d | Ordinateur : %d\n", playerLives, computerLives);
+        round++;
     }
-}
 
-int annoncer_carte(int joueur) {
-    if(joueur == 1) {
-        printf("Annoncez la carte que vous posez (1-13) : ");
-        return lire_entier();
-    } else {
-        return hasard(1,13);
-    }
-}
-
-int verifier_mentir(int vrai, int annonce) {
-    return vrai != annonce;
+    if (playerLives <= 0)
+        printf("\n💀 Vous avez perdu le jeu !\n");
+    else
+        printf("\n🏆 Vous avez gagné contre l'ordinateur !\n");
 }
