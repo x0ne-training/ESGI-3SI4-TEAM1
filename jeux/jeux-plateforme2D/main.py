@@ -8,7 +8,6 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Jeu plateforme scrolling")
 
 background_color = (135, 206, 235)
-ground_color = (0, 255, 0)
 
 GROUND_Y = HEIGHT - 50
 PLAYER_SPEED = 5
@@ -20,7 +19,6 @@ def load_images_from_folder(folder):
     if not os.path.exists(folder):
         print(f"❌ Dossier introuvable : {folder}")
         return []
-
     images = []
     for filename in sorted(os.listdir(folder)):
         if filename.endswith(".png"):
@@ -33,18 +31,35 @@ def load_images_from_folder(folder):
                 print(f"⚠️ Erreur chargement {filename}: {e}")
     return images
 
+# Chargement des animations
 idle_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\idle")
 run_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\run")
 jump_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\jump")
 fall_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\fall")
 attack_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\attack")
+crouch_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\crouch")
 
-print(f"Idle: {len(idle_images)} Run: {len(run_images)} Jump: {len(jump_images)} Fall: {len(fall_images)} Attack: {len(attack_images)}")
+print(f"Idle: {len(idle_images)} Run: {len(run_images)} Jump: {len(jump_images)} Fall: {len(fall_images)} Attack: {len(attack_images)} Crouch: {len(crouch_images)}")
 
+# Variables globales
 attacking = False
 attack_frame_index = 0
 attack_timer = 0
-ATTACK_DURATION = len(attack_images) * ANIMATION_DELAY
+ATTACK_DURATION = max(len(attack_images) * ANIMATION_DELAY, 1)
+
+player_x = 100
+player_y = GROUND_Y - 50
+player_velocity_x = 0
+player_velocity_y = 0
+on_ground = False
+crouching = False
+facing_right = True
+
+frame_index = 0
+animation_counter = 0
+current_animation = idle_images
+
+scroll_x = 0
 
 class Platform:
     def __init__(self, x, y, width, height):
@@ -52,9 +67,6 @@ class Platform:
 
     def draw(self, surface, scroll_x):
         pygame.draw.rect(surface, (139, 69, 19), self.rect.move(-scroll_x, 0))
-
-    def get_rect(self, scroll_x):
-        return self.rect.move(-scroll_x, 0)
 
 platforms = [
     Platform(0, GROUND_Y, 3000, 50),
@@ -70,25 +82,13 @@ platforms = [
     Platform(2300, GROUND_Y - 150, 200, 20),
 ]
 
-player_x = 100
-player_y = GROUND_Y - 50
-player_velocity_x = 0
-player_velocity_y = 0
-on_ground = False
-
-frame_index = 0
-animation_counter = 0
-current_animation = idle_images
-facing_right = True
-
-scroll_x = 0
-
 clock = pygame.time.Clock()
 running = True
 
 while running:
     clock.tick(60)
 
+    # ---- INPUT ----
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -105,7 +105,7 @@ while running:
         player_velocity_x = PLAYER_SPEED
         moving = True
         facing_right = True
-    if keys[pygame.K_SPACE] and on_ground:
+    if keys[pygame.K_UP] and on_ground and not crouching:
         player_velocity_y = JUMP_STRENGTH
         on_ground = False
     if keys[pygame.K_a] and not attacking:
@@ -113,39 +113,38 @@ while running:
         attack_timer = ATTACK_DURATION
         attack_frame_index = 0
         animation_counter = 0
-    
+    if keys[pygame.K_DOWN] and on_ground and not attacking:
+        crouching = True
+    else:
+        crouching = False
+
+    # ---- ANIMATION ----
     if attacking and len(attack_images) > 0:
+        # Attaque prioritaire
         attack_timer -= 1
         animation_counter += 1
-
         if animation_counter >= ANIMATION_DELAY:
             animation_counter = 0
             attack_frame_index = (attack_frame_index + 1) % len(attack_images)
-
         current_frame = attack_images[attack_frame_index]
-
         if not facing_right:
             current_frame = pygame.transform.flip(current_frame, True, False)
-
         if attack_timer <= 0:
             attacking = False
-
     else:
-    # Animation normale (idle, run, jump, fall)
-        previous_animation = current_animation  # sauvegarde
-        if not on_ground:
-            if player_velocity_y < 0:
-                current_animation = jump_images
-            else:
-                current_animation = fall_images
+        # Animations normales
+        previous_animation = current_animation
+        if crouching:
+            current_animation = crouch_images
+        elif not on_ground:
+            current_animation = jump_images if player_velocity_y < 0 else fall_images
         else:
             current_animation = run_images if moving else idle_images
 
-    # 🔹 Réinitialiser l’index si on change d’animation
+        # Reset index si changement
         if current_animation is not previous_animation:
             frame_index = 0
             animation_counter = 0
-
 
         if len(current_animation) == 0:
             current_frame = pygame.Surface((50, 50))
@@ -155,10 +154,12 @@ while running:
             if animation_counter >= ANIMATION_DELAY:
                 animation_counter = 0
                 frame_index = (frame_index + 1) % len(current_animation)
+            frame_index %= len(current_animation)
             current_frame = current_animation[frame_index]
             if not facing_right:
                 current_frame = pygame.transform.flip(current_frame, True, False)
 
+    # ---- MOUVEMENT ----
     player_x += player_velocity_x
     player_rect = pygame.Rect(player_x, player_y, 50, 50)
 
@@ -170,7 +171,6 @@ while running:
                 player_x = platform.rect.right
             player_rect.x = player_x
 
-
     player_x = max(0, min(player_x, 3000 - 50))
     player_rect.x = player_x
 
@@ -181,7 +181,7 @@ while running:
     on_ground = False
     for platform in platforms:
         if player_rect.colliderect(platform.rect):
-            if player_velocity_y > 0 and player_rect.bottom - player_velocity_y <= platform.rect.top +10:
+            if player_velocity_y > 0 and player_rect.bottom - player_velocity_y <= platform.rect.top + 10:
                 player_y = platform.rect.top - 50
                 player_velocity_y = 0
                 on_ground = True
@@ -191,28 +191,23 @@ while running:
                 player_velocity_y = 0
                 player_rect.y = player_y
 
-
     if player_y > HEIGHT + 100:
         player_x = 100
         player_y = GROUND_Y - 50
         player_velocity_y = 0
-        player_rect.x = player_x
-        player_rect.y = player_y
 
+    # ---- SCROLL ----
     if player_x - scroll_x > WIDTH * 0.6:
         scroll_x = player_x - WIDTH * 0.6
     elif player_x - scroll_x < WIDTH * 0.3:
         scroll_x = player_x - WIDTH * 0.3
     scroll_x = max(0, scroll_x)
 
-    # --- DESSIN ---
+    # ---- DESSIN ----
     screen.fill(background_color)
-
     for platform in platforms:
         platform.draw(screen, scroll_x)
-
     screen.blit(current_frame, (player_x - scroll_x, player_y))
     pygame.display.flip()
-
 
 pygame.quit()
