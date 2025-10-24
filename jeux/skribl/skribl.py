@@ -76,3 +76,17 @@ canvas.bind('<ButtonRelease-1>', stop_draw)
 tk.Button(frame, text='Annuler', command=lambda: [canvas.delete(i) for i in history.pop() if history]).pack(side=tk.LEFT, padx=5)
 
 tk.Button(frame, text='Effacer tout', command=lambda: [canvas.delete('all'), history.clear()]).pack(side=tk.LEFT, padx=5)
+
+from tkinter import filedialog, messagebox
+
+def save_as_ps():
+    file = filedialog.asksaveasfilename(defaultextension='.ps', filetypes=[('PostScript', '*.ps')])
+    if not file:
+        return
+    try:
+        canvas.postscript(file=file, colormode='color')
+        messagebox.showinfo('Sauvegarde', f'Dessin enregistré sous {file}')
+    except Exception as e:
+        messagebox.showerror('Erreur', f'Impossible d’enregistrer : {e}')
+
+tk.Button(frame, text='Sauvegarder (PS)', command=save_as_ps).pack(side=tk.LEFT, padx=5)
