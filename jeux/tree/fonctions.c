@@ -23,7 +23,7 @@ void play(Node* root) {
             if (current->left != NULL) {
                 current = current->left;
             } else {
-                printf("Félicitations ! Vous avez trouvé le trésor !\n");
+                printf("Felicitations ! Vous avez trouve le tresor !\n");
                 break;
             }
         } else if (strcmp(choice, "non") == 0) {
@@ -34,7 +34,7 @@ void play(Node* root) {
                 break;
             }
         } else {
-            printf("Veuillez répondre par 'oui' ou 'non'.\n");
+            printf("Veuillez repondre par 'oui' ou 'non'.\n");
         }
     }
 }
