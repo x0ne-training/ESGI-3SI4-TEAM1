@@ -272,6 +272,20 @@ while running:
     for platform in platforms:
         platform.draw(screen, scroll_x)
     screen.blit(current_frame, (player_x - scroll_x, player_y))
+    # --- BARRE DE STAMINA / COOLDOWN ---
+    bar_width = 50
+    bar_height = 5
+    bar_x = player_x - scroll_x
+    bar_y = player_y - 10  # légèrement au-dessus du joueur
+
+# On prend le cooldown le plus long entre dash et dash attack
+    max_cooldown = max(DASH_COOLDOWN, DASH_ATTACK_COOLDOWN)
+    current_cooldown = max(dash_cooldown_timer, dash_attack_cooldown_timer)
+
+    ratio = current_cooldown / max_cooldown
+    pygame.draw.rect(screen, (0, 0, 0), (bar_x, bar_y, bar_width, bar_height))  # fond noir
+    pygame.draw.rect(screen, (0, 0, 255), (bar_x, bar_y, bar_width * ratio, bar_height))  # bleu
+
     pygame.display.flip()
 
 pygame.quit()
