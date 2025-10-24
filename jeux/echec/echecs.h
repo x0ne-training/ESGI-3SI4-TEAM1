@@ -24,6 +24,13 @@ typedef struct {
     int partie_finie;
 } Jeu;
 
-
+// Prototypes des fonctions
+void initialiser_plateau(Jeu *jeu);
+void afficher_plateau(Jeu *jeu);
+int deplacer_piece(Jeu *jeu, int x1, int y1, int x2, int y2);
+int est_mouvement_valide(Jeu *jeu, int x1, int y1, int x2, int y2);
+int est_piece_du_joueur(int piece, int joueur);
+void changer_joueur(Jeu *jeu);
+int partie_terminee(Jeu *jeu);
 
 #endif
