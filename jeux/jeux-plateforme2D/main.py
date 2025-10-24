@@ -14,6 +14,8 @@ PLAYER_SPEED = 5
 GRAVITY = 1
 JUMP_STRENGTH = -15
 ANIMATION_DELAY = 5
+DASH_SPEED = 15
+DASH_DURATION = 15  # frames
 
 # --- FONCTION DE CHARGEMENT ---
 def load_images_from_folder(folder, size=(50, 50)):
@@ -33,15 +35,15 @@ def load_images_from_folder(folder, size=(50, 50)):
     return images
 
 # --- CHARGEMENT DES ANIMATIONS ---
-idle_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\idle")
-run_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\run")
-jump_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\jump")
-fall_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\fall")
-attack_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\attack")
-crouch_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\crouch")
-slide_images = load_images_from_folder(r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\slide")
-
-print(f"Idle: {len(idle_images)} Run: {len(run_images)} Jump: {len(jump_images)} Fall: {len(fall_images)} Attack: {len(attack_images)} Crouch: {len(crouch_images)} Slide: {len(slide_images)}")
+base_path = r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D"
+idle_images = load_images_from_folder(os.path.join(base_path, "idle"))
+run_images = load_images_from_folder(os.path.join(base_path, "run"))
+jump_images = load_images_from_folder(os.path.join(base_path, "jump"))
+fall_images = load_images_from_folder(os.path.join(base_path, "fall"))
+attack_images = load_images_from_folder(os.path.join(base_path, "attack"))
+crouch_images = load_images_from_folder(os.path.join(base_path, "crouch"))
+slide_images = load_images_from_folder(os.path.join(base_path, "slide"))
+dash_images = load_images_from_folder(os.path.join(base_path, "dash"))
 
 # --- CONSTANTES & VARIABLES ---
 attacking = False
@@ -62,14 +64,17 @@ animation_counter = 0
 current_animation = idle_images
 scroll_x = 0
 
+dashing = False
+dash_timer = 0
+dash_direction = 1
+
+
 # --- PLATEFORMES ---
 class Platform:
     def __init__(self, x, y, width, height):
         self.rect = pygame.Rect(x, y, width, height)
     def draw(self, surface, scroll_x):
         pygame.draw.rect(surface, (139, 69, 19), self.rect.move(-scroll_x, 0))
-    def get_rect(self, scroll_x):
-        return self.rect.move(-scroll_x, 0)
 
 platforms = [
     Platform(0, GROUND_Y, 3000, 50),
@@ -117,11 +122,27 @@ while running:
         animation_counter = 0
     crouching = keys[pygame.K_DOWN] and on_ground and not attacking
 
+    # --- DASH D + FLÈCHE ---
+    if keys[pygame.K_d] and on_ground and not dashing:
+        if keys[pygame.K_LEFT]:
+            dashing = True
+            dash_timer = DASH_DURATION
+            dash_direction = -1
+        elif keys[pygame.K_RIGHT]:
+            dashing = True
+            dash_timer = DASH_DURATION
+            dash_direction = 1
+
+    if dashing:
+        player_velocity_x = dash_direction * DASH_SPEED
+        dash_timer -= 1
+        if dash_timer <= 0:
+            dashing = False
+
     # --- ANIMATION ---
     previous_animation = current_animation
 
     if attacking and len(attack_images) > 0:
-        # ATTACK PRIORITAIRE
         attack_timer -= 1
         animation_counter += 1
         if animation_counter >= ANIMATION_DELAY:
@@ -133,8 +154,9 @@ while running:
         if attack_timer <= 0:
             attacking = False
     else:
-        # PRIORITE SLIDE > CROUCH > JUMP/FALL > RUN/IDLE
-        if crouching and moving and len(slide_images) > 0:
+        if dashing and len(dash_images) > 0:
+            current_animation = dash_images
+        elif crouching and moving and len(slide_images) > 0:
             current_animation = slide_images
         elif crouching:
             current_animation = crouch_images
@@ -143,12 +165,10 @@ while running:
         else:
             current_animation = run_images if moving else idle_images
 
-        # Réinitialiser l’index si changement d’animation
         if current_animation is not previous_animation:
             frame_index = 0
             animation_counter = 0
 
-        # Sécurité si animation vide
         if len(current_animation) == 0:
             current_frame = pygame.Surface((50, 50))
             current_frame.fill((255, 0, 0))
