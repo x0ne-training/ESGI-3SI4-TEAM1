@@ -14,8 +14,11 @@ PLAYER_SPEED = 5
 GRAVITY = 1
 JUMP_STRENGTH = -15
 ANIMATION_DELAY = 5
-DASH_SPEED = 15
-DASH_DURATION = 15  # frames
+
+# --- DASH CONFIG ---
+DASH_SPEED = 12      # vitesse raisonnable
+DASH_DURATION = 12    # frames
+DASH_COOLDOWN = 60    # frames (1 sec à 60 FPS)
 
 # --- FONCTION DE CHARGEMENT ---
 def load_images_from_folder(folder, size=(50, 50)):
@@ -45,7 +48,7 @@ crouch_images = load_images_from_folder(os.path.join(base_path, "crouch"))
 slide_images = load_images_from_folder(os.path.join(base_path, "slide"))
 dash_images = load_images_from_folder(os.path.join(base_path, "dash"))
 
-# --- CONSTANTES & VARIABLES ---
+# --- VARIABLES ---
 attacking = False
 attack_frame_index = 0
 attack_timer = 0
@@ -64,10 +67,11 @@ animation_counter = 0
 current_animation = idle_images
 scroll_x = 0
 
+# --- DASH VARIABLES ---
 dashing = False
 dash_timer = 0
 dash_direction = 1
-
+dash_cooldown_timer = 0
 
 # --- PLATEFORMES ---
 class Platform:
@@ -123,15 +127,20 @@ while running:
     crouching = keys[pygame.K_DOWN] and on_ground and not attacking
 
     # --- DASH D + FLÈCHE ---
-    if keys[pygame.K_d] and on_ground and not dashing:
+    if dash_cooldown_timer > 0:
+        dash_cooldown_timer -= 1
+
+    if keys[pygame.K_d] and on_ground and not dashing and dash_cooldown_timer == 0:
         if keys[pygame.K_LEFT]:
             dashing = True
             dash_timer = DASH_DURATION
             dash_direction = -1
+            dash_cooldown_timer = DASH_COOLDOWN
         elif keys[pygame.K_RIGHT]:
             dashing = True
             dash_timer = DASH_DURATION
             dash_direction = 1
+            dash_cooldown_timer = DASH_COOLDOWN
 
     if dashing:
         player_velocity_x = dash_direction * DASH_SPEED
