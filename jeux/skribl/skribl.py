@@ -75,3 +75,4 @@ canvas.bind('<ButtonRelease-1>', stop_draw)
 
 tk.Button(frame, text='Annuler', command=lambda: [canvas.delete(i) for i in history.pop() if history]).pack(side=tk.LEFT, padx=5)
 
+tk.Button(frame, text='Effacer tout', command=lambda: [canvas.delete('all'), history.clear()]).pack(side=tk.LEFT, padx=5)
