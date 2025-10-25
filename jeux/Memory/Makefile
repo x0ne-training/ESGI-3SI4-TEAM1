@@ -1,11 +1,14 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -g
-OBJ = main.o fonctions.o
-TARGET = memory_game
+SRC = main.c fonctions.c
+OBJ = $(SRC:.c=.o)
+BIN_DIR = application
+TARGET = $(BIN_DIR)/memory_game.exe
 
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
+	mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ)
 
 main.o: main.c memory.h
@@ -15,4 +18,5 @@ fonctions.o: fonctions.c memory.h
 	$(CC) $(CFLAGS) -c fonctions.c
 
 clean:
-	rm -f $(OBJ) $(TARGET)
+	rm -f $(OBJ)
+	rm -rf $(BIN_DIR)
