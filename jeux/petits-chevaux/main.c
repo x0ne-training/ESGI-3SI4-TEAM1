@@ -1,12 +1,4 @@
-#include <stdio.h>
-#include "petitschevaux.h"
 
-int main() {
-    Joueur joueurs[NB_JOUEURS];
-    initGame(joueurs);
-
-    int currentPlayer = 0;
-
-
+    printf("\nFin du jeu !\n");
     return 0;
 }
