@@ -5,7 +5,7 @@
 
 typedef struct {
     char value;
-    int revealed; // 0 = cachee, 1 = visible
+    int revealed;
 } Card;
 
 void initBoard(Card board[SIZE][SIZE]);
@@ -14,3 +14,4 @@ int isGameOver(Card board[SIZE][SIZE]);
 void playGame(Card board[SIZE][SIZE]);
 
 #endif
+

@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include "memory.h"
 
 void playGame(Card board[SIZE][SIZE]) {
     int x1, y1, x2, y2;
