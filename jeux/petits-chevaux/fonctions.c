@@ -1,16 +1,4 @@
 
-int lancerDe() {
-    return rand() % 6 + 1;
-}
-
-void movePion(Joueur *joueur, int pionIndex, int de) {
-    Pion *pion = &joueur->pions[pionIndex];
-
-    if(pion->finished) {
-        printf("Ce pion est deja arrive.\n");
-        return;
-    }
-
     if(pion->atHome) {
         if(de == 6) {
             pion->position = 1;
