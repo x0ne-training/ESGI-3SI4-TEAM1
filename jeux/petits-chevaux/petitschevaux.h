@@ -10,17 +10,3 @@ typedef struct {
     int atHome;     // 1 si le pion est à la maison
     int finished;   // 1 si le pion est arrivé
 } Pion;
-
-typedef struct {
-    char nom[20];
-    Pion pions[PIONS_PAR_JOUEUR];
-} Joueur;
-
-// Fonctions
-void initGame(Joueur joueurs[NB_JOUEURS]);
-void displayBoard(Joueur joueurs[NB_JOUEURS]);
-int lancerDe();
-void movePion(Joueur *joueur, int pionIndex, int de);
-int isGameOver(Joueur joueurs[NB_JOUEURS]);
-
-#endif
