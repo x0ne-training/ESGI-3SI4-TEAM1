@@ -1,20 +1,4 @@
 
-void displayBoard(Joueur joueurs[NB_JOUEURS]) {
-    printf("\n--- Plateau ---\n");
-    for(int i = 0; i < NB_JOUEURS; i++) {
-        printf("%s: ", joueurs[i].nom);
-        for(int j = 0; j < PIONS_PAR_JOUEUR; j++) {
-            if(joueurs[i].pions[j].finished)
-                printf("[F] ");
-            else if(joueurs[i].pions[j].atHome)
-                printf("[H] ");
-            else
-                printf("[%d] ", joueurs[i].pions[j].position);
-        }
-        printf("\n");
-    }
-}
-
 int lancerDe() {
     return rand() % 6 + 1;
 }
