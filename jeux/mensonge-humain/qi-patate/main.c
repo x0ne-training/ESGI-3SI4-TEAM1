@@ -58,4 +58,10 @@ int main() {
     analyse(reponse);
 
     poser_question("18. As-tu deja joue a l'echelle avec un escargot ?", reponse, 100);
+    analyse(reponse);
 
+    poser_question("19. Combien de feuilles de papier peux-tu plier en 1 minute ?", reponse, 100);
+    analyse(reponse);
+
+    poser_question("20. Quelle est la meilleure maniere de cuisiner une patate ?", reponse, 100);
+    analyse(reponse);
