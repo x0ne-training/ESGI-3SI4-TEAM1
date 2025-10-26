@@ -6,7 +6,15 @@ int main() {
     char reponse[100];
     intro();
 
-    poser_questi
+    poser_question("1. Combien de fois par jour respires-tu ?", reponse, 100);
+    analyse(reponse);
+
+    poser_question("2. As-tu deja perdu contre une chaise ?", reponse, 100);
+    analyse(reponse);
+
+    poser_question("3. Combien de pommes peux-tu manger en 1 minute ?", reponse, 100);
+    analyse(reponse);
+
     poser_question("4. Est-ce que tu sais faire du jonglage avec des patates ?", reponse, 100);
     analyse(reponse);
 
