@@ -65,3 +65,10 @@ int main() {
 
     poser_question("20. Quelle est la meilleure maniere de cuisiner une patate ?", reponse, 100);
     analyse(reponse);
+
+    verdict_final();
+
+    printf("\nAppuie sur une touche pour quitter...\n");
+    system("pause");
+    return 0;
+}
