@@ -31,3 +31,15 @@ void analyse(const char *reponse) {
     }
 }
 
+void verdict() {
+    srand((unsigned)time(NULL));
+    const char *verdicts[] = {
+            "Verdict : 97%% de mensonges détectés. Tu es politicien ? 🏛️",
+            "Verdict : 45%% de vérité, 55%% d’exagération dramatique.",
+            "Verdict : 100%% honnête… ou très bon menteur. 🤨",
+            "Verdict : détecteur en surchauffe. Trop de mytho détecté 💀",
+            "Verdict : tu es probablement un chat déguisé en humain 🐱",
+    };
+    printf("\n%s\n", verdicts[rand() % 5]);
+    printf("\nMerci d’avoir joué, maître du mensonge ! 🤥\n");
+}
