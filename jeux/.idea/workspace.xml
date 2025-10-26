@@ -23,6 +23,8 @@
   <component name="ChangeListManager">
     <list default="true" id="cb2e33df-cda4-4a42-800f-772e4363c070" name="Changes" comment="fix: inclusion des en-têtes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/echec/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/echec/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/echec/main.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,6 +37,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "luciemanarin"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "git@github.com:x0ne-training/ESGI-3SI4-TEAM1.git",
+    "accountId": "e1fedecf-8829-4c1d-91a3-bdf903178ce3"
+  }
+}]]></component>
   <component name="ProjectApplicationVersion">
     <option name="ide" value="CLion" />
     <option name="majorVersion" value="2024" />
@@ -58,7 +72,7 @@
     "RunOnceActivity.west.config.association.type.startup.service": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "dev/lucie/mensonge-humain",
     "last_opened_file_path": "D:/ESGI/3eme_annee/trimestre_un/c/exercices",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -85,6 +99,7 @@
       <workItem from="1761042259132" duration="1469000" />
       <workItem from="1761053015749" duration="4000" />
       <workItem from="1761119529743" duration="917000" />
+      <workItem from="1761515196300" duration="489000" />
     </task>
     <task id="LOCAL-00001" summary="add: définition des variable d'environnements">
       <option name="closed" value="true" />
@@ -110,7 +125,15 @@
       <option name="project" value="LOCAL" />
       <updated>1761026573795</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="fix: inclusion des en-têtes">
+      <option name="closed" value="true" />
+      <created>1761515465964</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1761515465964</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -134,6 +157,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="add: définition des variable d'environnements" />
-    <option name="LAST_COMMIT_MESSAGE" value="add: définition des variable d'environnements" />
+    <MESSAGE value="fix: inclusion des en-têtes" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: inclusion des en-têtes" />
   </component>
 </project>
