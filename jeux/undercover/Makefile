@@ -20,3 +20,4 @@ fonctions.o: fonctions.c undercover.h
 clean:
 	rm -f $(OBJ)
 	rm -rf $(BIN_DIR)
+
