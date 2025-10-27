@@ -28,3 +28,23 @@ void afficherLabyrinthe(char lab[SIZE][SIZE], Position player) {
     }
 }
 
+int deplacer(char lab[SIZE][SIZE], Position *player, char direction){
+    int nx = player->x;
+    int ny = player->y;
+    if(direction=='z') nx--;
+    else if(direction=='s') nx++;
+    else if(direction=='q') ny--;
+    else if(direction=='d') ny++;
+    else return 0;
+
+    if(nx>=0 && nx<SIZE && ny>=0 && ny<SIZE && lab[nx][ny]!='#'){
+        player->x = nx;
+        player->y = ny;
+        return 1;
+    }
+    return 0;
+}
+
+int estSortie(Position player, Position exitPos){
+    return (player.x == exitPos.x && player.y == exitPos.y);
+}
