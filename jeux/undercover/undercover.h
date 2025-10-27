@@ -4,14 +4,6 @@
 #define MAX_JOUEURS 20
 #define MAX_MOT 50
 
-typedef enum { CITOYEN, UNDERCOVER, MR_WHITE } Role;
-
-#ifndef UNDERCOVER_H
-#define UNDERCOVER_H
-
-#define MAX_JOUEURS 20
-#define MAX_MOT 50
-
 typedef enum {CITOYEN, UNDERCOVER, MR_WHITE} Role;
 
 typedef struct {
@@ -29,3 +21,4 @@ int vote(Joueur joueurs[MAX_JOUEURS], int nbJoueurs);
 int checkVictory(Joueur joueurs[MAX_JOUEURS], int nbJoueurs);
 
 #endif
+
