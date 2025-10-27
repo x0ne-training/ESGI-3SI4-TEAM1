@@ -1,18 +1,20 @@
-# Jeu Undercover en C
+# Jeu Undercover avec tirage de cartes
 
 ## Description
-Jeu de déduction inspiré du vrai Undercover. Les joueurs reçoivent des mots secrets selon leur rôle :
+Jeu de déduction avec tirage de cartes pour déterminer le rôle :
 - Citoyen : mot commun
 - Undercover : mot proche
-- Mr White (optionnel) : mot inconnu
+- Mr White : mot inconnu
 
 ## Règles
-- Chaque joueur donne un indice sans dire son mot.
-- Après la discussion, les joueurs votent pour éliminer quelqu'un.
-- Le joueur éliminé révèle son rôle et son mot.
-- Les citoyens gagnent si tous les undercovers et Mr White sont éliminés.
-- Les undercovers gagnent s'ils restent autant ou plus nombreux que les citoyens.
-- Mr White gagne s'il devine le mot des citoyens après avoir été éliminé.
+1. Chaque joueur tire une carte pour connaître son rôle.
+2. Chaque joueur donne un indice sur son mot sans le dire.
+3. Vote pour éliminer un joueur suspect.
+4. Le joueur éliminé révèle son rôle et son mot.
+5. Victoires :
+    - Citoyens : tous les Undercover et Mr White éliminés
+    - Undercover : restent autant ou plus nombreux que les citoyens
+    - Mr White : devine le mot des citoyens après élimination
 
 ## Compilation
 ```bash
