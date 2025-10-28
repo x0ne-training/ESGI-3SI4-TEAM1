@@ -14,13 +14,22 @@ clock = pygame.time.Clock()
 BACKGROUND_COLOR = (135, 206, 235)
 GROUND_COLOR = (139, 69, 19)
 
-# --- FOND D'ÉCRAN ---
-background_image_path = r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\biome\forest.png"
+# --- FOND MENU ---
+menu_background_path = r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\biome\forest.png"
+if os.path.exists(menu_background_path):
+    menu_background = pygame.image.load(menu_background_path).convert()
+    menu_background = pygame.transform.scale(menu_background, (WIDTH, HEIGHT))
+else:
+    print("❌ Image de fond du menu introuvable")
+    menu_background = None
+
+# --- FOND JEU ---
+background_image_path = r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\biome\plain.png"
 if os.path.exists(background_image_path):
     background_image = pygame.image.load(background_image_path).convert()
     background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
 else:
-    print("❌ Image de fond introuvable, utilisation de la couleur de fond")
+    print("❌ Image de fond du jeu introuvable")
     background_image = None
 
 # --- PLAYER ---
@@ -134,10 +143,42 @@ platforms = [
     Platform(2300, GROUND_Y - 150, 200, 20),
 ]
 
+# --- VARIABLES ANIMATION IDLE POUR LE MENU ---
+menu_idle_index = 0
+menu_idle_counter = 0
+menu_idle_speed = 5
+
 # --- FONCTIONS MENU ---
 def draw_menu(screen):
-    global highlight_counter
-    screen.fill((30, 30, 40))
+    global highlight_counter, menu_idle_index, menu_idle_counter
+
+    # --- FOND DU MENU ---
+    if menu_background:
+        screen.blit(menu_background, (0, 0))
+    else:
+        screen.fill((30, 30, 40))
+    
+    # --- PERSONNAGE ANIMÉ À GAUCHE ---
+    # --- PERSONNAGE ANIMÉ À GAUCHE (AGRANDI) ---
+    if len(idle_images) > 0:
+        menu_idle_counter += 1
+        if menu_idle_counter >= menu_idle_speed:
+            menu_idle_counter = 0
+            menu_idle_index = (menu_idle_index + 1) % len(idle_images)
+        idle_frame = idle_images[menu_idle_index]
+
+    # --- AGRANDIR L'IMAGE ---
+        scale_factor = 3  # 3x plus grand
+        idle_frame_large = pygame.transform.scale(
+            idle_frame,
+            (idle_frame.get_width() * scale_factor, idle_frame.get_height() * scale_factor)
+        )
+    
+    # Positionner le personnage à gauche, centré verticalement
+        screen.blit(idle_frame_large, (50, HEIGHT//2 - idle_frame_large.get_height()//2))
+
+
+    # --- TEXTE DU MENU ---
     font_title = pygame.font.Font(None, 80)
     title = font_title.render("DAENERYS JOURNEY", True, (255, 255, 255))
     screen.blit(title, (WIDTH//2 - title.get_width()//2, HEIGHT//6))
@@ -153,13 +194,14 @@ def draw_menu(screen):
         color = highlight_color if i == selected_option else base_color
         if i == selected_option:
             color = (min(255, int(color[0]*highlight_intensity)),
-                    min(255, int(color[1]*highlight_intensity)),
-                    0)
+                     min(255, int(color[1]*highlight_intensity)),
+                     0)
         text = font_option.render(option, True, color)
         screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT//2 + i*70))
 
     pygame.display.flip()
 
+# --- FONCTIONS OPTIONS ---
 def draw_options(screen):
     screen.fill((20, 20, 50))
     font_title = pygame.font.Font(None, 70)
