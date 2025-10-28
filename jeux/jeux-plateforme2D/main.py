@@ -7,21 +7,38 @@ pygame.init()
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Jeu plateforme scrolling")
+clock = pygame.time.Clock()
 
+# --- COULEURS ---
 BACKGROUND_COLOR = (135, 206, 235)
-GROUND_Y = HEIGHT - 50
+GROUND_COLOR = (139, 69, 19)
+
+# --- PLAYER ---
 PLAYER_SPEED = 5
 GRAVITY = 1
 JUMP_STRENGTH = -15
-ANIMATION_DELAY = 5  # Animation plus fluide
+ANIMATION_DELAY = 5
 DASH_SPEED = 12
-DASH_DURATION = 15  # frames
+DASH_DURATION = 15
 DASH_COOLDOWN = 300
 DASH_ATTACK_SPEED = 15
 DASH_ATTACK_DURATION = 15
 DASH_ATTACK_COOLDOWN = 500
 
-# --- FONCTION DE CHARGEMENT ---
+# --- PHYSIQUE ---
+GROUND_Y = HEIGHT - 50
+
+# --- ÉTATS DU JEU ---
+MENU = 0
+OPTIONS = 1
+GAME = 2
+state = MENU
+
+# --- MENU ---
+menu_options = ["Jouer", "Options", "Quitter"]
+selected_option = 0
+
+# --- CHARGEMENT DES IMAGES ---
 def load_images_from_folder(folder, size=(50, 50)):
     if not os.path.exists(folder):
         print(f"❌ Dossier introuvable : {folder}")
@@ -38,7 +55,6 @@ def load_images_from_folder(folder, size=(50, 50)):
                 print(f"⚠️ Erreur chargement {filename}: {e}")
     return images
 
-# --- CHARGEMENT DES ANIMATIONS ---
 base_path = r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D"
 idle_images = load_images_from_folder(os.path.join(base_path, "idle"))
 run_images = load_images_from_folder(os.path.join(base_path, "run"))
@@ -50,16 +66,9 @@ slide_images = load_images_from_folder(os.path.join(base_path, "slide"))
 dash_images = load_images_from_folder(os.path.join(base_path, "dash"))
 dash_attack_images = load_images_from_folder(os.path.join(base_path, "dash_attack"))
 
-# --- VARIABLES ---
-if len(attack_images) == 0:
-    print("⚠️ Aucune image d'attaque trouvée ! Vérifie ton dossier 'attack/'.")
-if len(dash_attack_images) == 0:
-    print("⚠️ Aucune image de dash attack trouvée ! Vérifie ton dossier 'dash_attack/'.")
-
-ATTACK_DURATION = max(len(attack_images) * ANIMATION_DELAY, 20)
+# --- VARIABLES JOUEUR ---
 player_health = 100
 max_health = 100
-
 attacking = False
 attack_frame_index = 0
 attack_timer = 0
@@ -89,12 +98,14 @@ dash_attack_timer = 0
 dash_attack_direction = 1
 dash_attack_cooldown_timer = 0
 
+ATTACK_DURATION = max(len(attack_images) * ANIMATION_DELAY, 20)
+
 # --- PLATEFORMES ---
 class Platform:
     def __init__(self, x, y, width, height):
         self.rect = pygame.Rect(x, y, width, height)
     def draw(self, surface, scroll_x):
-        pygame.draw.rect(surface, (139, 69, 19), self.rect.move(-scroll_x, 0))
+        pygame.draw.rect(surface, GROUND_COLOR, self.rect.move(-scroll_x, 0))
 
 platforms = [
     Platform(0, GROUND_Y, 3000, 50),
@@ -110,10 +121,34 @@ platforms = [
     Platform(2300, GROUND_Y - 150, 200, 20),
 ]
 
-# --- BOUCLE PRINCIPALE ---
-clock = pygame.time.Clock()
-running = True
+# --- FONCTIONS MENU ---
+def draw_menu(screen):
+    screen.fill((50, 50, 50))
+    font_title = pygame.font.Font(None, 74)
+    title = font_title.render("JEU DE PLATEFORME", True, (255, 255, 255))
+    screen.blit(title, (WIDTH//2 - title.get_width()//2, HEIGHT//4))
 
+    font_option = pygame.font.Font(None, 50)
+    for i, option in enumerate(menu_options):
+        color = (255, 255, 0) if i == selected_option else (200, 200, 200)
+        text = font_option.render(option, True, color)
+        screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT//2 + i*60))
+
+    pygame.display.flip()
+
+def draw_options(screen):
+    screen.fill((30, 30, 60))
+    font_title = pygame.font.Font(None, 70)
+    title = font_title.render("OPTIONS", True, (255, 255, 255))
+    screen.blit(title, (WIDTH//2 - title.get_width()//2, HEIGHT//4))
+
+    font_text = pygame.font.Font(None, 50)
+    text = font_text.render("Appuyez sur ESC pour revenir", True, (200, 200, 200))
+    screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT//2))
+    pygame.display.flip()
+
+# --- BOUCLE PRINCIPALE ---
+running = True
 while running:
     clock.tick(60)
     for event in pygame.event.get():
@@ -121,10 +156,36 @@ while running:
             running = False
 
     keys = pygame.key.get_pressed()
+
+    # --- MENU ---
+    if state == MENU:
+        draw_menu(screen)
+        if keys[pygame.K_DOWN]:
+            selected_option = (selected_option + 1) % len(menu_options)
+            pygame.time.wait(150)
+        elif keys[pygame.K_UP]:
+            selected_option = (selected_option - 1) % len(menu_options)
+            pygame.time.wait(150)
+        elif keys[pygame.K_RETURN]:
+            if menu_options[selected_option] == "Jouer":
+                state = GAME
+            elif menu_options[selected_option] == "Options":
+                state = OPTIONS
+            elif menu_options[selected_option] == "Quitter":
+                running = False
+        continue
+
+    if state == OPTIONS:
+        draw_options(screen)
+        if keys[pygame.K_ESCAPE]:
+            state = MENU
+        continue
+
+    # --- JEU ---
     moving = False
     player_velocity_x = 0
 
-    # --- GESTION DES ENTRÉES ---
+    # Déplacements
     if keys[pygame.K_LEFT]:
         player_velocity_x = -PLAYER_SPEED
         moving = True
@@ -137,39 +198,34 @@ while running:
         player_velocity_y = JUMP_STRENGTH
         on_ground = False
 
-    # --- ATTAQUE NORMALE ---
+    # Attaque normale
     if keys[pygame.K_a] and not attacking and not dashing and not dashing_attack:
         attacking = True
         attack_timer = ATTACK_DURATION
         attack_frame_index = 0
         animation_counter = 0
-        print("🗡️ ATTACK TRIGGERED")
 
     crouching = keys[pygame.K_DOWN] and on_ground and not attacking
 
-    # --- COOLDOWNS ---
-    if dash_attack_cooldown_timer > 0:
-        dash_attack_cooldown_timer -= 1
-    if dash_cooldown_timer > 0:
-        dash_cooldown_timer -= 1
+    # Cooldowns
+    if dash_attack_cooldown_timer > 0: dash_attack_cooldown_timer -= 1
+    if dash_cooldown_timer > 0: dash_cooldown_timer -= 1
 
-    # --- DASH ATTACK (Z + flèche) ---
+    # Dash attack
     if keys[pygame.K_z] and on_ground and not dashing_attack and dash_attack_cooldown_timer == 0:
-        attacking = False  # Interrompt attaque normale
+        attacking = False
         if keys[pygame.K_LEFT]:
             dashing_attack = True
             dash_attack_timer = DASH_ATTACK_DURATION
             dash_attack_direction = -1
             dash_attack_cooldown_timer = DASH_ATTACK_COOLDOWN
-            print("⚡ DASH ATTACK GAUCHE")
         elif keys[pygame.K_RIGHT]:
             dashing_attack = True
             dash_attack_timer = DASH_ATTACK_DURATION
             dash_attack_direction = 1
             dash_attack_cooldown_timer = DASH_ATTACK_COOLDOWN
-            print("⚡ DASH ATTACK DROITE")
 
-    # --- DASH NORMAL (D + flèche) ---
+    # Dash normal
     if keys[pygame.K_d] and on_ground and not dashing and not dashing_attack and dash_cooldown_timer == 0:
         if keys[pygame.K_LEFT]:
             dashing = True
@@ -182,7 +238,7 @@ while running:
             dash_direction = 1
             dash_cooldown_timer = DASH_COOLDOWN
 
-    # --- GESTION DES DÉPLACEMENTS ---
+    # Gestion des vitesses
     if dashing_attack:
         player_velocity_x = dash_attack_direction * DASH_ATTACK_SPEED
         dash_attack_timer -= 1
@@ -196,7 +252,7 @@ while running:
             dashing = False
             frame_index = 0
 
-    # --- ANIMATION ---
+    # --- ANIMATIONS ---
     previous_animation = current_animation
 
     if dashing_attack:
@@ -324,11 +380,9 @@ while running:
     pygame.draw.rect(screen, (0, 0, 255), (bar_x, bar_y, bar_width * ratio, bar_height))
 
     # Barre de vie
-    health_bar_x = player_x - scroll_x
-    health_bar_y = player_y - 20
     health_ratio = player_health / max_health
-    pygame.draw.rect(screen, (0, 0, 0), (health_bar_x, health_bar_y, bar_width, bar_height))
-    pygame.draw.rect(screen, (0, 255, 0), (health_bar_x, health_bar_y, bar_width * health_ratio, bar_height))
+    pygame.draw.rect(screen, (0, 0, 0), (bar_x, bar_y - 10, bar_width, bar_height))
+    pygame.draw.rect(screen, (0, 255, 0), (bar_x, bar_y - 10, bar_width * health_ratio, bar_height))
 
     pygame.display.flip()
 
