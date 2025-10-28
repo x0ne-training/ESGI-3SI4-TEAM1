@@ -1,5 +1,6 @@
 import pygame
 import os
+import json
 import math
 
 pygame.init()
@@ -12,7 +13,6 @@ clock = pygame.time.Clock()
 
 # --- COULEURS ---
 GROUND_COLOR = (139, 69, 19)
-GROUND_Y = HEIGHT - 50
 BACKGROUND_COLOR = (135, 206, 235)
 
 # --- ETATS DU JEU ---
@@ -29,11 +29,10 @@ highlight_counter = 0
 
 # --- VARIABLES OPTIONS ---
 volume = 0.5
-options_list = ["Volume"]
-selected_option_options = 0
 
 # --- VARIABLES SELECTION DE NIVEAU ---
 selected_level = 0
+level_files = ["level1.json", "level2.json", "level3.json"]  # fichiers JSON des niveaux
 
 # --- PLAYER ---
 PLAYER_SPEED = 5
@@ -52,7 +51,7 @@ max_health = 100
 attacking = False
 attack_timer = 0
 player_x = 100
-player_y = GROUND_Y - 50
+player_y = 100
 player_velocity_x = 0
 player_velocity_y = 0
 on_ground = False
@@ -88,7 +87,8 @@ def load_images_from_folder(folder, size=(50,50)):
                 print(f"⚠️ Erreur chargement {filename}: {e}")
     return images
 
-base_path=r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D"
+base_path = r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D"
+
 idle_images=load_images_from_folder(os.path.join(base_path,"idle"))
 run_images=load_images_from_folder(os.path.join(base_path,"run"))
 jump_images=load_images_from_folder(os.path.join(base_path,"jump"))
@@ -112,38 +112,19 @@ menu_idle_index=0
 menu_idle_counter=0
 menu_idle_speed=5
 
-# --- BIOME ET NIVEAUX ---
+# --- CLASSES ---
 class Platform:
     def __init__(self,x,y,width,height):
         self.rect=pygame.Rect(x,y,width,height)
     def draw(self,surface,scroll_x):
         pygame.draw.rect(surface,GROUND_COLOR,self.rect.move(-scroll_x,0))
 
-biomes={"forest":{"background":menu_background_path,"levels":[]}}
-for lvl in range(10):
-    platforms_list=[
-        Platform(0,GROUND_Y,3000,50),
-        Platform(300+lvl*50,GROUND_Y-100,100,20),
-        Platform(500+lvl*30,GROUND_Y-150,150,20),
-    ]
-    biomes["forest"]["levels"].append({
-        "platforms":platforms_list,
-        "player_start":(100,GROUND_Y-50)
-    })
-
-current_biome="forest"
-current_level_index=0
-current_level=biomes[current_biome]["levels"][current_level_index]
-platforms=current_level["platforms"]
-player_x,player_y=current_level["player_start"]
-scroll_x=0
-
-bg_path=biomes[current_biome]["background"]
-if os.path.exists(bg_path):
-    background_image=pygame.image.load(bg_path).convert()
-    background_image=pygame.transform.scale(background_image,(WIDTH,HEIGHT))
-else:
-    background_image=None
+class Barrier:
+    def __init__(self, x, y, width, height):
+        self.rect = pygame.Rect(x, y, width, height)
+    def draw(self, surface, scroll_x):
+        # invisible, donc rien à dessiner
+        pass
 
 # --- FONCTIONS MENU ---
 def draw_menu(screen):
@@ -187,7 +168,7 @@ def draw_level_select(screen):
     spacing_y=120
     start_x=WIDTH//2-(5*spacing_x)//2+spacing_x//2
     start_y=HEIGHT//3
-    for i in range(10):
+    for i in range(len(level_files)):
         row=i//5
         col=i%5
         x=start_x+col*spacing_x
@@ -203,11 +184,11 @@ def draw_level_select(screen):
     pygame.display.flip()
 
 def handle_level_select_event(event):
-    global selected_level,state,current_level_index,current_level,platforms,player_x,player_y,scroll_x
+    global selected_level,state,player_x,player_y,platforms,barriers,scroll_x,background_image,level_data
     if event.key==pygame.K_LEFT:
-        selected_level=(selected_level-1)%10
+        selected_level=(selected_level-1)%len(level_files)
     elif event.key==pygame.K_RIGHT:
-        selected_level=(selected_level+1)%10
+        selected_level=(selected_level+1)%len(level_files)
     elif event.key==pygame.K_UP:
         if selected_level>=5:
             selected_level-=5
@@ -215,14 +196,43 @@ def handle_level_select_event(event):
         if selected_level<5:
             selected_level+=5
     elif event.key==pygame.K_RETURN:
-        current_level_index=selected_level
-        current_level=biomes[current_biome]["levels"][current_level_index]
-        platforms=current_level["platforms"]
-        player_x,player_y=current_level["player_start"]
-        scroll_x=0
-        state=GAME
+        # --- Charger le niveau ---
+        level_data = load_level_json(level_files[selected_level])
+        if level_data:
+            player_x,player_y = level_data["player_start"]
+            platforms = [Platform(p["x"],p["y"],p["width"],p["height"]) for p in level_data["platforms"]]
+            barriers = []
+            if "barriers" in level_data:
+                for b in level_data["barriers"]:
+                    barriers.append(Barrier(b["x"], b["y"], b["width"], b["height"]))
+            # Charger le fond du biome
+            biome_path = os.path.join(base_path, "biome", level_data["biome"])
+            if os.path.exists(biome_path):
+                background_image = pygame.image.load(biome_path).convert_alpha()
+                background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
+            else:
+                print(f"❌ Biome introuvable : {biome_path}")
+                background_image = None
+            scroll_x=0
+            state=GAME
+        else:
+            print(f"❌ Impossible de charger le niveau {selected_level+1}.")
 
-# --- GESTION DES ANIMATIONS ---
+# --- CHARGEMENT NIVEAU JSON ---
+def load_level_json(filename):
+    path = os.path.join(base_path,"levels",filename)
+    if not os.path.exists(path):
+        print(f"❌ Niveau {filename} introuvable !")
+        return None
+    with open(path,"r") as f:
+        data=json.load(f)
+    # Vérifier les clés
+    if "player_start" not in data or "platforms" not in data or "biome" not in data:
+        print(f"❌ Niveau {filename} invalide !")
+        return None
+    return data
+
+# --- GESTION ANIMATIONS ---
 frame_indices = {name:0 for name in ["idle","run","jump","fall","attack","dash","dash_attack","crouch","slide"]}
 animation_counters = {name:0 for name in ["idle","run","jump","fall","attack","dash","dash_attack","crouch","slide"]}
 
@@ -312,6 +322,12 @@ def get_current_frame():
 
 # --- BOUCLE PRINCIPALE ---
 running=True
+scroll_x=0
+platforms=[]
+barriers=[]
+background_image=None
+level_data=None
+
 while running:
     clock.tick(60)
     for event in pygame.event.get():
@@ -338,6 +354,7 @@ while running:
 
     keys=pygame.key.get_pressed()
 
+    # --- ETATS ---
     if state==MENU:
         draw_menu(screen)
         continue
@@ -349,7 +366,6 @@ while running:
         pygame.display.flip()
         continue
     elif state==GAME:
-        # --- LOGIQUE DEPLACEMENT ---
         moving=False
         player_velocity_x=0
         if keys[pygame.K_LEFT]:
@@ -367,14 +383,14 @@ while running:
         if dash_attack_cooldown_timer>0: dash_attack_cooldown_timer-=1
         if dash_cooldown_timer>0: dash_cooldown_timer-=1
 
-        # --- Attaque normale ---
+        # Attaque normale
         if keys[pygame.K_a] and on_ground and not dashing_attack and not dashing:
             attacking = True
             attack_timer = len(attack_images) * ANIMATION_DELAY
             frame_indices["attack"] = 0
             animation_counters["attack"] = 0
 
-# --- Dash attack ---
+        # Dash attack
         if keys[pygame.K_z] and on_ground and not dashing_attack and dash_attack_cooldown_timer==0:
             if keys[pygame.K_LEFT]:
                 attacking=False
@@ -404,7 +420,7 @@ while running:
 
         crouching=keys[pygame.K_DOWN] and on_ground
 
-        # --- PHYSIQUE ---
+        # Physique
         if dashing_attack:
             player_velocity_x=dash_attack_direction*DASH_ATTACK_SPEED
         elif dashing:
@@ -412,41 +428,48 @@ while running:
 
         player_x+=player_velocity_x
         player_rect=pygame.Rect(player_x,player_y,50,50)
-        for plat in platforms:
-            if player_rect.colliderect(plat.rect):
-                if player_velocity_x>0: player_x=plat.rect.left-50
-                elif player_velocity_x<0: player_x=plat.rect.right
+
+        # Collision plateformes et barrières (horizontal)
+        for obj in platforms + barriers:
+            if player_rect.colliderect(obj.rect):
+                if player_velocity_x>0:
+                    player_x=obj.rect.left-50
+                elif player_velocity_x<0:
+                    player_x=obj.rect.right
                 player_rect.x=player_x
 
         player_velocity_y+=GRAVITY
         player_y+=player_velocity_y
         player_rect.y=player_y
         on_ground=False
-        for plat in platforms:
-            if player_rect.colliderect(plat.rect):
-                if player_velocity_y>0 and player_rect.bottom-player_velocity_y<=plat.rect.top+10:
-                    player_y=plat.rect.top-50
+
+        # Collision plateformes et barrières (vertical)
+        for obj in platforms + barriers:
+            if player_rect.colliderect(obj.rect):
+                if player_velocity_y>0 and player_rect.bottom-player_velocity_y<=obj.rect.top+10:
+                    player_y=obj.rect.top-50
                     player_velocity_y=0
                     on_ground=True
                     player_rect.y=player_y
-                elif player_velocity_y<0 and player_rect.top-player_velocity_y>=plat.rect.bottom:
-                    player_y=plat.rect.bottom
+                elif player_velocity_y<0 and player_rect.top-player_velocity_y>=obj.rect.bottom:
+                    player_y=obj.rect.bottom
                     player_velocity_y=0
                     player_rect.y=player_y
 
         if player_y>HEIGHT+100:
-            player_x,player_y=current_level["player_start"]
+            player_x,player_y=level_data["player_start"]
             player_velocity_y=0
             player_rect.x=player_x
             player_rect.y=player_y
 
+        # Scroll
         if player_x-scroll_x>WIDTH*0.6:
             scroll_x=player_x-WIDTH*0.6
         elif player_x-scroll_x<WIDTH*0.3:
             scroll_x=player_x-WIDTH*0.3
         scroll_x=max(0,scroll_x)
 
-        # --- DESSIN ---
+        # Dessin
         if background_image:
             screen.blit(background_image,(0,0))
         else:
@@ -458,7 +481,7 @@ while running:
         current_frame=get_current_frame()
         screen.blit(current_frame,(player_x-scroll_x,player_y))
 
-        # --- BARRES ---
+        # Barres
         bar_width=50
         bar_height=5
         bar_x=player_x-scroll_x
