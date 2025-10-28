@@ -471,7 +471,11 @@ while running:
 
         # Dessin
         if background_image:
-            screen.blit(background_image,(0,0))
+            bg_width = background_image.get_width()
+            x_offset = -scroll_x % bg_width  # Pour que le fond se répète
+    # Afficher deux fois le fond pour l'effet "loop"
+            screen.blit(background_image, (x_offset - bg_width, 0))
+            screen.blit(background_image, (x_offset, 0))
         else:
             screen.fill(BACKGROUND_COLOR)
 
