@@ -14,6 +14,15 @@ clock = pygame.time.Clock()
 BACKGROUND_COLOR = (135, 206, 235)
 GROUND_COLOR = (139, 69, 19)
 
+# --- FOND D'ÉCRAN ---
+background_image_path = r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\biome\forest.png"
+if os.path.exists(background_image_path):
+    background_image = pygame.image.load(background_image_path).convert()
+    background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
+else:
+    print("❌ Image de fond introuvable, utilisation de la couleur de fond")
+    background_image = None
+
 # --- PLAYER ---
 PLAYER_SPEED = 5
 GRAVITY = 1
@@ -144,8 +153,8 @@ def draw_menu(screen):
         color = highlight_color if i == selected_option else base_color
         if i == selected_option:
             color = (min(255, int(color[0]*highlight_intensity)),
-                     min(255, int(color[1]*highlight_intensity)),
-                     0)
+                    min(255, int(color[1]*highlight_intensity)),
+                    0)
         text = font_option.render(option, True, color)
         screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT//2 + i*70))
 
@@ -274,20 +283,6 @@ while running:
             dash_direction = 1
             dash_cooldown_timer = DASH_COOLDOWN
 
-    # Gestion des vitesses
-    if dashing_attack:
-        player_velocity_x = dash_attack_direction * DASH_ATTACK_SPEED
-        dash_attack_timer -= 1
-        if dash_attack_timer <= 0:
-            dashing_attack = False
-            frame_index = 0
-    elif dashing:
-        player_velocity_x = dash_direction * DASH_SPEED
-        dash_timer -= 1
-        if dash_timer <= 0:
-            dashing = False
-            frame_index = 0
-
     # --- ANIMATIONS ---
     previous_animation = current_animation
 
@@ -397,8 +392,16 @@ while running:
         scroll_x = player_x - WIDTH * 0.3
     scroll_x = max(0, scroll_x)
 
-    # --- DESSIN ---
-    screen.fill(BACKGROUND_COLOR)
+    # --- DESSIN DU FOND DÉFILANT ---
+    if background_image:
+        rel_x = -scroll_x % background_image.get_width()
+        screen.blit(background_image, (rel_x - background_image.get_width(), 0))
+        if rel_x < WIDTH:
+            screen.blit(background_image, (rel_x, 0))
+    else:
+        screen.fill(BACKGROUND_COLOR)
+
+    # --- DESSIN DES PLATEFORMES ET JOUEUR ---
     for platform in platforms:
         platform.draw(screen, scroll_x)
     screen.blit(current_frame, (player_x - scroll_x, player_y))
