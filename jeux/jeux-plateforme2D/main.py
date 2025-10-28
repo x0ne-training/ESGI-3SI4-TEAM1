@@ -1,12 +1,13 @@
 import pygame
 import os
+import math
 
 pygame.init()
 
 # --- CONFIGURATION ---
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Jeu plateforme scrolling")
+pygame.display.set_caption("Daenerys Journey")
 clock = pygame.time.Clock()
 
 # --- COULEURS ---
@@ -25,7 +26,6 @@ DASH_ATTACK_SPEED = 15
 DASH_ATTACK_DURATION = 15
 DASH_ATTACK_COOLDOWN = 500
 
-# --- PHYSIQUE ---
 GROUND_Y = HEIGHT - 50
 
 # --- ÉTATS DU JEU ---
@@ -34,9 +34,13 @@ OPTIONS = 1
 GAME = 2
 state = MENU
 
-# --- MENU ---
+# --- VARIABLES MENU ---
 menu_options = ["Jouer", "Options", "Quitter"]
 selected_option = 0
+highlight_counter = 0
+volume = 0.5
+options_list = ["Volume"]
+selected_option_options = 0
 
 # --- CHARGEMENT DES IMAGES ---
 def load_images_from_folder(folder, size=(50, 50)):
@@ -123,28 +127,45 @@ platforms = [
 
 # --- FONCTIONS MENU ---
 def draw_menu(screen):
-    screen.fill((50, 50, 50))
-    font_title = pygame.font.Font(None, 74)
-    title = font_title.render("JEU DE PLATEFORME", True, (255, 255, 255))
-    screen.blit(title, (WIDTH//2 - title.get_width()//2, HEIGHT//4))
+    global highlight_counter
+    screen.fill((30, 30, 40))
+    font_title = pygame.font.Font(None, 80)
+    title = font_title.render("DAENERYS JOURNEY", True, (255, 255, 255))
+    screen.blit(title, (WIDTH//2 - title.get_width()//2, HEIGHT//6))
 
     font_option = pygame.font.Font(None, 50)
+    highlight_color = (255, 255, 0)
+    base_color = (200, 200, 200)
+
+    highlight_intensity = (1 + 0.5 * math.sin(highlight_counter / 10))
+    highlight_counter += 1
+
     for i, option in enumerate(menu_options):
-        color = (255, 255, 0) if i == selected_option else (200, 200, 200)
+        color = highlight_color if i == selected_option else base_color
+        if i == selected_option:
+            color = (min(255, int(color[0]*highlight_intensity)),
+                     min(255, int(color[1]*highlight_intensity)),
+                     0)
         text = font_option.render(option, True, color)
-        screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT//2 + i*60))
+        screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT//2 + i*70))
 
     pygame.display.flip()
 
 def draw_options(screen):
-    screen.fill((30, 30, 60))
+    screen.fill((20, 20, 50))
     font_title = pygame.font.Font(None, 70)
     title = font_title.render("OPTIONS", True, (255, 255, 255))
-    screen.blit(title, (WIDTH//2 - title.get_width()//2, HEIGHT//4))
+    screen.blit(title, (WIDTH//2 - title.get_width()//2, HEIGHT//6))
 
     font_text = pygame.font.Font(None, 50)
-    text = font_text.render("Appuyez sur ESC pour revenir", True, (200, 200, 200))
-    screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT//2))
+    for i, opt in enumerate(options_list):
+        color = (255, 255, 0) if i == selected_option_options else (200, 200, 200)
+        value_text = f"{int(volume*100)}%" if opt == "Volume" else ""
+        text = font_text.render(f"{opt}: {value_text}", True, color)
+        screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT//2 + i*70))
+
+    info_text = font_text.render("Appuyez sur ESC pour revenir", True, (180, 180, 180))
+    screen.blit(info_text, (WIDTH//2 - info_text.get_width()//2, HEIGHT - 100))
     pygame.display.flip()
 
 # --- BOUCLE PRINCIPALE ---
@@ -175,9 +196,24 @@ while running:
                 running = False
         continue
 
+    # --- OPTIONS ---
     if state == OPTIONS:
         draw_options(screen)
-        if keys[pygame.K_ESCAPE]:
+        if keys[pygame.K_DOWN]:
+            selected_option_options = (selected_option_options + 1) % len(options_list)
+            pygame.time.wait(150)
+        elif keys[pygame.K_UP]:
+            selected_option_options = (selected_option_options - 1) % len(options_list)
+            pygame.time.wait(150)
+        elif keys[pygame.K_RIGHT]:
+            if options_list[selected_option_options] == "Volume":
+                volume = min(1.0, volume + 0.05)
+                pygame.time.wait(100)
+        elif keys[pygame.K_LEFT]:
+            if options_list[selected_option_options] == "Volume":
+                volume = max(0.0, volume - 0.05)
+                pygame.time.wait(100)
+        elif keys[pygame.K_ESCAPE]:
             state = MENU
         continue
 
