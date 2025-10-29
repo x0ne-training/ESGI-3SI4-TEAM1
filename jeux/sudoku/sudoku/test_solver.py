@@ -15,3 +15,7 @@ PUZZLE = [
     [0,0,0, 0,8,0, 0,7,9],
 ]
 
+def test_solver_finds_solution():
+    b = Board(PUZZLE)
+    assert solve_backtracking(b)
+    assert all(all(v != 0 for v in row) for row in b.grid)
