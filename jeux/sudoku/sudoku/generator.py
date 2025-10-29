@@ -44,3 +44,7 @@ def generate_puzzle(hints: int = 30) -> Board:
         removed += 1
     return puzzle
 
+def new_game(difficulty: str = "medium") -> Board:
+    mapping = {"easy": 36, "medium": 30, "hard": 26}
+    hints = mapping.get(difficulty.lower(), 30)
+    return generate_puzzle(hints=hints)
