@@ -1,5 +1,6 @@
 from .board import Board
 from .solver import solve_backtracking
+from .generator import new_game
 
 PUZZLE = [
     [5,3,0, 0,7,0, 0,0,0],
@@ -58,6 +59,12 @@ def run_cli():
         if op == "q":
             print("Bye.")
             break
+
+        elif op == "n":
+            diff = parts[1].lower() if len(parts) > 1 else "medium"
+            board = new_game(diff)
+            fixed = {(r, c) for r in range(9) for c in range(9) if board.get_cell(r, c) != 0}
+            _print_board(board, fixed)
 
         elif op == "v":
             print("OK, cohérent." if board.is_consistent() else "Conflits détectés.")
