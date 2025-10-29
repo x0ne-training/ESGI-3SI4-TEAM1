@@ -37,3 +37,7 @@ class Board:
     
     def col_vals(self, c: int) -> Set[int]:
         return {self.grid[r][c] for r in range(9)}
+    
+    def box_vals(self, r: int, c: int) -> Set[int]:
+        br, bc = (r // 3) * 3, (c // 3) * 3
+        return {self.grid[rr][cc] for rr in range(br, br + 3) for cc in range(bc, bc + 3)}
