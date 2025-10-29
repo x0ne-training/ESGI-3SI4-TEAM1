@@ -22,3 +22,8 @@ def _seed_full_board() -> Board:
     # sanity: doit être déjà une grille complète correcte
     assert solve_backtracking(b.copy())
     return b
+
+def _positions() -> List[Tuple[int, int]]:
+    pos = [(r, c) for r in range(9) for c in range(9)]
+    random.shuffle(pos)
+    return pos
