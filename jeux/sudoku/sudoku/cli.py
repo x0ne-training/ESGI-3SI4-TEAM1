@@ -40,3 +40,61 @@ def _print_board(board: Board):
     print("\n".join(lines))
     print(col_idx)
 
+def run_cli():
+    print("=== Sudoku (Commit 2: Board & édition) ===")
+    print(HELP)
+    board = Board(PUZZLE)
+    _print_board(board)
+
+    while True:
+        cmd = input("> ").strip()
+        if not cmd:
+            continue
+        parts = cmd.split()
+        op = parts[0].lower()
+
+        if op == "q":
+            print("Bye.")
+            break
+
+        elif op == "v":
+            print("OK, cohérent." if board.is_consistent() else "Conflits détectés.")
+
+        elif op == "p":
+            if len(parts) != 4:
+                print("Usage: p r c v")
+                continue
+            try:
+                r = int(parts[1]) - 1
+                c = int(parts[2]) - 1
+                v = int(parts[3])
+            except ValueError:
+                print("Paramètres invalides.")
+                continue
+            if not (0 <= r < 9 and 0 <= c < 9 and 1 <= v <= 9):
+                print("Hors limites.")
+                continue
+            if not board.is_safe(r, c, v):
+                print("Conflit avec ligne/colonne/boîte.")
+                continue
+            board.set_cell(r, c, v)
+            _print_board(board)
+
+        elif op == "d":
+            if len(parts) != 3:
+                print("Usage: d r c")
+                continue
+            try:
+                r = int(parts[1]) - 1
+                c = int(parts[2]) - 1
+            except ValueError:
+                print("Paramètres invalides.")
+                continue
+            if not (0 <= r < 9 and 0 <= c < 9):
+                print("Hors limites.")
+                continue
+            board.set_cell(r, c, 0)
+            _print_board(board)
+
+        else:
+            print("Commande inconnue. Tape 'v', 'p', 'd', ou 'q'.")
