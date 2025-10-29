@@ -24,3 +24,10 @@ class Board:
         if not self.is_valid_coord(r, c):
             raise ValueError("Coordonnées invalides.")
         return self.grid[r][c]
+    
+    def set_cell(self, r: int, c: int, val: int) -> None:
+        if not self.is_valid_coord(r, c):
+            raise ValueError("Coordonnées invalides.")
+        if not (0 <= val <= 9):
+            raise ValueError("Valeur doit être entre 0 et 9.")
+        self.grid[r][c] = val
