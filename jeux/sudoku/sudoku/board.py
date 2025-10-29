@@ -17,4 +17,5 @@ class Board:
     def copy(self) -> "Board":
         return Board([row[:] for row in self.grid])
 
-    
+    def is_valid_coord(self, r: int, c: int) -> bool:
+        return 0 <= r < 9 and 0 <= c < 9
