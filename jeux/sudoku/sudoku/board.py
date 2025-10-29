@@ -31,3 +31,6 @@ class Board:
         if not (0 <= val <= 9):
             raise ValueError("Valeur doit être entre 0 et 9.")
         self.grid[r][c] = val
+
+    def row_vals(self, r: int) -> Set[int]:
+        return set(self.grid[r])
