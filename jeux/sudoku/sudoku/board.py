@@ -14,4 +14,7 @@ class Board:
             raise ValueError("La grille doit être 9x9.")
         self.grid: Grid = [row[:] for row in grid]
 
+    def copy(self) -> "Board":
+        return Board([row[:] for row in self.grid])
+
     
