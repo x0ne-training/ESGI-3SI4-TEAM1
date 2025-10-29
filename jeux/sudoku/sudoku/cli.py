@@ -27,3 +27,15 @@ def _print_grid(grid):
         lines.append("".join(line))
     lines.append("+-------+-------+-------+")
     print("\n".join(lines))
+
+def run_cli():
+    print("=== Sudoku (Commit 1: affichage) ===")
+    _print_grid(PUZZLE)
+    print("Tape 'q' pour quitter.")
+    while True:
+        cmd = input("> ").strip().lower()
+        if cmd == "q":
+            print("Bye.")
+            break
+
+    
