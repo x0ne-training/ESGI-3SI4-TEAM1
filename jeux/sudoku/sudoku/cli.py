@@ -1,4 +1,5 @@
 from .board import Board
+from .solver import solve_backtracking
 
 PUZZLE = [
     [5,3,0, 0,7,0, 0,0,0],
@@ -19,6 +20,7 @@ Commandes:
   p r c v   -> placer v en ligne r, colonne c (1-9), ex: p 3 7 5
   d r c     -> effacer la case (mettre 0)
   v         -> vérifier cohérence (doublons)
+  s         -> résoudre automatiquement (backtracking)
   q         -> quitter
 """
 
@@ -41,7 +43,7 @@ def _print_board(board: Board):
     print(col_idx)
 
 def run_cli():
-    print("=== Sudoku (Commit 2: Board & édition) ===")
+    print("=== Sudoku (Commit 3: Solveur backtracking) ===")
     print(HELP)
     board = Board(PUZZLE)
     _print_board(board)
@@ -59,6 +61,15 @@ def run_cli():
 
         elif op == "v":
             print("OK, cohérent." if board.is_consistent() else "Conflits détectés.")
+
+        elif op == "s":
+            b = board.copy()
+            if solve_backtracking(b):
+                board = b
+                _print_board(board)
+                print("Solution trouvée.")
+            else:
+                print("Pas de solution trouvée (étrange).")
 
         elif op == "p":
             if len(parts) != 4:
@@ -97,6 +108,4 @@ def run_cli():
             _print_board(board)
 
         else:
-            print("Commande inconnue. Tape 'v', 'p', 'd', ou 'q'.")
-
-
+            print("Commande inconnue. Tape 'v', 'p', 'd', 's' ou 'q'.")
