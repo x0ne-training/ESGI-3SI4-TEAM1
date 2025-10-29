@@ -41,3 +41,15 @@ class Board:
     def box_vals(self, r: int, c: int) -> Set[int]:
         br, bc = (r // 3) * 3, (c // 3) * 3
         return {self.grid[rr][cc] for rr in range(br, br + 3) for cc in range(bc, bc + 3)}
+    
+    def is_safe(self, r: int, c: int, val: int) -> bool:
+        """Vérifie si `val` peut être posée en (r,c) sans conflit."""
+        if val == 0:
+            return True
+        cur = self.grid[r][c]
+        self.grid[r][c] = 0
+        ok = (val not in self.row_vals(r)
+              and val not in self.col_vals(c)
+              and val not in self.box_vals(r, c))
+        self.grid[r][c] = cur
+        return ok
