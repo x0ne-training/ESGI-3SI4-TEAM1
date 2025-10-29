@@ -27,3 +27,20 @@ def _positions() -> List[Tuple[int, int]]:
     pos = [(r, c) for r in range(9) for c in range(9)]
     random.shuffle(pos)
     return pos
+
+def generate_puzzle(hints: int = 30) -> Board:
+    """Génère une grille jouable avec ~`hints` cases visibles (entre 17 et 81)."""
+    hints = max(17, min(81, hints))
+    full = _seed_full_board()
+    puzzle = full.copy()
+
+    to_remove = 81 - hints
+    removed = 0
+    for (r, c) in _positions():
+        if removed >= to_remove:
+            break
+        puzzle.set_cell(r, c, 0)
+        # NB: on ne vérifie pas l'unicité ici pour rester rapide/simple.
+        removed += 1
+    return puzzle
+
