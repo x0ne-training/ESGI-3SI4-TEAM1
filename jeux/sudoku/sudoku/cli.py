@@ -98,3 +98,5 @@ def run_cli():
 
         else:
             print("Commande inconnue. Tape 'v', 'p', 'd', ou 'q'.")
+
+
