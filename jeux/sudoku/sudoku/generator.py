@@ -8,3 +8,17 @@ def _seed_full_board() -> Board:
     """Crée une solution complète valide via un motif latin mélangé."""
     base = 3
     side = base * base
+
+    def pattern(r, c): 
+        return (base * (r % base) + r // base + c) % side
+
+    r_base = list(range(base))
+    rows = [g * base + r for g in random.sample(r_base, len(r_base)) for r in random.sample(r_base, len(r_base))]
+    cols = [g * base + c for g in random.sample(r_base, len(r_base)) for c in random.sample(r_base, len(r_base))]
+    nums = random.sample(range(1, side + 1), side)
+
+    grid = [[nums[pattern(r, c)] for c in cols] for r in rows]
+    b = Board(grid)
+    # sanity: doit être déjà une grille complète correcte
+    assert solve_backtracking(b.copy())
+    return b
