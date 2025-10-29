@@ -53,3 +53,28 @@ class Board:
               and val not in self.box_vals(r, c))
         self.grid[r][c] = cur
         return ok
+    
+    def is_consistent(self) -> bool:
+        """Aucun doublon (zéros ignorés) sur lignes/colonnes/boîtes."""
+        # lignes
+        for r in range(9):
+            vals = [v for v in self.grid[r] if v != 0]
+            if len(vals) != len(set(vals)):
+                return False
+        # colonnes
+        for c in range(9):
+            col = [self.grid[r][c] for r in range(9) if self.grid[r][c] != 0]
+            if len(col) != len(set(col)):
+                return False
+        # boîtes
+        for br in range(0, 9, 3):
+            for bc in range(0, 9, 3):
+                box = []
+                for r in range(br, br + 3):
+                    for c in range(bc, bc + 3):
+                        v = self.grid[r][c]
+                        if v != 0:
+                            box.append(v)
+                if len(box) != len(set(box)):
+                    return False
+        return True
