@@ -19,3 +19,8 @@ class Board:
 
     def is_valid_coord(self, r: int, c: int) -> bool:
         return 0 <= r < 9 and 0 <= c < 9
+    
+    def get_cell(self, r: int, c: int) -> int:
+        if not self.is_valid_coord(r, c):
+            raise ValueError("Coordonnées invalides.")
+        return self.grid[r][c]
