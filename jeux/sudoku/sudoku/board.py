@@ -34,3 +34,6 @@ class Board:
 
     def row_vals(self, r: int) -> Set[int]:
         return set(self.grid[r])
+    
+    def col_vals(self, c: int) -> Set[int]:
+        return {self.grid[r][c] for r in range(9)}
