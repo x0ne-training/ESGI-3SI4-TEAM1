@@ -15,5 +15,10 @@
   "barriers":[
     {"x": 0, "y": 400, "width": 50, "height": 150},
     {"x": 3000, "y": 400, "width": 50, "height": 150}
-  ]
+  ],
+  "enemies": [
+  {"type":"wolf","x": 400, "y": 550},
+  {"type":"bear","x": 650, "y": 550}
+]
+
 }
