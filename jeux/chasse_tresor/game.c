@@ -94,4 +94,11 @@ int isGameOver(Player *p, Cell grid[GRID_SIZE][GRID_SIZE]) {
     return 1;
 }
 
-
+void endGame(Player *p) {
+    printf("\n=== FIN DU JEU ===\n");
+    if (p->life <= 0)
+        printf("Vous êtes mort...\n");
+    else
+        printf("Vous avez trouvé tous les trésors !\n");
+    printf("Score final : %d\n", p->score);
+}
