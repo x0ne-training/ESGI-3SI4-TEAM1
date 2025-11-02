@@ -37,3 +37,15 @@ void initializeGame(Player *p, Cell grid[GRID_SIZE][GRID_SIZE]) {
     }
 }
 
+void displayGrid(Player *p, Cell grid[GRID_SIZE][GRID_SIZE]) {
+    printf("\nGrille :\n");
+    for (int i = 0; i < GRID_SIZE; i++) {
+        for (int j = 0; j < GRID_SIZE; j++) {
+            if (i == p->x && j == p->y) printf(" P ");
+            else printf(" ? ");
+        }
+        printf("\n");
+    }
+    printf("Vie : %d | Score : %d\n", p->life, p->score);
+}
+
