@@ -3,5 +3,6 @@
 
 #include "quiz.h"
 
+int getQuestions(Question questions[]);
 
 #endif
