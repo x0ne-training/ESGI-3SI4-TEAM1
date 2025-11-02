@@ -1,52 +1,58 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "game.h"
 
-int action_success(int skill) {
-    return rand() % 100 < skill;
-}
-
-void print_stats(Player p) {
-    printf("Stats - Tir:%d Passe:%d Dribble:%d Endurance:%d\n", p.tir, p.passe, p.dribble, p.endurance);
-}
-
-int get_player_choice() {
-    int choice;
-    printf("Que voulez-vous faire ?\n1. Tir\n2. Passe\n3. Dribble\n4. Défense\n> ");
-    scanf("%d", &choice);
-    return choice;
-}
-
-void apply_choice(int choice, Player *player, Player *adversaire, int *score_player, int *score_adv) {
-    switch(choice) {
-        case 1:
-            if(action_success(player->tir)) {
-                printf("But pour vous !\n");
-                (*score_player)++;
-            } else {
-                printf("Tir manqué.\n");
-            }
+void applyChoice(int choice, Stats *stats) {
+    // Actions possibles :
+    // 1 = Attaque, 2 = Défense, 3 = Dribble
+    switch (choice) {
+        case 1: // Attaque
+            stats->energy -= 5;
+            stats->goals += rand() % 2; // 0 ou 1 but
+            stats->morale += 2;
             break;
-        case 2:
-            printf(action_success(player->passe) ? "Passe réussie.\n" : "Passe échouée.\n");
+        case 2: // Défense
+            stats->energy -= 3;
+            stats->fouls += rand() % 2;
+            stats->morale += 1;
             break;
-        case 3:
-            printf(action_success(player->dribble) ? "Dribble réussi.\n" : "Perte de balle.\n");
-            break;
-        case 4:
-            printf("Défense...\n");
-            if(action_success(adversaire->tir)) {
-                printf("L'adversaire marque pendant votre défense !\n");
-                (*score_adv)++;
-            }
+        case 3: // Dribble
+            stats->energy -= 4;
+            if(rand() % 2) stats->goals += 1;
+            stats->morale += 1;
             break;
         default:
-            printf("Choix invalide.\n");
+            printf("Action invalide!\n");
+    }
+}
+
+void playMatch(Stats *player, Stats *opponent) {
+    int rounds = 5;
+    for (int i = 0; i < rounds; i++) {
+        printf("\n--- Tour %d ---\n", i + 1);
+        int choice;
+        printf("Choisissez votre action (1=Attaque, 2=Défense, 3=Dribble): ");
+        scanf("%d", &choice);
+        applyChoice(choice, player);
+
+        // Action aléatoire de l'adversaire
+        int op_choice = rand() % 3 + 1;
+        applyChoice(op_choice, opponent);
+
+        printf("Votre stats:\n");
+        displayStats(player);
+        printf("Adversaire stats:\n");
+        displayStats(opponent);
     }
 
-    // Tour aléatoire adversaire
-    if(rand() % 2 == 0 && action_success(adversaire->tir)) {
-        printf("L'adversaire tire... et marque !\n");
-        (*score_adv)++;
-    }
+    printf("\n=== Résultat du match ===\n");
+    if (player->goals > opponent->goals) printf("Vous avez gagné !\n");
+    else if (player->goals < opponent->goals) printf("Vous avez perdu !\n");
+    else printf("Match nul !\n");
+}
+
+void displayStats(Stats *stats) {
+    printf("Énergie: %d | Morale: %d | Buts: %d | Fautes: %d\n",
+        stats->energy, stats->morale, stats->goals, stats->fouls);
 }
