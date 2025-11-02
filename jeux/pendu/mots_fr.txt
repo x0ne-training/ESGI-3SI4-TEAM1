@@ -1,0 +1,130 @@
+ordinateur
+clavier
+souris
+écran
+programmation
+algorithme
+variable
+fonction
+python
+développement
+serveur
+client
+réseau
+adresse ip
+données
+base de données
+table
+colonne
+index
+requête
+boucle
+condition
+fichier
+terminal
+système
+logiciel
+application
+interface
+utilisateur
+mot de passe
+connexion
+authentification
+sécurité
+chiffrement
+clé usb
+intelligence artificielle
+robot
+machine learning
+apprentissage
+dictionnaire
+liste
+chaîne de caractères
+débogage
+exception
+compilation
+héritage
+polymorphisme
+abstraction
+classe
+objet
+constructeur
+bibliothèque
+framework
+module
+script
+package
+projet
+git
+branche
+commit
+merge
+github
+visual studio code
+ordinateur portable
+processeur
+mémoire vive
+stockage
+disque dur
+internet
+navigateur
+site web
+serveur web
+adresse mail
+message
+réception
+notification
+application mobile
+téléphone
+électricité
+batterie
+chargeur
+voiture électrique
+avion
+train
+bus
+vélo
+football
+basketball
+musique
+cinéma
+vacances
+plage
+montagne
+forêt
+école
+professeur
+étudiant
+examen
+révision
+travail
+entreprise
+bureau
+réunion
+motivation
+succès
+créativité
+idée
+innovation
+technologie
+futur
+planète
+écologie
+énergie
+soleil
+lune
+étoile
+univers
+espace
+astronaute
+fusée
+galaxie
+amour
+amitié
+famille
+bonheur
+liberté
+paix
+courage
+espoir
+respect
