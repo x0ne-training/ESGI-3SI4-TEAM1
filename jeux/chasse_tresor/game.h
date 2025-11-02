@@ -11,6 +11,12 @@ typedef struct {
     int score;
 } Player;
 
+typedef enum {
+    EMPTY,
+    TREASURE,
+    TRAP
+} Cell;
+
 
 
 #endif
