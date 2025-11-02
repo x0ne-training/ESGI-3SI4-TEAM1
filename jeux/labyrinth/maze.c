@@ -30,3 +30,8 @@ void displayMaze(Maze *m, void *p) {
         printf("\n");
     }
 }
+
+void freeMaze(Maze *m) {
+    for (int i = 0; i < m->rows; i++) free(m->grid[i]);
+    free(m->grid);
+}
