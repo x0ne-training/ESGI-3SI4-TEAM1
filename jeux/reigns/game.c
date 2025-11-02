@@ -25,3 +25,10 @@ void applyChoice(int choice, Stats *stats, int effects[4]) {
     if (stats->people < 0) stats->people = 0;
 }
 
+int isGameOver(Stats stats) {
+    return (stats.power <= 0 || stats.money <= 0 ||
+            stats.faith <= 0 || stats.people <= 0 ||
+            stats.power >= 100 || stats.money >= 100 ||
+            stats.faith >= 100 || stats.people >= 100);
+}
+
