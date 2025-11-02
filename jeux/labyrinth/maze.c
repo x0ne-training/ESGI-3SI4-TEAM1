@@ -20,3 +20,13 @@ void generateMaze(Maze *m, int rows, int cols) {
     m->grid[m->exitX][m->exitY] = 'E';
 }
 
+void displayMaze(Maze *m, void *p) {
+    Player *player = (Player*)p;
+    for (int i = 0; i < m->rows; i++) {
+        for (int j = 0; j < m->cols; j++) {
+            if (i == player->x && j == player->y) printf("P ");
+            else printf("%c ", m->grid[i][j]);
+        }
+        printf("\n");
+    }
+}
