@@ -32,3 +32,26 @@ int isGameOver(Stats stats) {
             stats.faith >= 100 || stats.people >= 100);
 }
 
+void playGame() {
+    srand(time(NULL));
+    Stats stats = {50, 50, 50, 50};
+    int turn = 0;
+
+    printf("Bienvenue, Votre Majesté ! Gouvernez avec sagesse...\n");
+
+    while (!isGameOver(stats)) {
+        Question q = getRandomQuestion();
+        printf("\nTour %d : %s\n", ++turn, q.question);
+        printf("1) %s\n2) %s\nVotre choix : ", q.optionA, q.optionB);
+
+        int choice;
+        scanf("%d", &choice);
+
+        if (choice == 1) applyChoice(1, &stats, q.effectsA);
+        else applyChoice(2, &stats, q.effectsB);
+
+        printStats(stats);
+    }
+
+    printf("\nVotre règne est terminé après %d tours.\n", turn);
+}
