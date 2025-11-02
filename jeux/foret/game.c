@@ -19,10 +19,10 @@ void displayStats(Player *p) {
 void playTurn(Player *p) {
     int choice;
     printf("\nQue voulez-vous faire ?\n");
-    printf("1️⃣ Explorer la forêt\n");
-    printf("2️⃣ Chasser pour trouver de la nourriture\n");
-    printf("3️⃣ Se reposer\n");
-    printf("👉 Choix : ");
+    printf("1. Explorer la forêt\n");
+    printf("2. Chasser pour trouver de la nourriture\n");
+    printf("3. Se reposer\n");
+    printf("Choix : ");
     scanf("%d", &choice);
 
     switch (choice) {
@@ -30,29 +30,29 @@ void playTurn(Player *p) {
             printf("Vous explorez la forêt...\n");
             int event = rand() % 3;
             if (event == 0) {
-                printf("😱 Vous êtes attaqué par un loup ! Vous perdez 20 points de santé.\n");
+                printf("Vous êtes attaqué par un loup ! Vous perdez 20 points de santé.\n");
                 p->health -= 20;
             } else if (event == 1) {
-                printf("🍄 Vous trouvez des baies ! +1 nourriture.\n");
+                printf("Vous trouvez des baies ! +1 nourriture.\n");
                 p->food += 1;
             } else {
-                printf("🌲 Rien d'intéressant, mais la forêt est belle.\n");
+                printf("Rien d'intéressant, mais la forêt est belle.\n");
             }
             p->energy -= 15;
             break;
 
         case 2:
             if (rand() % 2) {
-                printf("🎯 Vous avez chassé un lapin ! +2 nourriture.\n");
+                printf("Vous avez chassé un lapin ! +2 nourriture.\n");
                 p->food += 2;
             } else {
-                printf("❌ Vous n'avez rien trouvé.\n");
+                printf("Vous n'avez rien trouvé.\n");
             }
             p->energy -= 20;
             break;
 
         case 3:
-            printf("💤 Vous vous reposez et regagnez de l'énergie.\n");
+            printf("Vous vous reposez et regagnez de l'énergie.\n");
             p->energy += 30;
             if (p->energy > 100) p->energy = 100;
             p->health += 10;
@@ -64,12 +64,11 @@ void playTurn(Player *p) {
             return;
     }
 
-    // Chaque jour, le joueur consomme de la nourriture
     if (p->food > 0) {
         p->food--;
-        printf("🍞 Vous mangez un peu de nourriture.\n");
+        printf("Vous mangez un peu de nourriture.\n");
     } else {
-        printf("😩 Vous avez faim et perdez de la santé.\n");
+        printf("Vous avez faim et perdez de la santé.\n");
         p->health -= 10;
     }
 
@@ -81,6 +80,6 @@ int isGameOver(Player *p) {
 }
 
 void endGame(Player *p) {
-    printf("\n💀 Vous n'avez pas survécu à la Forêt Maudite...\n");
+    printf("\nVous n'avez pas survécu à la Forêt Maudite...\n");
     printf("Vous avez tenu %d jours.\n", p->day);
 }
