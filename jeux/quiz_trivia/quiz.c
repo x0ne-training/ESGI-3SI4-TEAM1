@@ -17,7 +17,7 @@ void startQuiz(Question questions[], int numQuestions) {
             printf("Correct ! ✅\n");
             score++;
         } else {
-            printf("Faux ! ❌ La bonne réponse était : %s\n", questions[i].options[questions[i].answer]);
+            printf("Faux ! La bonne réponse était : %s\n", questions[i].options[questions[i].answer]);
         }
     }
     printf("\nVotre score final : %d/%d\n", score, numQuestions);
