@@ -83,3 +83,15 @@ int movePlayer(Player *p, Cell grid[GRID_SIZE][GRID_SIZE], int choice) {
     return 1;
 }
 
+int isGameOver(Player *p, Cell grid[GRID_SIZE][GRID_SIZE]) {
+    if (p->life <= 0) return 1;
+
+    // vérifier si tous les trésors ont été collectés
+    for (int i = 0; i < GRID_SIZE; i++)
+        for (int j = 0; j < GRID_SIZE; j++)
+            if (grid[i][j] == TREASURE) return 0;
+
+    return 1;
+}
+
+
