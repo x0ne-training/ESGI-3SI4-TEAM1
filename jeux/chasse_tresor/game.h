@@ -17,6 +17,10 @@ typedef enum {
     TRAP
 } Cell;
 
-
+void initializeGame(Player *p, Cell grid[GRID_SIZE][GRID_SIZE]);
+void displayGrid(Player *p, Cell grid[GRID_SIZE][GRID_SIZE]);
+int movePlayer(Player *p, Cell grid[GRID_SIZE][GRID_SIZE], int choice);
+int isGameOver(Player *p, Cell grid[GRID_SIZE][GRID_SIZE]);
+void endGame(Player *p);
 
 #endif
