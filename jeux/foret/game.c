@@ -11,3 +11,8 @@ void initializePlayer(Player *p) {
     srand(time(NULL));
 }
 
+void displayStats(Player *p) {
+    printf("\n=== JOUR %d ===\n", p->day);
+    printf("Santé : %d | Énergie : %d | Nourriture : %d\n", p->health, p->energy, p->food);
+}
+
