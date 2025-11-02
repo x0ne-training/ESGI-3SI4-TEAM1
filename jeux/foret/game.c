@@ -16,3 +16,13 @@ void displayStats(Player *p) {
     printf("Santé : %d | Énergie : %d | Nourriture : %d\n", p->health, p->energy, p->food);
 }
 
+void playTurn(Player *p) {
+    int choice;
+    printf("\nQue voulez-vous faire ?\n");
+    printf("1️⃣ Explorer la forêt\n");
+    printf("2️⃣ Chasser pour trouver de la nourriture\n");
+    printf("3️⃣ Se reposer\n");
+    printf("👉 Choix : ");
+    scanf("%d", &choice);
+
+   
