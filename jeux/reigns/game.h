@@ -10,6 +10,9 @@ typedef struct {
     int people;
 } Stats;
 
-
+void playGame();
+void applyChoice(int choice, Stats *stats, int effects[4]);
+int isGameOver(Stats stats);
+void printStats(Stats stats);
 
 #endif
