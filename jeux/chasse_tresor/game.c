@@ -49,3 +49,37 @@ void displayGrid(Player *p, Cell grid[GRID_SIZE][GRID_SIZE]) {
     printf("Vie : %d | Score : %d\n", p->life, p->score);
 }
 
+int movePlayer(Player *p, Cell grid[GRID_SIZE][GRID_SIZE], int choice) {
+    int newX = p->x;
+    int newY = p->y;
+
+    switch (choice) {
+        case 1: newX--; break; // haut
+        case 2: newX++; break; // bas
+        case 3: newY--; break; // gauche
+        case 4: newY++; break; // droite
+        default: printf("Choix invalide.\n"); return 0;
+    }
+
+    if (newX < 0 || newX >= GRID_SIZE || newY < 0 || newY >= GRID_SIZE) {
+        printf("Vous ne pouvez pas sortir de la grille !\n");
+        return 0;
+    }
+
+    p->x = newX;
+    p->y = newY;
+
+    if (grid[p->x][p->y] == TREASURE) {
+        printf("Vous avez trouvé un trésor ! +10 points\n");
+        p->score += 10;
+        grid[p->x][p->y] = EMPTY;
+    } else if (grid[p->x][p->y] == TRAP) {
+        printf("Vous êtes tombé dans un piège ! -20 vie\n");
+        p->life -= 20;
+        grid[p->x][p->y] = EMPTY;
+    } else {
+        printf("Rien ici...\n");
+    }
+    return 1;
+}
+
