@@ -14,7 +14,7 @@ void startQuiz(Question questions[], int numQuestions) {
         scanf("%d", &choice);
 
         if (choice - 1 == questions[i].answer) {
-            printf("Correct ! ✅\n");
+            printf("Correct !\n");
             score++;
         } else {
             printf("Faux ! La bonne réponse était : %s\n", questions[i].options[questions[i].answer]);
