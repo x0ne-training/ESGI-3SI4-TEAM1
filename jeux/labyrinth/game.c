@@ -7,3 +7,9 @@ void initializePlayer(Player *p) {
     p->health = 100;
 }
 
+void playTurn(Player *p, Maze *m) {
+    char choice;
+    printf("\nDéplacez-vous (Z=haut, S=bas, Q=gauche, D=droite) : ");
+    scanf(" %c", &choice);
+
+    
