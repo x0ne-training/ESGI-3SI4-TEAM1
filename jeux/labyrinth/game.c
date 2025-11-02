@@ -36,4 +36,10 @@ int isGameOver(Player *p, Maze *m) {
     return p->x == m->exitX && p->y == m->exitY;
 }
 
-
+void endGame(Player *p, Maze *m) {
+    if (p->x == m->exitX && p->y == m->exitY) {
+        printf("\nFélicitations ! Vous avez trouvé la sortie du labyrinthe !\n");
+    } else {
+        printf("\nGame Over !\n");
+    }
+}
