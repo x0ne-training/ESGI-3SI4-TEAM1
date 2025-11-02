@@ -5,3 +5,12 @@
 #define TREASURES 3
 #define TRAPS 3
 
+typedef struct {
+    int x, y;
+    int life;
+    int score;
+} Player;
+
+
+
+#endif
