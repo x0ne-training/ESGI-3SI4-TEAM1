@@ -36,5 +36,7 @@ Question getRandomQuestion() {
         }
     };
 
-    
+    int total = sizeof(questions) / sizeof(questions[0]);
+    int idx = rand() % total;
+    return questions[idx];
 }
