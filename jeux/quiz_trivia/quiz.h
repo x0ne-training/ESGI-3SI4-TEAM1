@@ -9,5 +9,6 @@ typedef struct {
     int answer; // index de la bonne réponse (0-3)
 } Question;
 
+void startQuiz(Question questions[], int numQuestions);
 
 #endif
