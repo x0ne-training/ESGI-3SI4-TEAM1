@@ -7,5 +7,8 @@ typedef struct {
     int exitX, exitY;
 } Maze;
 
+void generateMaze(Maze *m, int rows, int cols);
+void displayMaze(Maze *m, void *player);
+void freeMaze(Maze *m);
 
 #endif
