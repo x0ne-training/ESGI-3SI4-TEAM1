@@ -12,4 +12,15 @@ void playTurn(Player *p, Maze *m) {
     printf("\nDéplacez-vous (Z=haut, S=bas, Q=gauche, D=droite) : ");
     scanf(" %c", &choice);
 
+    int newX = p->x;
+    int newY = p->y;
+
+    switch (choice) {
+        case 'Z': case 'z': newX--; break;
+        case 'S': case 's': newX++; break;
+        case 'Q': case 'q': newY--; break;
+        case 'D': case 'd': newY++; break;
+        default: printf("Choix invalide !\n"); return;
+    }
+
     
