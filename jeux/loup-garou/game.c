@@ -16,3 +16,53 @@ void initPlayers(Player players[], int numPlayers) {
     }
 }
 
+void printStatus(Player players[], int numPlayers) {
+    printf("\n=== Statut actuel ===\n");
+    for(int i=0;i<numPlayers;i++){
+        printf("%s: %s\n", players[i].name, players[i].alive ? "Vivant" : "Mort");
+    }
+    printf("====================\n");
+}
+
+void nightPhase(Player players[], int numPlayers) {
+    printf("\n--- Nuit ---\n");
+    int victim = rand() % numPlayers;
+    while(!players[victim].alive || players[victim].role == LOUP) {
+        victim = rand() % numPlayers;
+    }
+    players[victim].alive = 0;
+    printf("Les loups ont attaqué %s !\n", players[victim].name);
+}
+
+void dayPhase(Player players[], int numPlayers) {
+    printf("\n--- Jour ---\n");
+    int vote = rand() % numPlayers;
+    while(!players[vote].alive) {
+        vote = rand() % numPlayers;
+    }
+    players[vote].alive = 0;
+    printf("Le village a voté pour éliminer %s !\n", players[vote].name);
+}
+
+int gameOver(Player players[], int numPlayers) {
+    int wolvesAlive=0, villagersAlive=0;
+    for(int i=0;i<numPlayers;i++){
+        if(players[i].alive){
+            if(players[i].role==LOUP) wolvesAlive++;
+            else villagersAlive++;
+        }
+    }
+    return wolvesAlive==0 || wolvesAlive>=villagersAlive;
+}
+
+void declareWinner(Player players[], int numPlayers) {
+    int wolvesAlive=0, villagersAlive=0;
+    for(int i=0;i<numPlayers;i++){
+        if(players[i].alive){
+            if(players[i].role==LOUP) wolvesAlive++;
+            else villagersAlive++;
+        }
+    }
+    if(wolvesAlive==0) printf("\nLes villageois ont gagné !\n");
+    else printf("\nLes loups-garous ont gagné !\n");
+}
