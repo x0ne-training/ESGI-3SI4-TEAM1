@@ -11,5 +11,6 @@ typedef struct {
     int effectsB[4];
 } Question;
 
+Question getRandomQuestion();
 
 #endif
