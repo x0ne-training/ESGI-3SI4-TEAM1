@@ -14,6 +14,7 @@ void printStats(Stats stats) {
 }
 
 void applyChoice(int choice, Stats *stats, int effects[4]) {
+    (void)choice;
     stats->power  += effects[0];
     stats->money  += effects[1];
     stats->faith  += effects[2];
