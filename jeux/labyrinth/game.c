@@ -23,4 +23,12 @@ void playTurn(Player *p, Maze *m) {
         default: printf("Choix invalide !\n"); return;
     }
 
-    
+    if (newX >= 0 && newX < m->rows && newY >= 0 && newY < m->cols && m->grid[newX][newY] != '#') {
+        p->x = newX;
+        p->y = newY;
+        printf("Vous vous déplacez...\n");
+    } else {
+        printf("Vous heurtez un mur !\n");
+    }
+}
+
