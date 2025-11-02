@@ -32,3 +32,8 @@ void playTurn(Player *p, Maze *m) {
     }
 }
 
+int isGameOver(Player *p, Maze *m) {
+    return p->x == m->exitX && p->y == m->exitY;
+}
+
+
