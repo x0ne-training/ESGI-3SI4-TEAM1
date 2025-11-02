@@ -44,25 +44,3 @@ void dayPhase(Player players[], int numPlayers) {
     printf("Le village a voté pour éliminer %s !\n", players[vote].name);
 }
 
-int gameOver(Player players[], int numPlayers) {
-    int wolvesAlive=0, villagersAlive=0;
-    for(int i=0;i<numPlayers;i++){
-        if(players[i].alive){
-            if(players[i].role==LOUP) wolvesAlive++;
-            else villagersAlive++;
-        }
-    }
-    return wolvesAlive==0 || wolvesAlive>=villagersAlive;
-}
-
-void declareWinner(Player players[], int numPlayers) {
-    int wolvesAlive=0, villagersAlive=0;
-    for(int i=0;i<numPlayers;i++){
-        if(players[i].alive){
-            if(players[i].role==LOUP) wolvesAlive++;
-            else villagersAlive++;
-        }
-    }
-    if(wolvesAlive==0) printf("\nLes villageois ont gagné !\n");
-    else printf("\nLes loups-garous ont gagné !\n");
-}
