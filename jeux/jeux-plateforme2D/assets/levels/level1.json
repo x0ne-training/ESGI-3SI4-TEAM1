@@ -19,6 +19,7 @@
   "enemies": [
   {"type":"wolf","x": 400, "y": 550},
   {"type":"bear","x": 650, "y": 550}
-]
+],
+  "finish": {"x": 2800, "y": 500, "width": 50, "height": 50}
 
 }

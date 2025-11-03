@@ -20,6 +20,7 @@ MENU = 0
 OPTIONS = 1
 LEVEL_SELECT = 2
 GAME = 3
+LEVEL_END = 4
 state = MENU
 
 # --- VARIABLES MENU ---
@@ -61,6 +62,9 @@ on_ground = False
 crouching = False
 facing_right = True
 moving = False
+finish_point = None
+level_end_timer = 0  # optionnel, pour auto-retour après quelques secondes
+level_end_message = ""
 
 # Dash normal
 dashing = False
@@ -72,6 +76,30 @@ dashing_attack = False
 dash_attack_timer = 0
 dash_attack_direction = 1
 dash_attack_cooldown_timer = 0
+
+def reset_player():
+    global player_x, player_y, player_health
+    global dash_cooldown_timer, dash_attack_cooldown_timer
+    global dashing, dashing_attack, dash_timer, dash_attack_timer
+    global attacking, attack_timer, player_has_hit_normal, player_has_hit_dash
+    global scroll_x
+
+    if level_data:  # sécurité si aucun niveau n’est chargé
+        player_x, player_y = level_data["player_start"]
+    player_health = max_health
+
+    dash_cooldown_timer = 0
+    dash_attack_cooldown_timer = 0
+    dashing = False
+    dashing_attack = False
+    dash_timer = 0
+    dash_attack_timer = 0
+    attacking = False
+    attack_timer = 0
+    player_has_hit_normal = False
+    player_has_hit_dash = False
+    scroll_x = 0
+
 
 # --- CHARGEMENT DES IMAGES ---
 def load_images_from_folder(folder, size=(50,50)):
@@ -142,6 +170,49 @@ class Barrier:
     def draw(self, surface, scroll_x):
         # invisible
         pass
+
+class FinishPoint:
+    def __init__(self, x, y, width=64, height=64):
+        self.frames = []
+        # ✅ On utilise base_path pour aller dans le bon dossier
+        portal_folder = os.path.join(base_path, "levels", "portal")
+
+        if not os.path.exists(portal_folder):
+            print(f"❌ Dossier portail introuvable : {portal_folder}")
+        else:
+            for i in range(1, 7):  # portal1.png à portal6.png
+                img_path = os.path.join(portal_folder, f"portal{i}.png")
+                if os.path.exists(img_path):
+                    img = pygame.image.load(img_path).convert_alpha()
+                    img = pygame.transform.scale(img, (width, height))
+                    self.frames.append(img)
+                else:
+                    print(f"⚠️ Image manquante : {img_path}")
+
+        # Si aucune image trouvée → on met un carré rose de secours
+        if not self.frames:
+            fallback = pygame.Surface((width, height), pygame.SRCALPHA)
+            fallback.fill((255, 0, 255))
+            self.frames = [fallback]
+
+        self.frame_index = 0
+        self.animation_speed = 0.15
+        self.rect = self.frames[0].get_rect(topleft=(x, y))
+        self.mask = pygame.mask.from_surface(self.frames[0])
+        self.timer = 0
+
+    def update(self):
+        self.timer += self.animation_speed
+        if self.timer >= 1:
+            self.timer = 0
+            self.frame_index = (self.frame_index + 1) % len(self.frames)
+
+    def draw(self, surface, scroll_x):
+        current_frame = self.frames[self.frame_index]
+        surface.blit(current_frame, (self.rect.x - scroll_x, self.rect.y))
+
+
+
 
 # --- CLASSE ENNEMI AVEC SPRITES ---
 
@@ -442,9 +513,28 @@ def draw_level_select(screen):
     
     pygame.display.flip()
 
+def draw_level_end(screen, player_health, max_health):
+    screen.fill((20, 20, 50))  # fond violet sombre
+    font_title = pygame.font.Font(None, 80)
+    title = font_title.render("Niveau Terminé !", True, (255, 255, 0))
+    screen.blit(title, (WIDTH//2 - title.get_width()//2, HEIGHT//4))
+
+    # Afficher la vie restante
+    font_text = pygame.font.Font(None, 50)
+    health_text = font_text.render(f"Vie restante : {player_health}/{max_health}", True, (0, 255, 0))
+    screen.blit(health_text, (WIDTH//2 - health_text.get_width()//2, HEIGHT//2))
+
+    # Optionnel : instructions
+    font_small = pygame.font.Font(None, 30)
+    info_text = font_small.render("Appuyez sur Entrée pour continuer", True, (255, 255, 255))
+    screen.blit(info_text, (WIDTH//2 - info_text.get_width()//2, HEIGHT*3//4))
+
+    pygame.display.flip()
+
+
 def handle_level_select_event(event):
     global selected_level, state, player_x, player_y, platforms, barriers, scroll_x, background_image, level_data, enemies
-    global current_page, levels_per_page
+    global current_page, levels_per_page, finish_point, player_health
 
     if event.key == pygame.K_LEFT:
         if selected_level % 5 == 0 and selected_level > current_page*levels_per_page:
@@ -491,6 +581,12 @@ def handle_level_select_event(event):
 
             else:
                 enemies = []
+            
+            # Finish point
+            finish_point = None
+            if "finish" in level_data:
+                f = level_data["finish"]
+                finish_point = FinishPoint(f["x"], f["y"], f.get("width",50), f.get("height",50))
 
             # Charger le fond du biome
             biome_path = os.path.join(base_path, r"levels\biome", level_data["biome"])
@@ -502,6 +598,7 @@ def handle_level_select_event(event):
                 background_image = None
             scroll_x=0
             state=GAME
+            player_health = 100
         else:
             print(f"❌ Impossible de charger le niveau {selected_level+1}.")
 
@@ -641,6 +738,12 @@ while running:
                         running = False
             elif state == LEVEL_SELECT:
                 handle_level_select_event(event)
+                if event.key == pygame.K_ESCAPE:
+                    state = MENU
+            elif state == LEVEL_END:
+                if event.key == pygame.K_RETURN:
+                    state = LEVEL_SELECT
+                    reset_player()
             elif state == OPTIONS:
                 if event.key == pygame.K_ESCAPE:
                     state = MENU
@@ -658,6 +761,8 @@ while running:
         screen.fill((20, 20, 50))
         pygame.display.flip()
         continue
+    elif state == LEVEL_END:
+        draw_level_end(screen, level_end_health, max_health)
     elif state == GAME:
         moving = False
         player_velocity_x = 0
@@ -759,6 +864,11 @@ while running:
                     player_velocity_y = 0
                     player_rect.y = player_y
 
+        if finish_point and player_rect.colliderect(finish_point.rect):
+            print("Niveau terminé !")
+            level_end_health = player_health
+            state = LEVEL_END
+
         # --- Reset position si tombe ---
         if level_data and player_y > HEIGHT + 100:
             player_x, player_y = level_data["player_start"]
@@ -838,6 +948,10 @@ while running:
         health_ratio = player_health / max_health if max_health > 0 else 0
         pygame.draw.rect(screen, (0, 0, 0), (bar_x, bar_y - 10, bar_width, bar_height))
         pygame.draw.rect(screen, (0, 255, 0), (bar_x, bar_y - 10, bar_width * health_ratio, bar_height))
+
+        if finish_point:
+            finish_point.update()
+            finish_point.draw(screen, scroll_x)
 
         pygame.display.flip()
 

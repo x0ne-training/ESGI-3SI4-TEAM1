@@ -11,10 +11,11 @@
     {"x": 1650, "y": 250, "width": 150, "height": 20},
     {"x": 1850, "y": 300, "width": 300, "height": 20},
     {"x": 2200, "y": 400, "width": 200, "height": 20},
-    {"x": 2450, "y": 500, "width": 350, "height": 50}
+    {"x": 2450, "y": 500, "width": 550, "height": 50}
   ],
   "barriers": [
     {"x": -50, "y": 0, "width": 50, "height": 600},
-    {"x": 2800, "y": 0, "width": 50, "height": 600}
-  ]
+    {"x": 3000, "y": 0, "width": 50, "height": 600}
+  ],
+  "finish": {"x": 2800, "y": 450, "width": 50, "height": 50}
 }

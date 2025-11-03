@@ -7,5 +7,6 @@
     "barriers":[
     {"x": 0, "y": 400, "width": 50, "height": 150},
     {"x": 3000, "y": 400, "width": 50, "height": 150}
-    ]
+    ],
+    "finish": {"x": 2800, "y": 500, "width": 50, "height": 50}
 }
