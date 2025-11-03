@@ -89,29 +89,32 @@ def load_images_from_folder(folder, size=(50,50)):
     return images
 
 # Remplace par ton chemin de base
-base_path = r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D"
+base_path = r"c:\Users\idimi\Documents\Codage\Python\ESGI-3SI4-TEAM1\jeux\jeux-plateforme2D\assets"
 
 # Player animations (tu en avais déjà)
-idle_images=load_images_from_folder(os.path.join(base_path,"idle"))
-run_images=load_images_from_folder(os.path.join(base_path,"run"))
-jump_images=load_images_from_folder(os.path.join(base_path,"jump"))
-fall_images=load_images_from_folder(os.path.join(base_path,"fall"))
-attack_images=load_images_from_folder(os.path.join(base_path,"attack"))
-crouch_images=load_images_from_folder(os.path.join(base_path,"crouch"))
-slide_images=load_images_from_folder(os.path.join(base_path,"slide"))
-dash_images=load_images_from_folder(os.path.join(base_path,"dash"))
-dash_attack_images=load_images_from_folder(os.path.join(base_path,"dash_attack"))
+player_base = os.path.join(base_path,"player")
+idle_images=load_images_from_folder(os.path.join(player_base,"idle"))
+run_images=load_images_from_folder(os.path.join(player_base,"run"))
+jump_images=load_images_from_folder(os.path.join(player_base,"jump"))
+fall_images=load_images_from_folder(os.path.join(player_base,"fall"))
+attack_images=load_images_from_folder(os.path.join(player_base,"attack"))
+crouch_images=load_images_from_folder(os.path.join(player_base,"crouch"))
+slide_images=load_images_from_folder(os.path.join(player_base,"slide"))
+dash_images=load_images_from_folder(os.path.join(player_base,"dash"))
+dash_attack_images=load_images_from_folder(os.path.join(player_base,"dash_attack"))
 
 # --- ENEMY (WOLF) ANIMATIONS ---
 # On suppose un dossier "wolf" à la racine base_path contenant des sous-dossiers "idle","walk","attack","death"
-wolf_base = os.path.join(base_path, "wolf")
+enemy_base = os.path.join(base_path, "enemies")
+wolf_base = os.path.join(enemy_base, "wolf")
 wolf_idle_images = load_images_from_folder(os.path.join(wolf_base, "idle"), size=(40,50))
 wolf_walk_images = load_images_from_folder(os.path.join(wolf_base, "walk"), size=(40,50))
 wolf_attack_images = load_images_from_folder(os.path.join(wolf_base, "attack"), size=(50,50))
 wolf_death_images = load_images_from_folder(os.path.join(wolf_base, "death"), size=(50,50))
 
 # --- FOND MENU ---
-menu_background_path = os.path.join(base_path,"forest.png")
+biome_base = os.path.join(base_path,r"levels\biome")
+menu_background_path = os.path.join(biome_base,"forest.png")
 if os.path.exists(menu_background_path):
     menu_background=pygame.image.load(menu_background_path).convert()
     menu_background=pygame.transform.scale(menu_background,(WIDTH,HEIGHT))
@@ -160,9 +163,8 @@ ENEMY_STATS = {
 
 class Enemy:
     def __init__(self, x, y, enemy_type="wolf"):
+        # --- Statistiques de base ---
         stats = ENEMY_STATS.get(enemy_type, ENEMY_STATS["wolf"])
-
-        # --- Attributs de base ---
         self.type = enemy_type
         self.health = stats["health"]
         self.max_health = stats["health"]
@@ -172,7 +174,7 @@ class Enemy:
         self.attack_range = stats.get("attack_range", 60)
         self.size = stats["size"]
 
-        # --- État interne ---
+        # --- Position et état ---
         self.x = x
         self.start_x = x
         self.ground_y = y
@@ -184,10 +186,10 @@ class Enemy:
 
         # --- Animation ---
         self.animations = {}
-        base_path = os.path.join(os.path.dirname(__file__), enemy_type)
+        enemy_base_path = os.path.join(base_path, "enemies", self.type)
 
         def safe_load_images(folder_name, size=self.size):
-            path = os.path.join(base_path, folder_name)
+            path = os.path.join(enemy_base_path, folder_name)
             images = []
             if os.path.exists(path):
                 for img_file in sorted(os.listdir(path)):
@@ -199,9 +201,11 @@ class Enemy:
                         except Exception as e:
                             print(f"⚠️ Erreur chargement {img_file}: {e}")
             if not images:
+                # Fallback carré rouge
                 surf = pygame.Surface(size, pygame.SRCALPHA)
                 surf.fill((255, 0, 0))
                 images.append(surf)
+            print(f"{self.type} {folder_name}: {len(images)} images chargées")
             return images
 
         self.animations["idle"] = safe_load_images("idle")
@@ -209,18 +213,19 @@ class Enemy:
         self.animations["attack"] = safe_load_images("attack")
         self.animations["death"] = safe_load_images("death")
 
-        # --- Animation contrôle ---
+        # --- Contrôle animation ---
         self.frame_index = 0
         self.animation_counter = 0
         self.image = self.animations["idle"][0]
         self.rect = self.image.get_rect(midbottom=(x, self.ground_y))
 
-        # --- Combat et effets ---
+        # --- Combat ---
         self.attacking = False
         self.attack_cooldown = 0
         self.attack_cooldown_max = 90
         self.has_hit_player = False
         self.hit_flash_timer = 0
+        self.ready_to_hit = False
 
     def update(self, player_rect):
         if self.dead:
@@ -448,7 +453,7 @@ def handle_level_select_event(event):
                 enemies = []
 
             # Charger le fond du biome
-            biome_path = os.path.join(base_path, "biome", level_data["biome"])
+            biome_path = os.path.join(base_path, r"levels\biome", level_data["biome"])
             if os.path.exists(biome_path):
                 background_image = pygame.image.load(biome_path).convert_alpha()
                 background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
@@ -616,7 +621,7 @@ while running:
     elif state == GAME:
         moving = False
         player_velocity_x = 0
-    
+
         # --- MOUVEMENT ---
         if keys[pygame.K_LEFT]:
             player_velocity_x = -PLAYER_SPEED
@@ -629,13 +634,13 @@ while running:
         if keys[pygame.K_UP] and on_ground:
             player_velocity_y = JUMP_STRENGTH
             on_ground = False
-    
+
         # --- Cooldowns ---
         if dash_attack_cooldown_timer > 0:
             dash_attack_cooldown_timer -= 1
         if dash_cooldown_timer > 0:
             dash_cooldown_timer -= 1
-    
+
         # --- Attaque normale ---
         if keys[pygame.K_a] and on_ground and not dashing_attack and not dashing:
             attacking = True
@@ -643,7 +648,7 @@ while running:
             frame_indices["attack"] = 0
             animation_counters["attack"] = 0
             player_has_hit_normal = False  # reset dégâts pour cette attaque
-    
+
         # --- Dash attack ---
         if keys[pygame.K_z] and on_ground and not dashing_attack and dash_attack_cooldown_timer == 0:
             if keys[pygame.K_LEFT]:
@@ -662,7 +667,7 @@ while running:
                 dash_attack_direction = 1
                 dash_attack_cooldown_timer = DASH_ATTACK_COOLDOWN
                 player_has_hit_dash = False
-    
+
         # --- Dash normal ---
         if keys[pygame.K_d] and on_ground and not dashing and not dashing_attack and dash_cooldown_timer == 0:
             if keys[pygame.K_LEFT]:
@@ -675,18 +680,18 @@ while running:
                 dash_timer = DASH_DURATION
                 dash_direction = 1
                 dash_cooldown_timer = DASH_COOLDOWN
-    
+
         crouching = keys[pygame.K_DOWN] and on_ground
-    
+
         # --- Physique ---
         if dashing_attack:
             player_velocity_x = dash_attack_direction * DASH_ATTACK_SPEED
         elif dashing:
             player_velocity_x = dash_direction * DASH_SPEED
-    
+
         player_x += player_velocity_x
         player_rect = pygame.Rect(player_x, player_y, 50, 50)
-    
+
         # --- Collision plateformes et barrières (horizontal) ---
         for obj in platforms + barriers:
             if player_rect.colliderect(obj.rect):
@@ -695,12 +700,12 @@ while running:
                 elif player_velocity_x < 0:
                     player_x = obj.rect.right
                 player_rect.x = player_x
-    
+
         player_velocity_y += GRAVITY
         player_y += player_velocity_y
         player_rect.y = player_y
         on_ground = False
-    
+
         # --- Collision plateformes et barrières (vertical) ---
         for obj in platforms + barriers:
             if player_rect.colliderect(obj.rect):
@@ -713,21 +718,21 @@ while running:
                     player_y = obj.rect.bottom
                     player_velocity_y = 0
                     player_rect.y = player_y
-    
+
         # --- Reset position si tombe ---
         if level_data and player_y > HEIGHT + 100:
             player_x, player_y = level_data["player_start"]
             player_velocity_y = 0
             player_rect.x = player_x
             player_rect.y = player_y
-    
+
         # --- Scroll ---
         if player_x - scroll_x > WIDTH * 0.6:
             scroll_x = player_x - WIDTH * 0.6
         elif player_x - scroll_x < WIDTH * 0.3:
             scroll_x = player_x - WIDTH * 0.3
         scroll_x = max(0, scroll_x)
-    
+
         # --- Dessin fond ---
         if background_image:
             bg_width = background_image.get_width()
@@ -736,10 +741,10 @@ while running:
             screen.blit(background_image, (x_offset, 0))
         else:
             screen.fill(BACKGROUND_COLOR)
-    
+
         for plat in platforms:
             plat.draw(screen, scroll_x)
-    
+
         # --- Mise à jour ennemis ---
         alive_enemies = []
         for enemy in enemies:
@@ -753,11 +758,11 @@ while running:
             if enemy.alive or enemy.dying:
                 alive_enemies.append(enemy)
         enemies = alive_enemies
-    
+
         # --- Dessin ennemis ---
         for enemy in enemies:
             enemy.draw(screen, scroll_x)
-    
+
         # --- Attaque joueur sur ennemis ---
         if attacking:
             attack_frame_hit = len(attack_images) // 2
@@ -768,18 +773,18 @@ while running:
                     if enemy.alive and not enemy.dying and attack_rect.colliderect(enemy.rect):
                         enemy.take_damage(50)
                 player_has_hit_normal = True
-    
+
         if dashing_attack and not player_has_hit_dash:
             dash_attack_rect = pygame.Rect(player_x + (25 if dash_attack_direction > 0 else -50), player_y, 50, 50)
             for enemy in enemies:
                 if enemy.alive and not enemy.dying and dash_attack_rect.colliderect(enemy.rect):
                     enemy.take_damage(100)
             player_has_hit_dash = True
-    
+
         # --- Dessin joueur ---
         current_frame = get_current_frame()
         screen.blit(current_frame, (player_x - scroll_x, player_y))
-    
+
         # --- Barres ---
         bar_width = 50
         bar_height = 5
@@ -793,9 +798,7 @@ while running:
         health_ratio = player_health / max_health if max_health > 0 else 0
         pygame.draw.rect(screen, (0, 0, 0), (bar_x, bar_y - 10, bar_width, bar_height))
         pygame.draw.rect(screen, (0, 255, 0), (bar_x, bar_y - 10, bar_width * health_ratio, bar_height))
-    
+
         pygame.display.flip()
-
-
 
 pygame.quit()
