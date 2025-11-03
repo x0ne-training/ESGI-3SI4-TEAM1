@@ -32,7 +32,7 @@ volume = 0.5
 
 # --- VARIABLES SELECTION DE NIVEAU ---
 selected_level = 0
-level_files = ["level1.json", "level2.json", "level3.json", "level4.json", "level5.json", "level6.json", "level7.json", "level8.json", "level9.json", "level10.json", "level11.json", "level12.json",]  # fichiers JSON des niveaux
+level_files = ["level1.json", "level2.json", "level3.json", "level4.json", "level5.json", "level6.json", "level7.json", "level8.json", "level9.json", "level10.json","level11.json", "level12.json", "level13.json", "level14.json", "level15.json", "level16.json", "level17.json", "level18.json", "level19.json", "level20.json","level21.json", "level22.json", "level23.json", "level24.json", "level25.json", "level26.json", "level27.json", "level28.json", "level29.json", "level30.json"]  # fichiers JSON des niveaux
 levels_per_page = 10
 current_page = 0
 total_pages = (len(level_files) - 1) // levels_per_page + 1
