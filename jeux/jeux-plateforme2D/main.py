@@ -32,7 +32,7 @@ volume = 0.5
 
 # --- VARIABLES SELECTION DE NIVEAU ---
 selected_level = 0
-level_files = ["level1.json", "level2.json", "level3.json"]  # fichiers JSON des niveaux
+level_files = ["level1.json", "level2.json", "level3.json", "level4.json", "level5.json", "level6.json", "level7.json", "level8.json", "level9.json", "level10.json",]  # fichiers JSON des niveaux
 
 # --- PLAYER ---
 PLAYER_SPEED = 5
