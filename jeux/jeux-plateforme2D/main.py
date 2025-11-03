@@ -171,8 +171,8 @@ class Enemy:
         self.attack_damage = stats.get("attack_damage", 10)
         self.attack_range = stats.get("attack_range", 60)
         self.size = stats["size"]
-        self.hit_flash_timer = 0
 
+        # --- État interne ---
         self.x = x
         self.start_x = x
         self.ground_y = y
@@ -193,14 +193,14 @@ class Enemy:
                 for img_file in sorted(os.listdir(path)):
                     if img_file.endswith(".png"):
                         try:
-                            img = pygame.image.load(os.path.join(path,img_file)).convert_alpha()
+                            img = pygame.image.load(os.path.join(path, img_file)).convert_alpha()
                             img = pygame.transform.scale(img, size)
                             images.append(img)
                         except Exception as e:
                             print(f"⚠️ Erreur chargement {img_file}: {e}")
             if not images:
                 surf = pygame.Surface(size, pygame.SRCALPHA)
-                surf.fill((255,0,0))
+                surf.fill((255, 0, 0))
                 images.append(surf)
             return images
 
@@ -209,19 +209,26 @@ class Enemy:
         self.animations["attack"] = safe_load_images("attack")
         self.animations["death"] = safe_load_images("death")
 
+        # --- Animation contrôle ---
         self.frame_index = 0
         self.animation_counter = 0
         self.image = self.animations["idle"][0]
         self.rect = self.image.get_rect(midbottom=(x, self.ground_y))
 
-        # --- Combat ---
-        self.attack_cooldown_max = 60
-        self.attack_cooldown_timer = 0
-        self.has_hit_player = False  # Pour frapper une seule fois par attaque
+        # --- Combat et effets ---
+        self.attacking = False
+        self.attack_cooldown = 0
+        self.attack_cooldown_max = 90
+        self.has_hit_player = False
+        self.hit_flash_timer = 0
 
     def update(self, player_rect):
         if self.dead:
             return
+
+        # --- Effet visuel hit ---
+        if self.hit_flash_timer > 0:
+            self.hit_flash_timer -= 1
 
         # --- Mort / dying ---
         if self.dying:
@@ -237,61 +244,55 @@ class Enemy:
                         self.frame_index = len(frames) - 1
             return
 
-        # --- Distance par rapport au joueur ---
+        # --- Distance joueur ---
         distance_x = abs(player_rect.centerx - self.rect.centerx)
 
-        # --- Attaque ---
-        if self.state == "attack":
+        # --- Gestion cooldown ---
+        if self.attack_cooldown > 0:
+            self.attack_cooldown -= 1
+
+        # --- Si en attaque ---
+        if self.attacking:
             frames = self.animations.get("attack", [])
             if frames:
                 self.animation_counter += 1
-                if self.animation_counter > 15:
+                if self.animation_counter > 10:
                     self.animation_counter = 0
                     self.frame_index += 1
 
-                    # Appliquer les dégâts seulement une fois au milieu de l'attaque
-                    if self.frame_index == len(frames)//2:
-                        self.has_hit_player = False  # Reset pour la collision
+                    # Frapper à la moitié de l'animation
+                    if self.frame_index == len(frames) // 2:
+                        self.has_hit_player = False
 
                     if self.frame_index >= len(frames):
-                        self.attack_cooldown_timer = self.attack_cooldown_max
+                        self.attacking = False
+                        self.attack_cooldown = self.attack_cooldown_max
                         self.state = "idle"
                         self.frame_index = 0
                         self.animation_counter = 0
                         self.has_hit_player = False
 
-        # --- Cooldown ---
-        elif self.attack_cooldown_timer > 0:
-            self.attack_cooldown_timer -= 1
-            self.state = "idle"
-            frames = self.animations.get("idle", [])
-            if frames:
-                self.animation_counter += 1
-                if self.animation_counter > 10:
-                    self.animation_counter = 0
-                    self.frame_index = (self.frame_index + 1) % len(frames)
+        # --- Si peut attaquer ---
+        elif distance_x < self.attack_range and self.attack_cooldown == 0:
+            self.attacking = True
+            self.state = "attack"
+            self.frame_index = 0
+            self.animation_counter = 0
+            self.has_hit_player = False
 
-        # --- Patrol ou attaque si proche ---
+        # --- Sinon, patrouille ---
         else:
-            if distance_x < self.attack_range:
-                self.state = "attack"
-                self.frame_index = 0
-                self.animation_counter = 0
-                self.speed = 0
-                self.has_hit_player = False
-            else:
-                self.state = "walk"
-                self.speed = ENEMY_STATS[self.type]["speed"]
-                self.x += self.direction * self.speed
-                if abs(self.x - self.start_x) > self.patrol_range:
-                    self.direction *= -1
+            self.state = "walk"
+            self.x += self.direction * self.speed
+            if abs(self.x - self.start_x) > self.patrol_range:
+                self.direction *= -1
 
         # --- Mise à jour du rect ---
         self.rect.x = int(self.x)
         self.rect.bottom = self.ground_y
 
-        # --- Animation walk / idle ---
-        if self.state in ["walk", "idle"]:
+        # --- Animation idle / walk ---
+        if self.state in ["idle", "walk"]:
             frames = self.animations.get(self.state, [])
             if frames:
                 self.animation_counter += 1
@@ -306,7 +307,6 @@ class Enemy:
         frames = self.animations.get(self.state, [])
         if not frames:
             frames = [pygame.Surface(self.size)]
-
         self.frame_index %= len(frames)
         self.image = frames[self.frame_index]
 
@@ -314,15 +314,22 @@ class Enemy:
         if self.direction < 0:
             img = pygame.transform.flip(img, True, False)
 
+        # --- Flash rouge lors du hit ---
+        if self.hit_flash_timer > 0:
+            flash = img.copy()
+            flash.fill((255, 0, 0, 100), special_flags=pygame.BLEND_RGBA_ADD)
+            img = flash
+
         surface.blit(img, (self.rect.x - scroll_x, self.rect.y))
 
-        # Barre de vie
+        # --- Barre de vie ---
         bar_width = 50
         bar_height = 5
         bar_x = self.rect.x - scroll_x + (self.rect.width - bar_width)//2
         bar_y = self.rect.y - 10
-        pygame.draw.rect(surface, (0,0,0), (bar_x, bar_y, bar_width, bar_height))
-        pygame.draw.rect(surface, (255,0,0), (bar_x, bar_y, bar_width*(self.health/self.max_health), bar_height))
+        pygame.draw.rect(surface, (0, 0, 0), (bar_x, bar_y, bar_width, bar_height))
+        pygame.draw.rect(surface, (255, 0, 0),
+                         (bar_x, bar_y, bar_width * (self.health / self.max_health), bar_height))
 
     def take_damage(self, dmg):
         if self.dead or self.dying:
@@ -336,20 +343,15 @@ class Enemy:
             self.state = "death"
 
     def attack_player(self, player_rect, player_health):
-        # Attaque seulement si l'ennemi est en train d'attaquer et pas mort
-        if self.state != "attack" or self.dead or self.dying:
+        if not self.attacking or self.dead or self.dying:
             return player_health
 
-        # Frapper le joueur une seule fois par attaque
         if not self.has_hit_player and self.rect.colliderect(player_rect):
             player_health -= self.attack_damage
-            if player_health < 0:
-                player_health = 0
+            player_health = max(player_health, 0)
             self.has_hit_player = True
 
         return player_health
-
-
 
 # --- FONCTIONS MENU ---
 def draw_menu(screen):
