@@ -260,10 +260,11 @@ class Enemy:
                     self.animation_counter = 0
                     self.frame_index += 1
 
-                    # Frapper à la moitié de l'animation
+                    # --- Déclenchement du coup sur UNE frame ---
                     if self.frame_index == len(frames) // 2:
-                        self.has_hit_player = False
+                        self.ready_to_hit = True  # l’attaque frappe à cette frame
 
+                    # --- Fin d'attaque ---
                     if self.frame_index >= len(frames):
                         self.attacking = False
                         self.attack_cooldown = self.attack_cooldown_max
@@ -271,14 +272,16 @@ class Enemy:
                         self.frame_index = 0
                         self.animation_counter = 0
                         self.has_hit_player = False
+                        self.ready_to_hit = False
 
-        # --- Si peut attaquer ---
+        # --- Déclenche attaque ---
         elif distance_x < self.attack_range and self.attack_cooldown == 0:
             self.attacking = True
             self.state = "attack"
             self.frame_index = 0
             self.animation_counter = 0
             self.has_hit_player = False
+            self.ready_to_hit = False
 
         # --- Sinon, patrouille ---
         else:
@@ -343,13 +346,15 @@ class Enemy:
             self.state = "death"
 
     def attack_player(self, player_rect, player_health):
+        # Attaque uniquement si l’ennemi est dans la frame de frappe
         if not self.attacking or self.dead or self.dying:
             return player_health
 
-        if not self.has_hit_player and self.rect.colliderect(player_rect):
+        if self.ready_to_hit and not self.has_hit_player and self.rect.colliderect(player_rect):
             player_health -= self.attack_damage
             player_health = max(player_health, 0)
             self.has_hit_player = True
+            self.ready_to_hit = False  # le coup est consommé
 
         return player_health
 
@@ -611,7 +616,7 @@ while running:
     elif state == GAME:
         moving = False
         player_velocity_x = 0
-
+    
         # --- MOUVEMENT ---
         if keys[pygame.K_LEFT]:
             player_velocity_x = -PLAYER_SPEED
@@ -624,13 +629,13 @@ while running:
         if keys[pygame.K_UP] and on_ground:
             player_velocity_y = JUMP_STRENGTH
             on_ground = False
-
+    
         # --- Cooldowns ---
         if dash_attack_cooldown_timer > 0:
             dash_attack_cooldown_timer -= 1
         if dash_cooldown_timer > 0:
             dash_cooldown_timer -= 1
-
+    
         # --- Attaque normale ---
         if keys[pygame.K_a] and on_ground and not dashing_attack and not dashing:
             attacking = True
@@ -638,11 +643,11 @@ while running:
             frame_indices["attack"] = 0
             animation_counters["attack"] = 0
             player_has_hit_normal = False  # reset dégâts pour cette attaque
-
+    
         # --- Dash attack ---
         if keys[pygame.K_z] and on_ground and not dashing_attack and dash_attack_cooldown_timer == 0:
             if keys[pygame.K_LEFT]:
-                attacking = False  # <-- désactive l'attaque normale
+                attacking = False
                 player_has_hit_normal = False
                 dashing_attack = True
                 dash_attack_timer = DASH_ATTACK_DURATION
@@ -650,15 +655,14 @@ while running:
                 dash_attack_cooldown_timer = DASH_ATTACK_COOLDOWN
                 player_has_hit_dash = False
             elif keys[pygame.K_RIGHT]:
-                attacking = False  # <-- désactive l'attaque normale
+                attacking = False
                 player_has_hit_normal = False
                 dashing_attack = True
                 dash_attack_timer = DASH_ATTACK_DURATION
                 dash_attack_direction = 1
                 dash_attack_cooldown_timer = DASH_ATTACK_COOLDOWN
                 player_has_hit_dash = False
-
-
+    
         # --- Dash normal ---
         if keys[pygame.K_d] and on_ground and not dashing and not dashing_attack and dash_cooldown_timer == 0:
             if keys[pygame.K_LEFT]:
@@ -671,18 +675,18 @@ while running:
                 dash_timer = DASH_DURATION
                 dash_direction = 1
                 dash_cooldown_timer = DASH_COOLDOWN
-
+    
         crouching = keys[pygame.K_DOWN] and on_ground
-
+    
         # --- Physique ---
         if dashing_attack:
             player_velocity_x = dash_attack_direction * DASH_ATTACK_SPEED
         elif dashing:
             player_velocity_x = dash_direction * DASH_SPEED
-
+    
         player_x += player_velocity_x
         player_rect = pygame.Rect(player_x, player_y, 50, 50)
-
+    
         # --- Collision plateformes et barrières (horizontal) ---
         for obj in platforms + barriers:
             if player_rect.colliderect(obj.rect):
@@ -691,12 +695,12 @@ while running:
                 elif player_velocity_x < 0:
                     player_x = obj.rect.right
                 player_rect.x = player_x
-
+    
         player_velocity_y += GRAVITY
         player_y += player_velocity_y
         player_rect.y = player_y
         on_ground = False
-
+    
         # --- Collision plateformes et barrières (vertical) ---
         for obj in platforms + barriers:
             if player_rect.colliderect(obj.rect):
@@ -709,21 +713,21 @@ while running:
                     player_y = obj.rect.bottom
                     player_velocity_y = 0
                     player_rect.y = player_y
-
+    
         # --- Reset position si tombe ---
         if level_data and player_y > HEIGHT + 100:
             player_x, player_y = level_data["player_start"]
             player_velocity_y = 0
             player_rect.x = player_x
             player_rect.y = player_y
-
+    
         # --- Scroll ---
         if player_x - scroll_x > WIDTH * 0.6:
             scroll_x = player_x - WIDTH * 0.6
         elif player_x - scroll_x < WIDTH * 0.3:
             scroll_x = player_x - WIDTH * 0.3
         scroll_x = max(0, scroll_x)
-
+    
         # --- Dessin fond ---
         if background_image:
             bg_width = background_image.get_width()
@@ -732,15 +736,15 @@ while running:
             screen.blit(background_image, (x_offset, 0))
         else:
             screen.fill(BACKGROUND_COLOR)
-
+    
         for plat in platforms:
             plat.draw(screen, scroll_x)
-
+    
         # --- Mise à jour ennemis ---
         alive_enemies = []
         for enemy in enemies:
             enemy.update(player_rect)
-            player_health = enemy.attack_player(player_rect, player_health)
+            player_health = enemy.attack_player(player_rect, player_health)  # dégâts appliqués ici
             if enemy.dying:
                 enemy.frame_index += 1
                 if enemy.frame_index >= len(enemy.animations["death"]):
@@ -749,13 +753,12 @@ while running:
             if enemy.alive or enemy.dying:
                 alive_enemies.append(enemy)
         enemies = alive_enemies
-
+    
         # --- Dessin ennemis ---
         for enemy in enemies:
             enemy.draw(screen, scroll_x)
-
+    
         # --- Attaque joueur sur ennemis ---
-        # Attaque normale
         if attacking:
             attack_frame_hit = len(attack_images) // 2
             if frame_indices["attack"] == attack_frame_hit and not player_has_hit_normal:
@@ -765,27 +768,18 @@ while running:
                     if enemy.alive and not enemy.dying and attack_rect.colliderect(enemy.rect):
                         enemy.take_damage(50)
                 player_has_hit_normal = True
-
-
-        # Dash-attack
+    
         if dashing_attack and not player_has_hit_dash:
             dash_attack_rect = pygame.Rect(player_x + (25 if dash_attack_direction > 0 else -50), player_y, 50, 50)
             for enemy in enemies:
                 if enemy.alive and not enemy.dying and dash_attack_rect.colliderect(enemy.rect):
                     enemy.take_damage(100)
             player_has_hit_dash = True
-
-        # --- Contact avec ennemis ---
-        for enemy in enemies:
-            if enemy.alive and not enemy.dying and player_rect.colliderect(enemy.rect):
-                player_health -= 0.5
-                if player_health < 0:
-                    player_health = 0
-
+    
         # --- Dessin joueur ---
         current_frame = get_current_frame()
         screen.blit(current_frame, (player_x - scroll_x, player_y))
-
+    
         # --- Barres ---
         bar_width = 50
         bar_height = 5
@@ -799,8 +793,9 @@ while running:
         health_ratio = player_health / max_health if max_health > 0 else 0
         pygame.draw.rect(screen, (0, 0, 0), (bar_x, bar_y - 10, bar_width, bar_height))
         pygame.draw.rect(screen, (0, 255, 0), (bar_x, bar_y - 10, bar_width * health_ratio, bar_height))
-
+    
         pygame.display.flip()
+
 
 
 pygame.quit()
