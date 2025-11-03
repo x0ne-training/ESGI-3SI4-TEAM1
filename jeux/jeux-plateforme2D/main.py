@@ -32,7 +32,10 @@ volume = 0.5
 
 # --- VARIABLES SELECTION DE NIVEAU ---
 selected_level = 0
-level_files = ["level1.json", "level2.json", "level3.json", "level4.json", "level5.json", "level6.json", "level7.json", "level8.json", "level9.json", "level10.json",]  # fichiers JSON des niveaux
+level_files = ["level1.json", "level2.json", "level3.json", "level4.json", "level5.json", "level6.json", "level7.json", "level8.json", "level9.json", "level10.json", "level11.json", "level12.json",]  # fichiers JSON des niveaux
+levels_per_page = 10
+current_page = 0
+total_pages = (len(level_files) - 1) // levels_per_page + 1
 
 # --- PLAYER ---
 PLAYER_SPEED = 5
@@ -405,34 +408,71 @@ def draw_level_select(screen):
     spacing_y=120
     start_x=WIDTH//2-(5*spacing_x)//2+spacing_x//2
     start_y=HEIGHT//3
-    for i in range(len(level_files)):
-        row=i//5
-        col=i%5
-        x=start_x+col*spacing_x
-        y=start_y+row*spacing_y
-        color=(200,200,200) if i!=selected_level else (255,255,0)
+    start_index = current_page * levels_per_page
+    end_index = min(start_index + levels_per_page, len(level_files))
+    page_levels = range(start_index, end_index)
+    
+    screen.fill((50,50,80))
+    font = pygame.font.Font(None,40)
+    circle_radius = 40
+    spacing_x = 120
+    spacing_y = 120
+    start_x = WIDTH//2-(5*spacing_x)//2+spacing_x//2
+    start_y = HEIGHT//3
+    
+    for idx, i in enumerate(page_levels):
+        row = idx // 5
+        col = idx % 5
+        x = start_x + col * spacing_x
+        y = start_y + row * spacing_y
+        color = (200,200,200) if i != selected_level else (255,255,0)
         pygame.draw.circle(screen,color,(x,y),circle_radius)
         pygame.draw.circle(screen,(0,0,0),(x,y),circle_radius,3)
-        text=font.render(str(i+1),True,(0,0,0))
+        text = font.render(str(i+1), True, (0,0,0))
         screen.blit(text,(x-text.get_width()//2,y-text.get_height()//2))
-    font_small=pygame.font.Font(None,30)
-    info=font_small.render("Flèches : sélectionner, Entrée : jouer",True,(200,200,200))
+    
+    # Info + boutons page
+    font_small = pygame.font.Font(None,30)
+    info = font_small.render("Flèches : sélectionner, Entrée : jouer",True,(200,200,200))
     screen.blit(info,(WIDTH//2-info.get_width()//2,HEIGHT-50))
+    
+    # Boutons page
+    page_info = font_small.render(f"Page {current_page+1}/{total_pages}", True, (255,255,255))
+    screen.blit(page_info, (WIDTH//2-page_info.get_width()//2, HEIGHT-80))
+    
     pygame.display.flip()
 
 def handle_level_select_event(event):
-    global selected_level,state,player_x,player_y,platforms,barriers,scroll_x,background_image,level_data,enemies
-    if event.key==pygame.K_LEFT:
-        selected_level=(selected_level-1)%len(level_files)
-    elif event.key==pygame.K_RIGHT:
-        selected_level=(selected_level+1)%len(level_files)
-    elif event.key==pygame.K_UP:
-        if selected_level>=5:
-            selected_level-=5
-    elif event.key==pygame.K_DOWN:
-        if selected_level<5:
-            selected_level+=5
-    elif event.key==pygame.K_RETURN:
+    global selected_level, state, player_x, player_y, platforms, barriers, scroll_x, background_image, level_data, enemies
+    global current_page, levels_per_page
+
+    if event.key == pygame.K_LEFT:
+        if selected_level % 5 == 0 and selected_level > current_page*levels_per_page:
+            selected_level -= 1
+        elif selected_level % 5 != 0:
+            selected_level -= 1
+    elif event.key == pygame.K_RIGHT:
+        if selected_level % 5 == 4 and selected_level < (current_page+1)*levels_per_page-1 and selected_level < len(level_files)-1:
+            selected_level += 1
+        elif selected_level % 5 != 4:
+            selected_level += 1
+
+    elif event.key == pygame.K_UP:
+        if selected_level >= 5:
+            selected_level -= 5
+    elif event.key == pygame.K_DOWN:
+        if selected_level < 5:
+            selected_level += 5
+
+    if event.key == pygame.K_PAGEUP:
+        current_page = (current_page - 1) % total_pages
+        selected_level = current_page * levels_per_page
+    elif event.key == pygame.K_PAGEDOWN:
+        current_page = (current_page + 1) % total_pages
+        selected_level = current_page * levels_per_page
+    elif event.key == pygame.K_RETURN:
+        # ... reste inchangé
+
         # --- Charger le niveau ---
         level_data = load_level_json(level_files[selected_level])
         if level_data:
