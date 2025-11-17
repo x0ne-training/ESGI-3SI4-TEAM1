@@ -1,25 +1,32 @@
 # main.py
 
-# État du jeu
 position_joueur = "entrée"
 
-# Boucle principale du jeu
 while True:
     if position_joueur == "entrée":
         print("\nVous êtes à l'entrée sombre d'une grotte.")
-        print("Un courant d'air froid vient d'un tunnel à votre GAUCHE.")
-        print("Un faible écho résonne depuis un chemin à votre DROITE.")
-        print("Que faites-vous ? (gauche, droite)")
-
+        print("Actions possibles : gauche, droite")
         choix = input("> ").lower()
+        if choix == "gauche": position_joueur = "tunnel_venteux"
+        elif choix == "droite": position_joueur = "salle_echo"
+        elif choix == "quitter": break
+        else: print("Direction inconnue.")
 
-        if choix == "gauche":
-            position_joueur = "tunnel_venteux"
-        elif choix == "droite":
-            position_joueur = "salle_echo"
-        elif choix == "quitter":
-            break
-        else:
-            print("Je ne comprends pas cette direction.")
+    elif position_joueur == "tunnel_venteux":
+        print("\nLe vent siffle dans ce tunnel étroit.")
+        print("Vous pouvez seulement REVENIR sur vos pas.")
+        choix = input("> ").lower()
+        if choix == "revenir": position_joueur = "entrée"
+        elif choix == "quitter": break
+        else: print("Action impossible.")
+
+    elif position_joueur == "salle_echo":
+        print("\nVous êtes dans une grande salle. Le moindre bruit crée un écho assourdissant.")
+        print("Vous pouvez REVENIR ou avancer vers une LUEUR au loin.")
+        choix = input("> ").lower()
+        if choix == "revenir": position_joueur = "entrée"
+        elif choix == "lueur": print("C'est une impasse ! L'aventure s'arrête ici.") ; break # Fin simple
+        elif choix == "quitter": break
+        else: print("Action impossible.")
 
 print("Merci d'avoir joué !")
