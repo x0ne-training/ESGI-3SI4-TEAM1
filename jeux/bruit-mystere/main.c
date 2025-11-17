@@ -16,8 +16,8 @@ int main() {
 
     printf("\nScore final : %d / 5\n", score);
 
-    if (score == 5) printf("🔥 GENIE ABSOLU DU SON !");
-    else if (score >= 3) printf("😎 Pas mal !");
+    if (score == 5) printf("GENIE ABSOLU DU SON !");
+    else if (score >= 3) printf(" Pas mal !");
     else printf("Tu es sourd ou quoi ?");
 
     printf("\n");
