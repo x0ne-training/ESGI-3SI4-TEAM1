@@ -3,6 +3,7 @@
 
 # Boucle principale du jeu
 while True:
-    pass # "pass" est une instruction qui ne fait rien, en attendant de la remplir
+    choix = input("> ")
+    print(f"Vous avez tapé : {choix}") # On affiche ce que le joueur a écrit pour vérifier
 
 print("Merci d'avoir joué !")
