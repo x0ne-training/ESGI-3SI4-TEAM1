@@ -11,7 +11,7 @@ SERPENT_SYMBOLE = "O"
 NOURRITURE_SYMBOLE = "*"
 
 # --- État du jeu ---
-serpent = [[HAUTEUR // 2, LARGEUR // 4]]
+serpent = [[HAUTEUR // 2, LARGEUR // 4], [HAUTEUR // 2, LARGEUR // 4 - 1]] # Serpent de taille 2
 nourriture = [random.randint(0, HAUTEUR-1), random.randint(0, LARGEUR-1)]
 direction = "DROITE" 
 partie_terminee = False
@@ -49,9 +49,15 @@ while not partie_terminee:
     elif direction == "GAUCHE": nouvelle_tete = [tete_y, tete_x - 1]
     elif direction == "DROITE": nouvelle_tete = [tete_y, tete_x + 1]
 
-    # Vérification des collisions avec les murs
-    ny, nx = nouvelle_tete
-    if nx < 0 or nx >= LARGEUR or ny < 0 or ny >= HAUTEUR:
+    # Collisions Murs
+    if nouvelle_tete[0] < 0 or nouvelle_tete[0] >= HAUTEUR or nouvelle_tete[1] < 0 or nouvelle_tete[1] >= LARGEUR:
+        print("Collision avec un mur !")
+        partie_terminee = True
+        continue
+    
+    # Collisions Serpent
+    if nouvelle_tete in serpent:
+        print("Vous vous êtes mordu la queue !")
         partie_terminee = True
         continue
 
@@ -62,4 +68,4 @@ while not partie_terminee:
     else:
         serpent.pop()
 
-print("Collision avec un mur ! Jeu terminé.")
+print("Jeu terminé.")
