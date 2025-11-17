@@ -5,7 +5,7 @@
 int ask_sound(const char *sound, const char *expected) {
     char answer[50];
 
-    printf("👉 Quel est ce son ? : \"%s\"\n> ", sound);
+    printf("Quel est ce son ? : \"%s\"\n> ", sound);
     scanf("%49s", answer);
 
     // Convertir en minuscules
