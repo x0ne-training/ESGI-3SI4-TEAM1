@@ -8,6 +8,10 @@ def gerer_tunnel_venteux():
     if choix == "fissure": return "salle_tresor" # Nouvelle salle !
     return "tunnel_venteux"
 
+def afficher_aide():
+    print("\n--- AIDE ---")
+    print("Commandes générales : 'quitter', 'aide', 'inventaire'")
+    print("Actions en jeu : regardez les options affichées (ex: 'gauche', 'prendre cle')")
 
 def gerer_entree():
     print("\nVous êtes à l'entrée sombre d'une grotte.")
@@ -73,20 +77,15 @@ def gerer_tunnel_venteux():
 
 # --- Boucle principale ---
 position_joueur = "entrée"
-while True:
+quitter_jeu = False
+while not quitter_jeu:
     print(f"Inventaire : {inventaire}")
 
     if position_joueur in salles:
         fonction_salle = salles[position_joueur]
-        position_joueur = fonction_salle()
-    elif position_joueur == "salle_tresor":
-        print("\nLa clé tourne parfaitement. Vous trouvez un coffre rempli d'or ! Vous avez gagné !")
-        break
-    elif position_joueur == "impasse":
-        print("\nC'est une impasse ! L'aventure s'arrête ici.")
-        break
-    else: # Sécurité au cas où une position serait invalide
-        print("Erreur: Le joueur est perdu.")
-        break
+        # On ne peut pas gérer 'aide'/'quitter' dans les fonctions,
+        # donc on le gère avant d'appeler la fonction de salle.
+        # C'est une limite de notre design actuel, mais acceptable.
+        position_joueur = fonction_salle() # Pour ce commit, on garde la 
 
 print("Merci d'avoir joué !")
