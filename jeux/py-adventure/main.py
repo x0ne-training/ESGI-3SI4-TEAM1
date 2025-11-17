@@ -35,6 +35,22 @@ def gerer_salle_echo():
 
 inventaire = []
 
+
+def gerer_salle_echo():
+    print("\nVous êtes dans une grande salle. Le moindre bruit crée un écho.")
+    print("Au centre, une vieille CLÉ brille sur un rocher.")
+    print("Actions possibles : revenir, lueur, prendre cle")
+    choix = input("> ").lower()
+    if choix == "revenir": return "entrée"
+    if choix == "lueur": return "impasse"
+    if choix == "prendre cle":
+        if "clé" not in inventaire:
+            print("Vous avez pris la clé.")
+            inventaire.append("clé")
+        else:
+            print("Vous avez déjà la clé.")
+    return "salle_echo"
+
 # --- Boucle principale ---
 position_joueur = "entrée"
 while True:
