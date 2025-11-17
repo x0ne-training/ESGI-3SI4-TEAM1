@@ -1,5 +1,14 @@
 # main.py
 
+def gerer_tunnel_venteux():
+    print("\nLe vent siffle dans ce tunnel étroit. Vous apercevez une FISSURE dans le mur.")
+    print("Actions possibles : revenir, fissure")
+    choix = input("> ").lower()
+    if choix == "revenir": return "entrée"
+    if choix == "fissure": return "salle_tresor" # Nouvelle salle !
+    return "tunnel_venteux"
+
+
 def gerer_entree():
     print("\nVous êtes à l'entrée sombre d'une grotte.")
     print("Actions possibles : gauche, droite")
@@ -26,18 +35,14 @@ def gerer_salle_echo():
 # --- Boucle principale ---
 position_joueur = "entrée"
 while True:
-    if position_joueur == "entrée":
-        position_joueur = gerer_entree()
-    elif position_joueur == "tunnel_venteux":
-        position_joueur = gerer_tunnel_venteux()
-    elif position_joueur == "salle_echo":
-        position_joueur = gerer_salle_echo()
+    if position_joueur == "entrée": position_joueur = gerer_entree()
+    elif position_joueur == "tunnel_venteux": position_joueur = gerer_tunnel_venteux()
+    elif position_joueur == "salle_echo": position_joueur = gerer_salle_echo()
+    elif position_joueur == "salle_tresor":
+        print("\nDerrière la fissure, vous trouvez un coffre rempli d'or ! Vous avez gagné !")
+        break
     elif position_joueur == "impasse":
         print("\nC'est une impasse ! L'aventure s'arrête ici.")
-        break
-    
-    # On ajoute une option globale pour quitter
-    if position_joueur == "quitter": # Si une fonction renvoyait "quitter"
         break
 
 print("Merci d'avoir joué !")
