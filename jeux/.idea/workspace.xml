@@ -22,7 +22,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cb2e33df-cda4-4a42-800f-772e4363c070" name="Changes" comment="fix: inclusion des en-têtes">
-      <change beforePath="$PROJECT_DIR$/mensonge-ok/functions.h" beforeDir="false" afterPath="$PROJECT_DIR$/mensonge-ok/functions.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mensonge-ok/functions.c" beforeDir="false" afterPath="$PROJECT_DIR$/mensonge-ok/functions.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,7 +85,7 @@
       <workItem from="1761042259132" duration="1469000" />
       <workItem from="1761053015749" duration="4000" />
       <workItem from="1761119529743" duration="917000" />
-      <workItem from="1763369314181" duration="1186000" />
+      <workItem from="1763369314181" duration="1614000" />
     </task>
     <task id="LOCAL-00001" summary="add: définition des variable d'environnements">
       <option name="closed" value="true" />
