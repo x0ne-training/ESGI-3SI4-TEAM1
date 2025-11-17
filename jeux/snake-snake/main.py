@@ -17,20 +17,14 @@ direction = "DROITE"
 partie_terminee = False
 
 # --- Fonctions ---
-def effacer_ecran():
-    os.system('cls' if os.name == 'nt' else 'clear')
+def effacer_ecran(): os.system('cls' if os.name == 'nt' else 'clear')
 
 def afficher_grille(grille, serpent_a_afficher, nourriture_a_afficher):
     effacer_ecran()
     grille_affichee = copy.deepcopy(grille)
-    # Placer le serpent
     for segment in serpent_a_afficher:
-        y, x = segment
-        grille_affichee[y][x] = SERPENT_SYMBOLE
-    # Placer la nourriture
-    y, x = nourriture_a_afficher
-    grille_affichee[y][x] = NOURRITURE_SYMBOLE
-        
+        grille_affichee[segment[0]][segment[1]] = SERPENT_SYMBOLE
+    grille_affichee[nourriture_a_afficher[0]][nourriture_a_afficher[1]] = NOURRITURE_SYMBOLE
     print("+" + "-" * LARGEUR + "+")
     for ligne in grille_affichee:
         print("|" + "".join(ligne) + "|")
@@ -56,7 +50,12 @@ while not partie_terminee:
     elif direction == "DROITE": nouvelle_tete = [tete_y, tete_x + 1]
 
     serpent.insert(0, nouvelle_tete)
-    serpent.pop()
+
+    # Si le serpent mange, il grandit (on ne retire pas la queue)
+    if serpent[0] == nourriture:
+        pass # La nourriture sera replacée au prochain commit
+    else:
+        serpent.pop()
     
     if serpent[0][1] >= LARGEUR: partie_terminee = True
 
