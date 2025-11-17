@@ -16,10 +16,10 @@ int ask(const char *question, int truth) {
     int user_says_yes = strcmp(answer, "YES") == 0;
 
     if (user_says_yes == truth) {
-        printf("HA ! Tu as dit la vérité !! Tu perds !\n");
+        printf("HA ! Tu as dit la verite !! Tu perds !\n");
         return 0;
     }
 
-    printf("Bien joué… tu mens comme un pro !\n");
+    printf("Bien joue... tu mens comme un pro !\n");
     return 1;
 }
