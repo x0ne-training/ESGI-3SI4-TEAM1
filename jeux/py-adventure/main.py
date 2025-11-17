@@ -3,7 +3,11 @@
 
 # Boucle principale du jeu
 while True:
-    choix = input("> ")
-    print(f"Vous avez tapé : {choix}") # On affiche ce que le joueur a écrit pour vérifier
+    choix = input("> ").lower() # .lower() pour ne pas être sensible à la casse (majuscules/minuscules)
+
+    if choix == "quitter":
+        break # On sort de la boucle
+    else:
+        print(f"Commande inconnue : '{choix}'")
 
 print("Merci d'avoir joué !")
