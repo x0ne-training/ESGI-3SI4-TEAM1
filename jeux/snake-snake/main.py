@@ -1,6 +1,7 @@
 # main.py
 # Projet pour créer le jeu Snake en mode texte.
 import copy
+import time
 
 # --- Constantes ---
 LARGEUR = 20
@@ -8,7 +9,8 @@ HAUTEUR = 10
 SERPENT_SYMBOLE = "O"
 
 # --- État du jeu ---
-serpent = [[HAUTEUR // 2, LARGEUR // 2]]
+serpent = [[HAUTEUR // 2, LARGEUR // 4]]
+direction = "DROITE" # "HAUT", "BAS", "GAUCHE", "DROITE"
 partie_terminee = False
 
 # --- Fonctions ---
@@ -30,7 +32,20 @@ grille_jeu = [[" " for _ in range(LARGEUR)] for _ in range(HAUTEUR)]
 # --- Boucle Principale ---
 while not partie_terminee:
     afficher_grille(grille_jeu, serpent)
-    # Pour l'instant, on arrête la boucle manuellement
-    partie_terminee = True 
+    time.sleep(0.5) # Petite pause pour voir le mouvement
+    
+    # 1. Calculer la nouvelle tête
+    tete_y, tete_x = serpent[0]
+    if direction == "DROITE":
+        nouvelle_tete = [tete_y, tete_x + 1]
+    # (on ajoutera les autres directions plus tard)
+
+    # 2. Mettre à jour le serpent
+    serpent.insert(0, nouvelle_tete) # Ajoute la nouvelle tête
+    serpent.pop() # Retire l'ancienne queue
+    
+    # Condition de fin temporaire
+    if serpent[0][1] >= LARGEUR -1:
+        partie_terminee = True
 
 print("Jeu terminé !")
