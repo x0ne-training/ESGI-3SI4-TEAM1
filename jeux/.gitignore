@@ -1,3 +1,6 @@
-.idea/
-.idea/
+# IntelliJ
+/.idea/*
+!/.idea/codeStyles/
+!/.idea/runConfigurations/
+.idea/workspace.xml
 .idea/
