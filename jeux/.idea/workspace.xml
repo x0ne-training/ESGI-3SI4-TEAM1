@@ -22,7 +22,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cb2e33df-cda4-4a42-800f-772e4363c070" name="Changes" comment="fix: inclusion des en-têtes">
-      <change beforePath="$PROJECT_DIR$/mensonge-ok/MakeFile" beforeDir="false" afterPath="$PROJECT_DIR$/mensonge-ok/MakeFile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mensonge-ok/functions.o" beforeDir="false" afterPath="$PROJECT_DIR$/mensonge-ok/functions.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mensonge-ok/main.o" beforeDir="false" afterPath="$PROJECT_DIR$/mensonge-ok/main.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mensonge-ok/mensonge.exe" beforeDir="false" afterPath="$PROJECT_DIR$/mensonge-ok/mensonge.exe" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,6 +55,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -85,7 +90,7 @@
       <workItem from="1761042259132" duration="1469000" />
       <workItem from="1761053015749" duration="4000" />
       <workItem from="1761119529743" duration="917000" />
-      <workItem from="1763369314181" duration="2288000" />
+      <workItem from="1763369314181" duration="3762000" />
     </task>
     <task id="LOCAL-00001" summary="add: définition des variable d'environnements">
       <option name="closed" value="true" />
