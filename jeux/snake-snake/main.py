@@ -51,9 +51,8 @@ while not partie_terminee:
 
     serpent.insert(0, nouvelle_tete)
 
-    # Si le serpent mange, il grandit (on ne retire pas la queue)
     if serpent[0] == nourriture:
-        pass # La nourriture sera replacée au prochain commit
+        nourriture = [random.randint(0, HAUTEUR-1), random.randint(0, LARGEUR-1)]
     else:
         serpent.pop()
     
