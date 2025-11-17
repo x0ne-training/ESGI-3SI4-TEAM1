@@ -32,9 +32,13 @@ def gerer_salle_echo():
     if choix == "lueur": return "impasse"
     return "salle_echo"
 
+
+inventaire = []
+
 # --- Boucle principale ---
 position_joueur = "entrée"
 while True:
+    print(f"Inventaire : {inventaire}") # Affiche l'inventaire à chaque tour
     if position_joueur == "entrée": position_joueur = gerer_entree()
     elif position_joueur == "tunnel_venteux": position_joueur = gerer_tunnel_venteux()
     elif position_joueur == "salle_echo": position_joueur = gerer_salle_echo()
