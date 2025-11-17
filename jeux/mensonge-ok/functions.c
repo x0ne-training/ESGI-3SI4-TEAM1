@@ -13,4 +13,13 @@ int ask(const char *question, int truth) {
         if (answer[i] >= 'a' && answer[i] <= 'z')
             answer[i] -= 32;
 
-   
+    int user_says_yes = strcmp(answer, "YES") == 0;
+
+    if (user_says_yes == truth) {
+        printf("HA ! Tu as dit la vérité !! Tu perds !\n");
+        return 0;
+    }
+
+    printf("Bien joué… tu mens comme un pro !\n");
+    return 1;
+}
