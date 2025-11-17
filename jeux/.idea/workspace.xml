@@ -21,7 +21,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cb2e33df-cda4-4a42-800f-772e4363c070" name="Changes" comment="fix: inclusion des en-têtes" />
+    <list default="true" id="cb2e33df-cda4-4a42-800f-772e4363c070" name="Changes" comment="fix: inclusion des en-têtes">
+      <change beforePath="$PROJECT_DIR$/mensonge-ok/functions.h" beforeDir="false" afterPath="$PROJECT_DIR$/mensonge-ok/functions.h" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -56,7 +58,7 @@
     "RunOnceActivity.west.config.association.type.startup.service": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "dev/lucie/mensonge-ok",
     "last_opened_file_path": "D:/ESGI/3eme_annee/trimestre_un/c/exercices",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -83,7 +85,7 @@
       <workItem from="1761042259132" duration="1469000" />
       <workItem from="1761053015749" duration="4000" />
       <workItem from="1761119529743" duration="917000" />
-      <workItem from="1763369314181" duration="326000" />
+      <workItem from="1763369314181" duration="1155000" />
     </task>
     <task id="LOCAL-00001" summary="add: définition des variable d'environnements">
       <option name="closed" value="true" />
