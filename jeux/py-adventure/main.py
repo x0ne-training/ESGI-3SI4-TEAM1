@@ -35,6 +35,11 @@ def gerer_salle_echo():
 
 inventaire = []
 
+salles = {
+    "entrée": gerer_entree,
+    "tunnel_venteux": gerer_tunnel_venteux,
+    "salle_echo": gerer_salle_echo,
+}
 
 def gerer_salle_echo():
     print("\nVous êtes dans une grande salle. Le moindre bruit crée un écho.")
@@ -69,15 +74,19 @@ def gerer_tunnel_venteux():
 # --- Boucle principale ---
 position_joueur = "entrée"
 while True:
-    print(f"Inventaire : {inventaire}") # Affiche l'inventaire à chaque tour
-    if position_joueur == "entrée": position_joueur = gerer_entree()
-    elif position_joueur == "tunnel_venteux": position_joueur = gerer_tunnel_venteux()
-    elif position_joueur == "salle_echo": position_joueur = gerer_salle_echo()
+    print(f"Inventaire : {inventaire}")
+
+    if position_joueur in salles:
+        fonction_salle = salles[position_joueur]
+        position_joueur = fonction_salle()
     elif position_joueur == "salle_tresor":
-        print("\nDerrière la fissure, vous trouvez un coffre rempli d'or ! Vous avez gagné !")
+        print("\nLa clé tourne parfaitement. Vous trouvez un coffre rempli d'or ! Vous avez gagné !")
         break
     elif position_joueur == "impasse":
         print("\nC'est une impasse ! L'aventure s'arrête ici.")
+        break
+    else: # Sécurité au cas où une position serait invalide
+        print("Erreur: Le joueur est perdu.")
         break
 
 print("Merci d'avoir joué !")
