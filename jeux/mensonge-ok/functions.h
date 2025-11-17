@@ -7,4 +7,4 @@
 // Retourne 1 si le joueur continue, 0 si il a perdu.
 int ask(const char *question, int truth);
 
-#endif
+
