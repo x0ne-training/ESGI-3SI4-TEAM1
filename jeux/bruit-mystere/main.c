@@ -8,4 +8,8 @@ int main() {
     printf("Devine à quoi correspond le bruit !\n");
     printf("(Réponds avec un mot : ex: chat, voiture, explosion)\n\n");
 
-    
+    score += ask_sound("MIAOUUUUUU !!", "chat");
+    score += ask_sound("BROOOOOOMMMM", "voiture");
+    score += ask_sound("PLOP SPLATCH", "eau");
+    score += ask_sound("BIP BIP BIP BIP", "alarme");
+    score += ask_sound("BOUM", "explosion");
