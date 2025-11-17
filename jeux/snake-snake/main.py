@@ -49,13 +49,17 @@ while not partie_terminee:
     elif direction == "GAUCHE": nouvelle_tete = [tete_y, tete_x - 1]
     elif direction == "DROITE": nouvelle_tete = [tete_y, tete_x + 1]
 
+    # Vérification des collisions avec les murs
+    ny, nx = nouvelle_tete
+    if nx < 0 or nx >= LARGEUR or ny < 0 or ny >= HAUTEUR:
+        partie_terminee = True
+        continue
+
     serpent.insert(0, nouvelle_tete)
 
     if serpent[0] == nourriture:
         nourriture = [random.randint(0, HAUTEUR-1), random.randint(0, LARGEUR-1)]
     else:
         serpent.pop()
-    
-    if serpent[0][1] >= LARGEUR: partie_terminee = True
 
-print("Jeu terminé !")
+print("Collision avec un mur ! Jeu terminé.")
