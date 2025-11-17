@@ -11,20 +11,23 @@ SERPENT_SYMBOLE = "O"
 NOURRITURE_SYMBOLE = "*"
 
 # --- État du jeu ---
-serpent = [[HAUTEUR // 2, LARGEUR // 4], [HAUTEUR // 2, LARGEUR // 4 - 1]] # Serpent de taille 2
+serpent = [[HAUTEUR // 2, LARGEUR // 4], [HAUTEUR // 2, LARGEUR // 4 - 1]]
 nourriture = [random.randint(0, HAUTEUR-1), random.randint(0, LARGEUR-1)]
 direction = "DROITE" 
+score = 0
 partie_terminee = False
 
 # --- Fonctions ---
 def effacer_ecran(): os.system('cls' if os.name == 'nt' else 'clear')
 
-def afficher_grille(grille, serpent_a_afficher, nourriture_a_afficher):
+def afficher_grille(grille, serpent_a_afficher, nourriture_a_afficher, score_a_afficher):
     effacer_ecran()
     grille_affichee = copy.deepcopy(grille)
     for segment in serpent_a_afficher:
         grille_affichee[segment[0]][segment[1]] = SERPENT_SYMBOLE
     grille_affichee[nourriture_a_afficher[0]][nourriture_a_afficher[1]] = NOURRITURE_SYMBOLE
+    
+    print(f"Score : {score_a_afficher}")
     print("+" + "-" * LARGEUR + "+")
     for ligne in grille_affichee:
         print("|" + "".join(ligne) + "|")
@@ -35,7 +38,7 @@ grille_jeu = [[" " for _ in range(LARGEUR)] for _ in range(HAUTEUR)]
 
 # --- Boucle Principale ---
 while not partie_terminee:
-    afficher_grille(grille_jeu, serpent, nourriture)
+    afficher_grille(grille_jeu, serpent, nourriture, score)
     
     choix = input("Votre direction (z,q,s,d) ? ").lower()
     if choix == 'z': direction = "HAUT"
@@ -49,13 +52,11 @@ while not partie_terminee:
     elif direction == "GAUCHE": nouvelle_tete = [tete_y, tete_x - 1]
     elif direction == "DROITE": nouvelle_tete = [tete_y, tete_x + 1]
 
-    # Collisions Murs
     if nouvelle_tete[0] < 0 or nouvelle_tete[0] >= HAUTEUR or nouvelle_tete[1] < 0 or nouvelle_tete[1] >= LARGEUR:
         print("Collision avec un mur !")
         partie_terminee = True
         continue
     
-    # Collisions Serpent
     if nouvelle_tete in serpent:
         print("Vous vous êtes mordu la queue !")
         partie_terminee = True
@@ -64,8 +65,9 @@ while not partie_terminee:
     serpent.insert(0, nouvelle_tete)
 
     if serpent[0] == nourriture:
+        score += 10
         nourriture = [random.randint(0, HAUTEUR-1), random.randint(0, LARGEUR-1)]
     else:
         serpent.pop()
 
-print("Jeu terminé.")
+print(f"Jeu terminé. Score final : {score}")
