@@ -51,6 +51,21 @@ def gerer_salle_echo():
             print("Vous avez déjà la clé.")
     return "salle_echo"
 
+
+def gerer_tunnel_venteux():
+    print("\nLe vent siffle. Vous apercevez une FISSURE avec une serrure ancienne.")
+    print("Actions possibles : revenir, utiliser cle")
+    choix = input("> ").lower()
+    if choix == "revenir": return "entrée"
+    if choix == "utiliser cle":
+        if "clé" in inventaire:
+            return "salle_tresor"
+        else:
+            print("La serrure est solide. Il vous manque la clé.")
+            return "tunnel_venteux"
+    return "tunnel_venteux"
+
+
 # --- Boucle principale ---
 position_joueur = "entrée"
 while True:
