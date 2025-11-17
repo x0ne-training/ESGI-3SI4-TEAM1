@@ -13,3 +13,13 @@ int main() {
     score += ask_sound("PLOP SPLATCH", "eau");
     score += ask_sound("BIP BIP BIP BIP", "alarme");
     score += ask_sound("BOUM", "explosion");
+
+    printf("\nScore final : %d / 5\n", score);
+
+    if (score == 5) printf("🔥 GENIE ABSOLU DU SON !");
+    else if (score >= 3) printf("😎 Pas mal !");
+    else printf("Tu es sourd ou quoi ?");
+
+    printf("\n");
+    return 0;
+}
