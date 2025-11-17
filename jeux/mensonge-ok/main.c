@@ -11,3 +11,7 @@ int main(void) {
     if (!ask("Est-ce qu'une pizza est liquide ?", 0)) return 0;
     if (!ask("Est-ce que tu mens en ce moment ?", 1)) return 0;
 
+    printf("\nTU AS GAGNÉ !!!\n");
+    printf(" Tu es officiellement un menteur professionnel.\n");
+    return 0;
+}
