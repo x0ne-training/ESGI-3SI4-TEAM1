@@ -21,9 +21,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cb2e33df-cda4-4a42-800f-772e4363c070" name="Changes" comment="fix: inclusion des en-têtes">
-      <change beforePath="$PROJECT_DIR$/bruit-mystere/sounds.h" beforeDir="false" afterPath="$PROJECT_DIR$/bruit-mystere/sounds.h" afterDir="false" />
-    </list>
+    <list default="true" id="cb2e33df-cda4-4a42-800f-772e4363c070" name="Changes" comment="fix: inclusion des en-têtes" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
