@@ -513,8 +513,13 @@ def draw_level_select(screen):
     
     pygame.display.flip()
 
+level_end_options = ["Retour", "Suivant"]
+selected_level_end_option = 0
+
 def draw_level_end(screen, player_health, max_health):
+    global level_end_options, selected_level_end_option
     screen.fill((20, 20, 50))  # fond violet sombre
+
     font_title = pygame.font.Font(None, 80)
     title = font_title.render("Niveau Terminé !", True, (255, 255, 0))
     screen.blit(title, (WIDTH//2 - title.get_width()//2, HEIGHT//4))
@@ -525,12 +530,32 @@ def draw_level_end(screen, player_health, max_health):
     screen.blit(health_text, (WIDTH//2 - health_text.get_width()//2, HEIGHT//2))
 
     # Optionnel : instructions
-    font_small = pygame.font.Font(None, 30)
-    info_text = font_small.render("Appuyez sur Entrée pour continuer", True, (255, 255, 255))
-    screen.blit(info_text, (WIDTH//2 - info_text.get_width()//2, HEIGHT*3//4))
+    font_option = pygame.font.Font(None, 50)
+    for i, option in enumerate(level_end_options):
+        color = (255, 255, 0) if i == selected_level_end_option else (200, 200, 200)
+        text = font_option.render(option, True, color)
+        screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT//2 + 70 + i*60))
 
     pygame.display.flip()
 
+def handle_level_end_event(event):
+    global state, selected_level_end_option, selected_level, current_page
+    if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_UP:
+            selected_level_end_option = (selected_level_end_option - 1) % len(level_end_options)
+        elif event.key == pygame.K_DOWN:
+            selected_level_end_option = (selected_level_end_option + 1) % len(level_end_options)
+        elif event.key == pygame.K_RETURN:
+            if level_end_options[selected_level_end_option] == "Retour":
+                state = LEVEL_SELECT
+                reset_player()
+            elif level_end_options[selected_level_end_option] == "Suivant":
+                # passer au niveau suivant
+                if selected_level + 1 < len(level_files):
+                    selected_level += 1
+                else:
+                    selected_level = 0
+                load_level_by_index(selected_level)
 
 def handle_level_select_event(event):
     global selected_level, state, player_x, player_y, platforms, barriers, scroll_x, background_image, level_data, enemies
@@ -615,6 +640,54 @@ def load_level_json(filename):
         print(f"❌ Niveau {filename} invalide !")
         return None
     return data
+
+def load_level_by_index(index):
+    global level_data, player_x, player_y, platforms, barriers, enemies
+    global finish_point, background_image, scroll_x, player_health, state
+
+    if index < 0 or index >= len(level_files):
+        print(f"❌ Index de niveau invalide : {index}")
+        return False
+
+    level_data = load_level_json(level_files[index])
+    if not level_data:
+        return False
+
+    # Position + objets
+    player_x, player_y = level_data["player_start"]
+    platforms = [Platform(p["x"], p["y"], p["width"], p["height"]) for p in level_data["platforms"]]
+
+    barriers = []
+    if "barriers" in level_data:
+        for b in level_data["barriers"]:
+            barriers.append(Barrier(b["x"], b["y"], b["width"], b["height"]))
+
+    enemies = []
+    if "enemies" in level_data:
+        for e in level_data["enemies"]:
+            enemy_type = e.get("type", "wolf")
+            enemies.append(Enemy(e["x"], e["y"], enemy_type))
+
+    finish_point = None
+    if "finish" in level_data:
+        f = level_data["finish"]
+        finish_point = FinishPoint(f["x"], f["y"], f.get("width", 50), f.get("height", 50))
+
+    # Fond biome
+    biome_path = os.path.join(base_path, r"levels\biome", level_data["biome"])
+    if os.path.exists(biome_path):
+        background_image = pygame.image.load(biome_path).convert_alpha()
+        background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
+    else:
+        background_image = None
+
+    # Réinitialisations
+    reset_player()
+    player_health = max_health
+    scroll_x = 0
+    state = GAME
+    return True
+
 
 # --- GESTION ANIMATIONS (PLAYER) ---
 frame_indices = {name:0 for name in ["idle","run","jump","fall","attack","dash","dash_attack","crouch","slide"]}
@@ -740,10 +813,6 @@ while running:
                 handle_level_select_event(event)
                 if event.key == pygame.K_ESCAPE:
                     state = MENU
-            elif state == LEVEL_END:
-                if event.key == pygame.K_RETURN:
-                    state = LEVEL_SELECT
-                    reset_player()
             elif state == OPTIONS:
                 if event.key == pygame.K_ESCAPE:
                     state = MENU
@@ -763,6 +832,7 @@ while running:
         continue
     elif state == LEVEL_END:
         draw_level_end(screen, level_end_health, max_health)
+        handle_level_end_event(event)
     elif state == GAME:
         moving = False
         player_velocity_x = 0
