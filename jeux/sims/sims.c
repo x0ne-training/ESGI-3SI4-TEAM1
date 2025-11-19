@@ -20,3 +20,8 @@ void init_sims(SimsState *s, const char *name) {
     s->alive = 1;
 }
 
+void init_game(Game *g) {
+    g->count = 0;
+    g->current = -1;
+}
+
