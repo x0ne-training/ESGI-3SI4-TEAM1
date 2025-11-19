@@ -39,3 +39,15 @@ void show_dragon(const Dragon *d) {
            d->alive ? "Vivant" : "Mort");
 }
 
+void list_dragons(const GameState *g) {
+    if (!g) return;
+    if (g->count == 0) {
+        printf("Tu n'as aucun dragon pour le moment.\n");
+        return;
+    }
+    for (int i = 0; i < g->count; ++i) {
+        printf("[%d] ", i+1);
+        show_dragon(&g->dragons[i]);
+    }
+}
+
