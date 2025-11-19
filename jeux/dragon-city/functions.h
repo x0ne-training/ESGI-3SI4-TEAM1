@@ -22,3 +22,10 @@ typedef struct {
     int day;
 } GameState;
 
+/* initialisation */
+void init_game(GameState *g);
+
+/* gestion dragons */
+bool add_dragon(GameState *g, const char *name);
+void list_dragons(const GameState *g);
+void show_dragon(const Dragon *d);
