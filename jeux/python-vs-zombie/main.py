@@ -29,13 +29,37 @@ class Game:
             print(row_str)
         print("-" * 30)
 
+    def get_user_input(self):
+        """Gets and processes the user's input."""
+        command = input("Enter command (plant [x] [y], quit): ").lower().split()
+        if not command:
+            return
+        if command[0] == "plant" and len(command) == 3:
+            try:
+                x, y = int(command[1]), int(command[2])
+                self.place_plant(x, y)
+            except ValueError:
+                print("Invalid coordinates.")
+        elif command[0] == "quit":
+            self.game_over = True
+        else:
+            print("Invalid command.")
+
+    def place_plant(self, x, y):
+        """Places a plant on the board if the position is valid."""
+        if not (0 <= x < 10 and 0 <= y < 5):
+            print("Invalid coordinates.")
+            return
+        if any(plant.x == x and plant.y == y for plant in self.plants):
+            print("A plant is already there.")
+            return
+        self.plants.append(Plant(x, y))
+
     def run(self):
         """The main game loop."""
-        # Example plant
-        self.plants.append(Plant(2, 2))
         while not self.game_over:
             self.print_board()
-            time.sleep(1)
+            self.get_user_input()
 
 if __name__ == "__main__":
     game = Game()
