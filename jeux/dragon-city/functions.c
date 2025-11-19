@@ -32,3 +32,10 @@ bool add_dragon(GameState *g, const char *name) {
     return true;
 }
 
+void show_dragon(const Dragon *d) {
+    if (!d) return;
+    printf("Nom : %s | Niveau : %d | PV : %d | Faim : %d | Att : %d | %s\n",
+           d->name, d->level, d->health, d->hunger, d->attack,
+           d->alive ? "Vivant" : "Mort");
+}
+
