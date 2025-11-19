@@ -45,7 +45,7 @@ class Game:
 
     def print_board(self):
         """Prints the current state of the game board."""
-        print(f"Sun: {self.sun}")
+        print(f"Turn: {self.turn} | Sun: {self.sun}")
         for y in range(5):
             row_str = ""
             for x in range(10):
