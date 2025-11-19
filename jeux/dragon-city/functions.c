@@ -17,3 +17,18 @@ void init_game(GameState *g) {
     g->day = 1;
     srand((unsigned)time(NULL));
 }
+
+bool add_dragon(GameState *g, const char *name) {
+    if (!g || !name) return false;
+    if (g->count >= MAX_DRAGONS) return false;
+    Dragon *d = &g->dragons[g->count++];
+    strncpy(d->name, name, NAME_LEN-1);
+    d->name[NAME_LEN-1] = '\0';
+    d->level = 1;
+    d->health = 100;
+    d->hunger = 0;
+    d->attack = 10;
+    d->alive = true;
+    return true;
+}
+
