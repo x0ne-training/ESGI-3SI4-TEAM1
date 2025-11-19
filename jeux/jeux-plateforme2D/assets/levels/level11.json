@@ -1,0 +1,12 @@
+{
+    "biome":"desert.png",
+    "player_start": [100, 500],
+    "platforms":[
+        {"x": 0, "y": 550, "width": 3000, "height": 50}
+    ],
+    "barriers":[
+    {"x": 0, "y": 400, "width": 50, "height": 150},
+    {"x": 3000, "y": 400, "width": 50, "height": 150}
+    ],
+    "finish": {"x": 2800, "y": 500, "width": 50, "height": 50}
+}
