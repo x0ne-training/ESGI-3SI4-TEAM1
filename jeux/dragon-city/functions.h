@@ -15,3 +15,10 @@ typedef struct {
     bool alive;
 } Dragon;
 
+typedef struct {
+    Dragon dragons[MAX_DRAGONS];
+    int count;
+    int gold;
+    int day;
+} GameState;
+
