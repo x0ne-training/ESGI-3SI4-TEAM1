@@ -74,6 +74,16 @@ class Game:
     def update_game_state(self):
         """Updates the state of all game objects for the current turn."""
         self.turn += 1
+        # Peashooters shoot
+        zombies_to_remove = []
+        for plant in self.plants:
+            if plant.char == "P":
+                for zombie in self.zombies:
+                    if zombie.y == plant.y and zombie.x > plant.x:
+                        zombies_to_remove.append(zombie)
+                        break
+        self.zombies = [z for z in self.zombies if z not in zombies_to_remove]
+
         # Zombies move
         for zombie in self.zombies:
             zombie.move()
