@@ -1,15 +1,17 @@
 import time
 import random
 
+PLANT_COSTS = {"P": 100}
 PEASHOOTER_DAMAGE = 20
 ZOMBIE_DAMAGE = 10
+INITIAL_SUN = 150
 
 class Plant:
     """Represents a plant on the board."""
-    def __init__(self, x, y):
+    def __init__(self, plant_type, x, y):
+        self.plant_type = plant_type
         self.x = x
         self.y = y
-        self.char = "P"
         self.health = 100
 
     def is_alive(self):
@@ -35,18 +37,20 @@ class Game:
         self.board = [["." for _ in range(10)] for _ in range(5)]
         self.plants = []
         self.zombies = []
+        self.sun = INITIAL_SUN
         self.turn = 0
         self.game_over = False
 
     def print_board(self):
         """Prints the current state of the game board."""
+        print(f"Sun: {self.sun}")
         for y in range(5):
             row_str = ""
             for x in range(10):
                 char_to_print = "."
                 for plant in self.plants:
                     if plant.x == x and plant.y == y:
-                        char_to_print = plant.char
+                        char_to_print = plant.plant_type
                         break
                 for zombie in self.zombies:
                     if int(zombie.x) == x and zombie.y == y:
@@ -58,13 +62,14 @@ class Game:
 
     def get_user_input(self):
         """Gets and processes the user's input."""
-        command = input("Enter command (plant [x] [y], quit): ").lower().split()
+        command = input("Enter command (plant [P] [x] [y], quit): ").lower().split()
         if not command:
             return
-        if command[0] == "plant" and len(command) == 3:
+        if command[0] == "plant" and len(command) == 4:
+            plant_type = command[1].upper()
             try:
-                x, y = int(command[1]), int(command[2])
-                self.place_plant(x, y)
+                x, y = int(command[2]), int(command[3])
+                self.place_plant(plant_type, x, y)
             except ValueError:
                 print("Invalid coordinates.")
         elif command[0] == "quit":
@@ -72,22 +77,29 @@ class Game:
         else:
             print("Invalid command.")
 
-    def place_plant(self, x, y):
-        """Places a plant on the board if the position is valid."""
+    def place_plant(self, plant_type, x, y):
+        """Places a plant on the board if the position is valid and there is enough sun."""
+        if plant_type not in PLANT_COSTS:
+            print("Invalid plant type.")
+            return
         if not (0 <= x < 10 and 0 <= y < 5):
             print("Invalid coordinates.")
             return
         if any(plant.x == x and plant.y == y for plant in self.plants):
             print("A plant is already there.")
             return
-        self.plants.append(Plant(x, y))
+        if self.sun >= PLANT_COSTS[plant_type]:
+            self.sun -= PLANT_COSTS[plant_type]
+            self.plants.append(Plant(plant_type, x, y))
+        else:
+            print("Not enough sun.")
 
     def update_game_state(self):
         """Updates the state of all game objects for the current turn."""
         self.turn += 1
         # Peashooters shoot
         for plant in self.plants:
-            if plant.char == "P":
+            if plant.plant_type == "P":
                 for zombie in self.zombies:
                     if zombie.y == plant.y and zombie.x > plant.x:
                         zombie.health -= PEASHOOTER_DAMAGE
