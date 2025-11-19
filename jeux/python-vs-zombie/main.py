@@ -2,6 +2,7 @@ import time
 import random
 
 PLANT_COSTS = {"P": 100, "S": 50}
+ZOMBIE_HEALTH = {"Z": 100, "B": 200}
 PEASHOOTER_DAMAGE = 20
 ZOMBIE_DAMAGE = 10
 INITIAL_SUN = 150
@@ -20,11 +21,11 @@ class Plant:
 
 class Zombie:
     """Represents a zombie on the board."""
-    def __init__(self, y):
+    def __init__(self, zombie_type, y):
+        self.zombie_type = zombie_type
         self.x = 9
         self.y = y
-        self.char = "Z"
-        self.health = 100
+        self.health = ZOMBIE_HEALTH[zombie_type]
 
     def is_alive(self):
         return self.health > 0
@@ -55,7 +56,7 @@ class Game:
                         break
                 for zombie in self.zombies:
                     if int(zombie.x) == x and zombie.y == y:
-                        char_to_print = zombie.char
+                        char_to_print = zombie.zombie_type
                         break
                 row_str += f" {char_to_print} "
             print(row_str)
@@ -122,8 +123,9 @@ class Game:
 
         # Spawn new zombies
         if self.turn % 5 == 0:
+            zombie_type = random.choice(list(ZOMBIE_HEALTH.keys()))
             y = random.randint(0, 4)
-            self.zombies.append(Zombie(y))
+            self.zombies.append(Zombie(zombie_type, y))
 
         # Check for game over
         for zombie in self.zombies:
