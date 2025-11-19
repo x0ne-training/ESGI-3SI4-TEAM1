@@ -13,7 +13,7 @@ static int clamp(int v, int a, int b) {
 void init_game(GameState *g) {
     if (!g) return;
     g->count = 0;
-    g->gold = 50;   // monnaie de départ
+    g->gold = 50;   // monnaie de depart
     g->day = 1;
     srand((unsigned)time(NULL));
 }
@@ -59,18 +59,18 @@ void feed_dragon(GameState *g, int idx) {
     }
     Dragon *d = &g->dragons[idx];
     if (!d->alive) {
-        printf("%s est mort(e) et ne peut pas être nourri(e).\n", d->name);
+        printf("%s est mort(e) et ne peut pas etre nourri(e).\n", d->name);
         return;
     }
     const int cost = 5;
     if (g->gold < cost) {
-        printf("Pas assez d'or (coût = %d).\n", cost);
+        printf("Pas assez d'or (cout = %d).\n", cost);
         return;
     }
     g->gold -= cost;
     d->hunger = clamp(d->hunger - 30, 0, 100);
     d->health = clamp(d->health + 10, 0, 100);
-    printf("%s a été nourri(e). Faim=%d PV=%d. Or restant: %d\n", d->name, d->hunger, d->health, g->gold);
+    printf("%s a ete nourri(e). Faim=%d PV=%d. Or restant: %d\n", d->name, d->hunger, d->health, g->gold);
 }
 
 void train_dragon(GameState *g, int idx) {
@@ -81,12 +81,12 @@ void train_dragon(GameState *g, int idx) {
     }
     Dragon *d = &g->dragons[idx];
     if (!d->alive) {
-        printf("%s est mort(e) et ne peut pas s'entraîner.\n", d->name);
+        printf("%s est mort(e) et ne peut pas s'entrainer.\n", d->name);
         return;
     }
     const int cost = 10;
     if (g->gold < cost) {
-        printf("Pas assez d'or (coût = %d).\n", cost);
+        printf("Pas assez d'or (cout = %d).\n", cost);
         return;
     }
     g->gold -= cost;
@@ -94,11 +94,11 @@ void train_dragon(GameState *g, int idx) {
     d->level += 1;
     d->hunger = clamp(d->hunger + 15, 0, 100);
     d->health = clamp(d->health - 5, 0, 100);
-    printf("%s s'est entraîné(e). Niveau=%d Att=%d PV=%d Faim=%d. Or restant: %d\n",
+    printf("%s s'est entraine(e). Niveau=%d Att=%d PV=%d Faim=%d. Or restant: %d\n",
            d->name, d->level, d->attack, d->health, d->hunger, g->gold);
     if (d->health <= 0) {
         d->alive = false;
-        printf("%s est mort(e) après l'entraînement...\n", d->name);
+        printf("%s est mort(e) apres l'entrainement...\n", d->name);
     }
 }
 
@@ -109,11 +109,9 @@ void pass_day(GameState *g) {
     for (int i = 0; i < g->count; ++i) {
         Dragon *d = &g->dragons[i];
         if (!d->alive) continue;
-        // chaque dragon produit or selon son niveau, mais la faim réduit la production
         int produced = 5 + d->level * 2;
         produced = produced * (100 - d->hunger) / 100;
         income += produced;
-        // évolution de la faim et de la santé
         d->hunger = clamp(d->hunger + 10, 0, 100);
         if (d->hunger > 80) {
             d->health = clamp(d->health - 10, 0, 100);
@@ -124,7 +122,7 @@ void pass_day(GameState *g) {
         }
     }
     g->gold += income;
-    printf("Jour %d : tes dragons ont rapporté %d or. Or total: %d\n", g->day, income, g->gold);
+    printf("Jour %d : tes dragons ont rapporte %d or. Or total: %d\n", g->day, income, g->gold);
 }
 
 void battle_random(GameState *g, int idx) {
@@ -139,33 +137,28 @@ void battle_random(GameState *g, int idx) {
         return;
     }
 
-    // crée un monstre simple
     int monster_level = clamp(d->level + (rand()%3 - 1), 1, d->level + 2);
     int monster_hp = 30 + monster_level * 10;
     int monster_attack = 5 + monster_level * 3;
 
-    printf("Un monstre de niveau %d apparaît ! PV=%d Att=%d\n", monster_level, monster_hp, monster_attack);
+    printf("Un monstre de niveau %d apparait ! PV=%d Att=%d\n", monster_level, monster_hp, monster_attack);
 
-    // combat tour par tour
     while (monster_hp > 0 && d->health > 0) {
-        // dragon attaque
         int dmg = d->attack + (rand()%5);
         monster_hp -= dmg;
-        printf("%s inflige %d dégâts. Monstre PV=%d\n", d->name, dmg, monster_hp > 0 ? monster_hp : 0);
+        printf("%s inflige %d degats. Monstre PV=%d\n", d->name, dmg, monster_hp > 0 ? monster_hp : 0);
         if (monster_hp <= 0) break;
-        // monstre attaque
         int mdmg = monster_attack + (rand()%4);
         d->health -= mdmg;
-        printf("Monstre inflige %d dégâts à %s. PV=%d\n", mdmg, d->name, d->health > 0 ? d->health : 0);
+        printf("Monstre inflige %d degats a %s. PV=%d\n", mdmg, d->name, d->health > 0 ? d->health : 0);
     }
 
     if (d->health > 0) {
         int reward = 10 + monster_level * 5;
         g->gold += reward;
-        printf("%s a vaincu le monstre ! Récompense : %d or. Or total : %d\n", d->name, reward, g->gold);
-        // petite augmentation d'expérience/attaque
+        printf("%s a vaincu le monstre ! Recompense : %d or. Or total : %d\n", d->name, reward, g->gold);
         d->attack += 1;
-        if (rand()%100 < 30) { // 30% chance de level up
+        if (rand()%100 < 30) {
             d->level += 1;
             printf("%s gagne un niveau ! Niveau %d\n", d->name, d->level);
         }
@@ -180,12 +173,12 @@ int read_int_range(int min, int max) {
     while (1) {
         if (scanf("%d", &v) != 1) {
             clear_input();
-            printf("Entrée invalide, réessaie : ");
+            printf("Entree invalide, reessaie : ");
             continue;
         }
         clear_input();
         if (v < min || v > max) {
-            printf("Choix hors-limites (%d-%d). Réessaie : ", min, max);
+            printf("Choix hors-limites (%d-%d). Reessaie : ", min, max);
             continue;
         }
         return v;
