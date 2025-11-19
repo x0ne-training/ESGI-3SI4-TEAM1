@@ -29,3 +29,15 @@ void init_game(GameState *g);
 bool add_dragon(GameState *g, const char *name);
 void list_dragons(const GameState *g);
 void show_dragon(const Dragon *d);
+
+/* actions */
+void feed_dragon(GameState *g, int idx);
+void train_dragon(GameState *g, int idx);
+void pass_day(GameState *g);
+void battle_random(GameState *g, int idx);
+
+/* utilitaires */
+int read_int_range(int min, int max);
+void clear_input(void);
+
+#endif /* FUNCTIONS_H */
