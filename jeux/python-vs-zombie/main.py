@@ -1,10 +1,11 @@
 import time
 import random
 
-PLANT_COSTS = {"P": 100}
+PLANT_COSTS = {"P": 100, "S": 50}
 PEASHOOTER_DAMAGE = 20
 ZOMBIE_DAMAGE = 10
 INITIAL_SUN = 150
+SUNFLOWER_SUN_PRODUCTION = 25
 
 class Plant:
     """Represents a plant on the board."""
@@ -62,7 +63,7 @@ class Game:
 
     def get_user_input(self):
         """Gets and processes the user's input."""
-        command = input("Enter command (plant [P] [x] [y], quit): ").lower().split()
+        command = input("Enter command (plant [P/S] [x] [y], quit): ").lower().split()
         if not command:
             return
         if command[0] == "plant" and len(command) == 4:
@@ -97,6 +98,11 @@ class Game:
     def update_game_state(self):
         """Updates the state of all game objects for the current turn."""
         self.turn += 1
+        # Sunflowers generate sun
+        for plant in self.plants:
+            if plant.plant_type == "S":
+                self.sun += SUNFLOWER_SUN_PRODUCTION
+
         # Peashooters shoot
         for plant in self.plants:
             if plant.plant_type == "P":
