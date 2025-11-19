@@ -2,6 +2,7 @@ import time
 import random
 
 PEASHOOTER_DAMAGE = 20
+ZOMBIE_DAMAGE = 10
 
 class Plant:
     """Represents a plant on the board."""
@@ -93,9 +94,14 @@ class Game:
                         break
         self.zombies = [z for z in self.zombies if z.is_alive()]
 
-        # Zombies move
+        # Zombies move and attack
         for zombie in self.zombies:
             zombie.move()
+            for plant in self.plants:
+                if int(zombie.x) == plant.x and zombie.y == plant.y:
+                    plant.health -= ZOMBIE_DAMAGE
+        self.plants = [p for p in self.plants if p.is_alive()]
+
         # Spawn new zombies
         if self.turn % 5 == 0:
             y = random.randint(0, 4)
