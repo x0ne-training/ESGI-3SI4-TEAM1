@@ -64,7 +64,7 @@ class Game:
 
     def get_user_input(self):
         """Gets and processes the user's input."""
-        command = input("Enter command (plant [P/S] [x] [y], quit): ").lower().split()
+        command = input("Enter command (plant [P/S] [x] [y], wait, quit): ").lower().split()
         if not command:
             return
         if command[0] == "plant" and len(command) == 4:
@@ -74,6 +74,8 @@ class Game:
                 self.place_plant(plant_type, x, y)
             except ValueError:
                 print("Invalid coordinates.")
+        elif command[0] == "wait":
+            return
         elif command[0] == "quit":
             self.game_over = True
         else:
