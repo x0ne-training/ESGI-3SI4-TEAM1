@@ -125,12 +125,20 @@ class Game:
             y = random.randint(0, 4)
             self.zombies.append(Zombie(y))
 
+        # Check for game over
+        for zombie in self.zombies:
+            if zombie.x < 0:
+                self.game_over = True
+                print("The zombies have reached your house! Game Over.")
+                return
+
     def run(self):
         """The main game loop."""
         while not self.game_over:
             self.print_board()
             self.get_user_input()
-            self.update_game_state()
+            if not self.game_over:
+                self.update_game_state()
 
 if __name__ == "__main__":
     game = Game()
