@@ -15,6 +15,9 @@ class Zombie:
         self.y = y
         self.char = "Z"
 
+    def move(self):
+        self.x -= 1
+
 class Game:
     """Manages the game state and logic."""
     def __init__(self):
@@ -71,6 +74,9 @@ class Game:
     def update_game_state(self):
         """Updates the state of all game objects for the current turn."""
         self.turn += 1
+        # Zombies move
+        for zombie in self.zombies:
+            zombie.move()
         # Spawn new zombies
         if self.turn % 5 == 0:
             y = random.randint(0, 4)
