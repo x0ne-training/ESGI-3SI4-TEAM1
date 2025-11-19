@@ -1,12 +1,18 @@
 import time
 import random
 
+PEASHOOTER_DAMAGE = 20
+
 class Plant:
     """Represents a plant on the board."""
     def __init__(self, x, y):
         self.x = x
         self.y = y
         self.char = "P"
+        self.health = 100
+
+    def is_alive(self):
+        return self.health > 0
 
 class Zombie:
     """Represents a zombie on the board."""
@@ -14,6 +20,10 @@ class Zombie:
         self.x = 9
         self.y = y
         self.char = "Z"
+        self.health = 100
+
+    def is_alive(self):
+        return self.health > 0
 
     def move(self):
         self.x -= 1
@@ -75,14 +85,13 @@ class Game:
         """Updates the state of all game objects for the current turn."""
         self.turn += 1
         # Peashooters shoot
-        zombies_to_remove = []
         for plant in self.plants:
             if plant.char == "P":
                 for zombie in self.zombies:
                     if zombie.y == plant.y and zombie.x > plant.x:
-                        zombies_to_remove.append(zombie)
+                        zombie.health -= PEASHOOTER_DAMAGE
                         break
-        self.zombies = [z for z in self.zombies if z not in zombies_to_remove]
+        self.zombies = [z for z in self.zombies if z.is_alive()]
 
         # Zombies move
         for zombie in self.zombies:
