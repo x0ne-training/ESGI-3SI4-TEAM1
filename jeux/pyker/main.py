@@ -12,13 +12,18 @@ def creer_paquet():
             paquet.append((valeur, couleur))
     return paquet
 
+def melanger_paquet(paquet):
+    """Melange le paquet de cartes."""
+    random.shuffle(paquet)
+
 def main():
     """
     Fonction principale du jeu.
     """
     print("Bienvenue au jeu de Poker !")
     paquet = creer_paquet()
-    print(f"Le paquet a {len(paquet)} cartes.")
+    melanger_paquet(paquet)
+    print("Le paquet a ete melange.")
 
 if __name__ == "__main__":
     main()
