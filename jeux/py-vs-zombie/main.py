@@ -18,6 +18,12 @@ class Zombie:
         self.y = y
         self.char = 'Z'
 
+class Pea:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.char = '-'
+
 # --- Utility Functions ---
 def clear_screen():
     """Clears the console screen."""
@@ -42,12 +48,18 @@ def print_board(board, game_objects):
 def main():
     """Main function to run the game."""
     board = create_board()
-    game_objects = []
+    game_objects = [Plant(1, 2)] # Start with one plant for testing
     game_turn = 0
 
     while True:
         game_turn += 1
         clear_screen()
+
+        # Plants shoot every 3 turns
+        if game_turn % 3 == 0:
+            for obj in game_objects:
+                if isinstance(obj, Plant):
+                    game_objects.append(Pea(obj.x + 1, obj.y))
 
         # Update game state
         for obj in game_objects:
