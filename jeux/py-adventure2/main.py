@@ -6,6 +6,8 @@ def afficher_salle(salle):
     """
     print(f"\n--- {salle['nom']} ---")
     print(salle['description'])
+    if salle['objets']:
+        print("Vous voyez ici : " + ", ".join(salle['objets']))
 
 def main():
     """
@@ -15,35 +17,51 @@ def main():
         'clairiere': {
             'nom': 'La Clairière du Départ',
             'description': "Vous êtes dans une clairière paisible. La lumière du soleil filtre à travers les arbres. Un chemin mène vers le nord.",
-            'sorties': {'nord': 'foret'}
+            'sorties': {'nord': 'foret'},
+            'objets': ['épée rouillée']
         },
         'foret': {
             'nom': 'La Forêt Sombre',
             'description': "Vous pénétrez dans une forêt dense. Les arbres sont hauts et bloquent la lumière. Un frisson parcourt votre échine. Le chemin du retour est au sud.",
-            'sorties': {'sud': 'clairiere'}
+            'sorties': {'sud': 'clairiere'},
+            'objets': []
         }
     }
-
-    salle_actuelle = 'clairiere'
+    salle_actuelle_id = 'clairiere'
+    inventaire_joueur = []
 
     print("Bienvenue dans Py-Adventure !")
     print("Tapez 'quitter' pour fermer le jeu.")
-    print("Commandes de déplacement : 'nord', 'sud', 'est', 'ouest'.")
+    print("Commandes : 'nord', 'sud', 'est', 'ouest', 'prendre [objet]'.")
 
-    afficher_salle(carte[salle_actuelle])
+    afficher_salle(carte[salle_actuelle_id])
 
     while True:
-        commande = input("> ").lower().strip()
+        commande_brute = input("> ").lower().strip()
+        mots = commande_brute.split()
+        commande = mots[0]
 
         if commande == "quitter":
             print("Merci d'avoir joué. À bientôt !")
             break
         elif commande in ['nord', 'sud', 'est', 'ouest']:
-            if commande in carte[salle_actuelle]['sorties']:
-                salle_actuelle = carte[salle_actuelle]['sorties'][commande]
-                afficher_salle(carte[salle_actuelle])
+            if commande in carte[salle_actuelle_id]['sorties']:
+                salle_actuelle_id = carte[salle_actuelle_id]['sorties'][commande]
+                afficher_salle(carte[salle_actuelle_id])
             else:
                 print("Vous ne pouvez pas aller par là.")
+        elif commande == "prendre":
+            if len(mots) > 1:
+                objet_a_prendre = " ".join(mots[1:])
+                salle_actuelle = carte[salle_actuelle_id]
+                if objet_a_prendre in salle_actuelle['objets']:
+                    salle_actuelle['objets'].remove(objet_a_prendre)
+                    inventaire_joueur.append(objet_a_prendre)
+                    print(f"Vous avez pris : {objet_a_prendre}.")
+                else:
+                    print(f"Il n'y a pas de '{objet_a_prendre}' ici.")
+            else:
+                print("Prendre quoi ?")
         else:
             print("Commande inconnue.")
 
