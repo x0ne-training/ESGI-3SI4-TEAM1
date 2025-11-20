@@ -1,4 +1,4 @@
-# Code for Commit 8
+# Code for Commit 9
 import time
 import os
 import random
@@ -19,6 +19,7 @@ class Zombie:
         self.x = x
         self.y = y
         self.char = 'Z'
+        self.health = 3 # Added health
 
 class Pea:
     def __init__(self, x, y):
@@ -69,30 +70,26 @@ def main():
             elif isinstance(obj, Pea):
                 obj.x += 1
         
-        # 3. Collision Detection
-        peas = [p for p in game_objects if isinstance(p, Pea)]
-        zombies = [z for z in game_objects if isinstance(z, Zombie)]
-        collided_peas = []
-
-        for pea in peas:
-            for zombie in zombies:
+        # 3. Collision Detection and Damage
+        peas_to_remove = []
+        zombies_to_remove = []
+        
+        for pea in [p for p in game_objects if isinstance(p, Pea)]:
+            for zombie in [z for z in game_objects if isinstance(z, Zombie)]:
                 if pea.x == zombie.x and pea.y == zombie.y:
-                    collided_peas.append(pea)
+                    zombie.health -= 1
+                    if pea not in peas_to_remove:
+                        peas_to_remove.append(pea)
+                    if zombie.health <= 0 and zombie not in zombies_to_remove:
+                        zombies_to_remove.append(zombie)
         
-        # 4. Remove collided and off-screen objects
-        surviving_objects = []
-        for obj in game_objects:
-            # Keep object if it's not a collided pea
-            is_collided_pea = obj in collided_peas
-            # Keep object if it's a pea within the board boundaries
-            is_on_screen_pea = isinstance(obj, Pea) and obj.x < BOARD_WIDTH
-            # Keep any non-pea object
-            is_other_object = not isinstance(obj, Pea)
-
-            if not is_collided_pea and (is_on_screen_pea or is_other_object):
-                surviving_objects.append(obj)
-        
-        game_objects = surviving_objects
+        # 4. Remove dead objects and off-screen peas
+        game_objects = [
+            obj for obj in game_objects 
+            if obj not in peas_to_remove 
+            and obj not in zombies_to_remove
+            and not (isinstance(obj, Pea) and obj.x >= BOARD_WIDTH)
+        ]
 
         # --- DRAW THE BOARD ---
         print_board(board, game_objects)
