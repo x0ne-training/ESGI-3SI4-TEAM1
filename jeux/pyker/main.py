@@ -6,11 +6,7 @@ VALEURS = ('2', '3', '4', '5', '6', '7', '8', '9', '10', 'Valet', 'Dame', 'Roi',
 
 def creer_paquet():
     """Cree un paquet de 52 cartes."""
-    paquet = []
-    for couleur in COULEURS:
-        for valeur in VALEURS:
-            paquet.append((valeur, couleur))
-    return paquet
+    return [(valeur, couleur) for couleur in COULEURS for valeur in VALEURS]
 
 def melanger_paquet(paquet):
     """Melange le paquet de cartes."""
@@ -18,10 +14,13 @@ def melanger_paquet(paquet):
 
 def distribuer_cartes(paquet, nombre):
     """Distribue un certain nombre de cartes."""
-    cartes = []
-    for _ in range(nombre):
-        cartes.append(paquet.pop())
-    return cartes
+    return [paquet.pop() for _ in range(nombre)]
+
+def afficher_main(main, nom_joueur):
+    """Affiche la main d'un joueur."""
+    print(f"Main de {nom_joueur}:")
+    for valeur, couleur in main:
+        print(f"  {valeur} de {couleur}")
 
 def main():
     """
@@ -34,8 +33,8 @@ def main():
     main_joueur = distribuer_cartes(paquet, 5)
     main_croupier = distribuer_cartes(paquet, 5)
 
-    print(f"Votre main: {main_joueur}")
-    print(f"Main du croupier: {main_croupier}")
+    afficher_main(main_joueur, "Joueur")
+    afficher_main(main_croupier, "Croupier")
 
 if __name__ == "__main__":
     main()
