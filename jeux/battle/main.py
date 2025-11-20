@@ -10,12 +10,26 @@ def creer_paquet():
             paquet.append(f"{valeur} de {couleur}")
     return paquet
 
+def melanger_paquet(paquet):
+    """Mélange le paquet de cartes."""
+    random.shuffle(paquet)
+
+def distribuer_cartes(paquet):
+    """Distribue les cartes entre deux joueurs."""
+    joueur1 = paquet[:26]
+    joueur2 = paquet[26:]
+    return joueur1, joueur2
+
 def main():
     """Fonction principale du jeu."""
     paquet = creer_paquet()
-    print("Paquet de cartes créé :")
-    for carte in paquet:
-        print(carte)
+    melanger_paquet(paquet)
+    joueur1, joueur2 = distribuer_cartes(paquet)
+
+    print("Cartes du joueur 1:")
+    print(joueur1)
+    print("\nCartes du joueur 2:")
+    print(joueur2)
 
 if __name__ == "__main__":
     main()
