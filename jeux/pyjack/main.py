@@ -15,6 +15,24 @@ def melanger_deck(deck):
 def tirer_carte(deck):
     return deck.pop()
 
+def calculer_total(main):
+    total = 0
+    nombre_as = 0
+    for carte in main:
+        valeur = carte.split()[0]
+        if valeur.isdigit():
+            total += int(valeur)
+        elif valeur in ['Valet', 'Dame', 'Roi']:
+            total += 10
+        elif valeur == 'As':
+            nombre_as += 1
+            total += 11
+
+    while total > 21 and nombre_as > 0:
+        total -= 10
+        nombre_as -= 1
+    return total
+
 def main():
     print("Bienvenue au Blackjack !")
 
@@ -25,7 +43,7 @@ def main():
         joueur_main = [tirer_carte(deck), tirer_carte(deck)]
         croupier_main = [tirer_carte(deck), tirer_carte(deck)]
 
-        print(f"Votre main : {joueur_main}")
+        print(f"Votre main : {joueur_main}, total : {calculer_total(joueur_main)}")
         print(f"Main du croupier : [{croupier_main[0]}, 'Carte cachée']")
 
         rejouer = input("\nVoulez-vous rejouer ? (oui/non) ")
