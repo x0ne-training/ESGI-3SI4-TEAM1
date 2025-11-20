@@ -16,31 +16,32 @@ def main():
     carte = {
         'clairiere': {
             'nom': 'La Clairière du Départ',
-            'description': "Vous êtes dans une clairière paisible. La lumière du soleil filtre à travers les arbres. Un chemin mène vers le nord.",
+            'description': "Vous êtes dans une clairière paisible...",
             'sorties': {'nord': 'foret'},
-            'objets': ['épée rouillée']
+            'objets': ['épée rouillée', 'pomme']
         },
         'foret': {
             'nom': 'La Forêt Sombre',
-            'description': "Vous pénétrez dans une forêt dense. Les arbres sont hauts et bloquent la lumière. Un frisson parcourt votre échine. Le chemin du retour est au sud.",
+            'description': "Vous pénétrez dans une forêt dense...",
             'sorties': {'sud': 'clairiere'},
             'objets': []
         }
     }
     salle_actuelle_id = 'clairiere'
-    inventaire_joueur = []
+    inventaire = []
 
     print("Bienvenue dans Py-Adventure !")
-    print("Tapez 'quitter' pour fermer le jeu.")
-    print("Commandes : 'nord', 'sud', 'est', 'ouest', 'prendre [objet]'.")
+    print("Commandes : 'nord', 'sud', 'prendre [objet]', 'inventaire', 'quitter'.")
 
     afficher_salle(carte[salle_actuelle_id])
 
     while True:
         commande_brute = input("> ").lower().strip()
         mots = commande_brute.split()
+        if not mots:
+            continue
         commande = mots[0]
-
+        
         if commande == "quitter":
             print("Merci d'avoir joué. À bientôt !")
             break
@@ -56,12 +57,17 @@ def main():
                 salle_actuelle = carte[salle_actuelle_id]
                 if objet_a_prendre in salle_actuelle['objets']:
                     salle_actuelle['objets'].remove(objet_a_prendre)
-                    inventaire_joueur.append(objet_a_prendre)
+                    inventaire.append(objet_a_prendre)
                     print(f"Vous avez pris : {objet_a_prendre}.")
                 else:
                     print(f"Il n'y a pas de '{objet_a_prendre}' ici.")
             else:
                 print("Prendre quoi ?")
+        elif commande == "inventaire":
+            if not inventaire:
+                print("Votre inventaire est vide.")
+            else:
+                print("Vous transportez : " + ", ".join(inventaire))
         else:
             print("Commande inconnue.")
 
