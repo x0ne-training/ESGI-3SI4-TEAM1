@@ -55,9 +55,13 @@ def main():
             if choix.lower() == 'tirer':
                 joueur_main.append(tirer_carte(deck))
             elif choix.lower() == 'rester':
+                while calculer_total(croupier_main) < 17:
+                    croupier_main.append(tirer_carte(deck))
                 break
             else:
                 print("Choix invalide.")
+
+        # Logique de fin de partie à venir
 
         rejouer = input("\nVoulez-vous rejouer ? (oui/non) ")
         if rejouer.lower() != 'oui':
