@@ -60,21 +60,23 @@ def determiner_gagnant(main_joueur, main_croupier):
         if v_c > v_j: return "croupier"
     return "egalite"
 
-def echanger_cartes(main, paquet):
+def echanger_cartes_joueur(main, paquet):
     """Permet au joueur d'echanger des cartes."""
-    while True:
-        choix = input("Quelles cartes echanger (ex: 1 3, ou 0 pour ne rien echanger) ? ")
-        try:
-            indices = [int(i) - 1 for i in choix.split()]
-            if not indices or (len(indices) == 1 and indices[0] == -1):
-                return
-            
-            nouvelles_cartes = distribuer_cartes(paquet, len(indices))
-            for i, idx in enumerate(sorted(indices, reverse=True)):
-                main[idx] = nouvelles_cartes[i]
-            break
-        except (ValueError, IndexError):
-            print("Entree invalide.")
+    choix = input("Quelles cartes echanger (ex: 1 3, 0 pour ne rien faire) ? ")
+    indices = [int(i) - 1 for i in choix.split()]
+    if not indices or (len(indices) == 1 and indices[0] == -1): return
+    
+    nouvelles_cartes = distribuer_cartes(paquet, len(indices))
+    for i, idx in enumerate(sorted(indices, reverse=True)):
+        main.pop(idx)
+    main.extend(nouvelles_cartes)
+
+def ia_croupier_echange(main, paquet):
+    """IA simple pour l'echange de cartes du croupier."""
+    score, _, _ = evaluer_main(main)
+    if score < 2: # Si moins qu'une paire, echange 3 cartes
+        for _ in range(3): main.pop(0)
+        main.extend(distribuer_cartes(paquet, 3))
 
 def boucle_de_jeu():
     """La boucle principale du jeu."""
@@ -95,18 +97,16 @@ def boucle_de_jeu():
         main_croupier = distribuer_cartes(paquet, 5)
 
         afficher_main(main_joueur, "Joueur")
-        echanger_cartes(main_joueur, paquet)
-        afficher_main(main_joueur, "Votre nouvelle main")
+        echanger_cartes_joueur(main_joueur, paquet)
         
-        afficher_main(main_croupier, "Croupier")
+        ia_croupier_echange(main_croupier, paquet)
+        print("\nLe croupier echange ses cartes.")
+
+        afficher_main(main_joueur, "Votre nouvelle main")
+        afficher_main(main_croupier, "Nouvelle main du Croupier")
         
         gagnant = determiner_gagnant(main_joueur, main_croupier)
-        if gagnant == "joueur":
-            argent_joueur += pot
-        elif gagnant == "croupier":
-            pass
-        else:
-            argent_joueur += mise
+        if gagnant == "joueur": argent_joueur += pot
 
     print("\nMerci d'avoir joue !")
 
