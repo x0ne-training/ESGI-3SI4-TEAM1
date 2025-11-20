@@ -38,6 +38,7 @@ def print_board(board, game_objects):
     for row in display_board:
         print(" ".join(row))
 
+# --- Main Game Logic ---
 def main():
     """Main function to run the game."""
     board = create_board()
@@ -47,16 +48,18 @@ def main():
     while True:
         game_turn += 1
         clear_screen()
+
+        # Update game state
+        for obj in game_objects:
+            if isinstance(obj, Zombie):
+                obj.x -= 1
+
         print_board(board, game_objects)
 
         # Spawn a new zombie every 5 turns
         if game_turn % 5 == 0:
             spawn_y = random.randint(0, BOARD_HEIGHT - 1)
             game_objects.append(Zombie(BOARD_WIDTH - 1, spawn_y))
-
-        # Get user input to place a plant
-        # For now, we will simplify and not ask for input in the main loop
-        # to focus on zombie movement first. We will re-integrate it later.
         
         time.sleep(1)
 
