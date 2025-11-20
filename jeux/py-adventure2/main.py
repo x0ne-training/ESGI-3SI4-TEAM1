@@ -31,7 +31,7 @@ def main():
     inventaire = []
 
     print("Bienvenue dans Py-Adventure !")
-    print("Commandes : 'nord', 'sud', 'prendre [objet]', 'inventaire', 'quitter'.")
+    print("Commandes : 'regarder', 'inventaire', 'prendre [objet]', 'nord'...")
 
     afficher_salle(carte[salle_actuelle_id])
 
@@ -51,6 +51,8 @@ def main():
                 afficher_salle(carte[salle_actuelle_id])
             else:
                 print("Vous ne pouvez pas aller par là.")
+        elif commande == "regarder":
+            afficher_salle(carte[salle_actuelle_id])
         elif commande == "prendre":
             if len(mots) > 1:
                 objet_a_prendre = " ".join(mots[1:])
