@@ -33,6 +33,15 @@ def calculer_total(main):
         nombre_as -= 1
     return total
 
+def afficher_mains(joueur_main, croupier_main, fin_de_partie):
+    if fin_de_partie:
+        print(f"Votre main : {joueur_main}, total : {calculer_total(joueur_main)}")
+        print(f"Main du croupier : {croupier_main}, total : {calculer_total(croupier_main)}")
+    else:
+        print(f"Votre main : {joueur_main}, total : {calculer_total(joueur_main)}")
+        print(f"Main du croupier : [{croupier_main[0]}, 'Carte cachée']")
+
+
 def determiner_gagnant(total_joueur, total_croupier, joueur_blackjack, croupier_blackjack):
     if joueur_blackjack and not croupier_blackjack:
         return "Blackjack ! Vous gagnez !"
@@ -49,52 +58,55 @@ def determiner_gagnant(total_joueur, total_croupier, joueur_blackjack, croupier_
     else:
         return "Égalité."
 
+def tour_joueur(deck, joueur_main):
+    while True:
+        if calculer_total(joueur_main) > 21:
+            break
+        choix = input("Voulez-vous 'tirer' ou 'rester' ? ")
+        if choix.lower() == 'tirer':
+            joueur_main.append(tirer_carte(deck))
+            print(f"Votre main : {joueur_main}, total : {calculer_total(joueur_main)}")
+        elif choix.lower() == 'rester':
+            break
+        else:
+            print("Choix invalide.")
+
+def tour_croupier(deck, croupier_main):
+    while calculer_total(croupier_main) < 17:
+        croupier_main.append(tirer_carte(deck))
+
+def jouer_partie():
+    deck = creer_deck()
+    melanger_deck(deck)
+
+    joueur_main = [tirer_carte(deck), tirer_carte(deck)]
+    croupier_main = [tirer_carte(deck), tirer_carte(deck)]
+
+    total_joueur = calculer_total(joueur_main)
+    total_croupier = calculer_total(croupier_main)
+
+    joueur_blackjack = total_joueur == 21 and len(joueur_main) == 2
+    croupier_blackjack = total_croupier == 21 and len(croupier_main) == 2
+
+    afficher_mains(joueur_main, croupier_main, False)
+
+    if not (joueur_blackjack or croupier_blackjack):
+        tour_joueur(deck, joueur_main)
+        if calculer_total(joueur_main) <= 21:
+            tour_croupier(deck, croupier_main)
+
+    afficher_mains(joueur_main, croupier_main, True)
+
+    total_joueur = calculer_total(joueur_main)
+    total_croupier = calculer_total(croupier_main)
+    print(determiner_gagnant(total_joueur, total_croupier, joueur_blackjack, croupier_blackjack))
+
+
 def main():
     print("Bienvenue au Blackjack !")
 
     while True:
-        deck = creer_deck()
-        melanger_deck(deck)
-
-        joueur_main = [tirer_carte(deck), tirer_carte(deck)]
-        croupier_main = [tirer_carte(deck), tirer_carte(deck)]
-
-        total_joueur = calculer_total(joueur_main)
-        total_croupier = calculer_total(croupier_main)
-
-        joueur_blackjack = total_joueur == 21 and len(joueur_main) == 2
-        croupier_blackjack = total_croupier == 21 and len(croupier_main) == 2
-
-        if joueur_blackjack or croupier_blackjack:
-            print(f"\nVotre main : {joueur_main}, total : {total_joueur}")
-            print(f"Main du croupier : {croupier_main}, total : {total_croupier}")
-            print(determiner_gagnant(total_joueur, total_croupier, joueur_blackjack, croupier_blackjack))
-        else:
-            while True:
-                print(f"\nVotre main : {joueur_main}, total : {calculer_total(joueur_main)}")
-                print(f"Main du croupier : [{croupier_main[0]}, 'Carte cachée']")
-
-                if calculer_total(joueur_main) > 21:
-                    break
-
-                choix = input("Voulez-vous 'tirer' ou 'rester' ? ")
-                if choix.lower() == 'tirer':
-                    joueur_main.append(tirer_carte(deck))
-                elif choix.lower() == 'rester':
-                    break
-                else:
-                    print("Choix invalide.")
-
-            while calculer_total(croupier_main) < 17:
-                croupier_main.append(tirer_carte(deck))
-
-            total_joueur = calculer_total(joueur_main)
-            total_croupier = calculer_total(croupier_main)
-
-            print(f"\nVotre main finale : {joueur_main}, total : {total_joueur}")
-            print(f"Main finale du croupier : {croupier_main}, total : {total_croupier}")
-            print(determiner_gagnant(total_joueur, total_croupier, joueur_blackjack, croupier_blackjack))
-
+        jouer_partie()
         rejouer = input("\nVoulez-vous rejouer ? (oui/non) ")
         if rejouer.lower() != 'oui':
             break
