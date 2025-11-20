@@ -1,6 +1,6 @@
 import time
 import os
-
+import random
 # --- Game Configuration ---
 BOARD_WIDTH = 10
 BOARD_HEIGHT = 5
@@ -38,34 +38,26 @@ def print_board(board, game_objects):
     for row in display_board:
         print(" ".join(row))
 
-# --- Main Game Logic ---
-def main():
-    """Main function to run the game."""
-    board = create_board()
-    game_objects = [Plant(1, 2), Zombie(8, 2)]
-    while True:
-        clear_screen()
-        print_board(board, game_objects)
-        time.sleep(1)
-
 def main():
     """Main function to run the game."""
     board = create_board()
     game_objects = []
-    
+    game_turn = 0
+
     while True:
+        game_turn += 1
         clear_screen()
         print_board(board, game_objects)
-        
-        # Get user input to place a plant
-        try:
-            plant_y = int(input(f"Enter row to plant (0-{BOARD_HEIGHT-1}): "))
-            plant_x = int(input(f"Enter col to plant (0-{BOARD_WIDTH-1}): "))
-            if 0 <= plant_y < BOARD_HEIGHT and 0 <= plant_x < BOARD_WIDTH:
-                game_objects.append(Plant(plant_x, plant_y))
-        except ValueError:
-            print("Invalid input. Please enter a number.")
 
+        # Spawn a new zombie every 5 turns
+        if game_turn % 5 == 0:
+            spawn_y = random.randint(0, BOARD_HEIGHT - 1)
+            game_objects.append(Zombie(BOARD_WIDTH - 1, spawn_y))
+
+        # Get user input to place a plant
+        # For now, we will simplify and not ask for input in the main loop
+        # to focus on zombie movement first. We will re-integrate it later.
+        
         time.sleep(1)
 
 if __name__ == "__main__":
