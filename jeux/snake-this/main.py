@@ -1,5 +1,6 @@
 import turtle
 import time
+import random
 
 # Configuration de la fenêtre
 wn = turtle.Screen()
@@ -16,6 +17,14 @@ head.color("green")
 head.penup()
 head.goto(0,0)
 head.direction = "stop"
+
+# Nourriture
+food = turtle.Turtle()
+food.speed(0)
+food.shape("circle")
+food.color("red")
+food.penup()
+food.goto(0,100)
 
 # Fonctions de changement de direction
 def go_up():
