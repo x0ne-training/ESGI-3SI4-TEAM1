@@ -17,11 +17,16 @@ def distribuer_cartes(paquet, nombre):
     """Distribue un certain nombre de cartes."""
     return [paquet.pop() for _ in range(nombre)]
 
-def afficher_main(main, nom_joueur):
+def afficher_main(main, nom_joueur, cacher=False):
     """Affiche la main d'un joueur."""
     print(f"\nMain de {nom_joueur}:")
-    for i, (valeur, couleur) in enumerate(main):
-        print(f"  {i+1}) {valeur} de {couleur}")
+    if cacher:
+        print("  [Carte cachee]")
+        for i in range(1, len(main)):
+            print(f"  {main[i][0]} de {main[i][1]}")
+    else:
+        for i, (valeur, couleur) in enumerate(main):
+            print(f"  {i+1}) {valeur} de {couleur}")
 
 def evaluer_main(main):
     """Evalue la force d'une main de poker."""
@@ -49,30 +54,34 @@ def determiner_gagnant(main_joueur, main_croupier):
     score_joueur, nom_main_joueur, valeurs_joueur = evaluer_main(main_joueur)
     score_croupier, nom_main_croupier, valeurs_croupier = evaluer_main(main_croupier)
 
-    print(f"\nVous avez : {nom_main_joueur}")
-    print(f"Le croupier a : {nom_main_croupier}")
+    print(f"\nVotre main: {nom_main_joueur}")
+    print(f"Main du croupier: {nom_main_croupier}")
 
-    if score_joueur > score_croupier:
-        return "joueur"
-    if score_croupier > score_joueur:
-        return "croupier"
-    # En cas d'egalite, on compare les valeurs des cartes
+    if score_joueur > score_croupier: return "joueur"
+    if score_croupier > score_joueur: return "croupier"
+
     for v_j, v_c in zip(valeurs_joueur, valeurs_croupier):
         if v_j > v_c: return "joueur"
         if v_c > v_j: return "croupier"
     return "egalite"
 
-def main():
-    """
-    Fonction principale du jeu.
-    """
+def boucle_de_jeu():
+    """La boucle principale du jeu."""
     argent_joueur = 100
-    print("Bienvenue au jeu de Poker !")
-
     while argent_joueur > 0:
-        print(f"\nVous avez {argent_joueur} jetons.")
-        mise = int(input(f"Entrez votre mise (1-{argent_joueur}): "))
-        if not 1 <= mise <= argent_joueur: continue
+        print("-" * 20)
+        print(f"Vous avez {argent_joueur} jetons.")
+        mise = 0
+        while True:
+            try:
+                mise = int(input(f"Votre mise (1-{argent_joueur}, 0 pour quitter): "))
+                if 0 <= mise <= argent_joueur:
+                    break
+            except ValueError:
+                print("Entree invalide.")
+        
+        if mise == 0:
+            break
 
         argent_joueur -= mise
         pot = mise * 2
@@ -83,27 +92,25 @@ def main():
         main_croupier = distribuer_cartes(paquet, 5)
 
         afficher_main(main_joueur, "Joueur")
-        afficher_main(main_croupier, "Croupier")
+        # La logique d'échange de cartes viendra ici
 
+        afficher_main(main_croupier, "Croupier")
+        
         gagnant = determiner_gagnant(main_joueur, main_croupier)
         if gagnant == "joueur":
-            print("Vous gagnez !")
+            print("\nVous remportez la manche !")
             argent_joueur += pot
         elif gagnant == "croupier":
-            print("Le croupier gagne.")
+            print("\nLe croupier remporte la manche.")
         else:
-            print("Egalite.")
+            print("\nEgalite. Vous recuperez votre mise.")
             argent_joueur += mise
 
-        if argent_joueur == 0:
-            print("Vous n'avez plus de jetons.")
-            break
+    print("\nMerci d'avoir joue !")
 
-        continuer = input("Jouer un autre tour? (o/n): ").lower()
-        if continuer != 'o':
-            break
-
-    print("Merci d'avoir joue !")
+def main():
+    print("Bienvenue au jeu de Poker !")
+    boucle_de_jeu()
 
 if __name__ == "__main__":
     main()
