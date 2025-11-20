@@ -9,11 +9,15 @@ def creer_deck():
             deck.append(f"{valeur} de {couleur}")
     return deck
 
+def melanger_deck(deck):
+    random.shuffle(deck)
+
 def main():
     print("Bienvenue au Blackjack !")
 
     while True:
         deck = creer_deck()
+        melanger_deck(deck)
         print(deck) # Pour le test
 
         rejouer = input("\nVoulez-vous rejouer ? (oui/non) ")
