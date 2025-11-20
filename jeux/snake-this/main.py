@@ -26,6 +26,8 @@ food.color("red")
 food.penup()
 food.goto(0,100)
 
+segments = []
+
 # Fonctions de changement de direction
 def go_up():
     if head.direction != "down":
@@ -78,6 +80,26 @@ while True:
         x = random.randint(-290, 290)
         y = random.randint(-290, 290)
         food.goto(x,y)
+
+        # Ajouter un segment
+        new_segment = turtle.Turtle()
+        new_segment.speed(0)
+        new_segment.shape("square")
+        new_segment.color("grey")
+        new_segment.penup()
+        segments.append(new_segment)
+
+    # Déplacer les segments du serpent
+    for index in range(len(segments)-1, 0, -1):
+        x = segments[index-1].xcor()
+        y = segments[index-1].ycor()
+        segments[index].goto(x, y)
+
+    # Déplacer le premier segment à la position de la tête
+    if len(segments) > 0:
+        x = head.xcor()
+        y = head.ycor()
+        segments[0].goto(x,y)
 
     move()
     time.sleep(0.1)
