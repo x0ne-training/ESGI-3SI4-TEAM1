@@ -12,13 +12,21 @@ def creer_deck():
 def melanger_deck(deck):
     random.shuffle(deck)
 
+def tirer_carte(deck):
+    return deck.pop()
+
 def main():
     print("Bienvenue au Blackjack !")
 
     while True:
         deck = creer_deck()
         melanger_deck(deck)
-        print(deck) # Pour le test
+
+        joueur_main = [tirer_carte(deck), tirer_carte(deck)]
+        croupier_main = [tirer_carte(deck), tirer_carte(deck)]
+
+        print(f"Votre main : {joueur_main}")
+        print(f"Main du croupier : [{croupier_main[0]}, 'Carte cachée']")
 
         rejouer = input("\nVoulez-vous rejouer ? (oui/non) ")
         if rejouer.lower() != 'oui':
