@@ -43,8 +43,21 @@ def main():
         joueur_main = [tirer_carte(deck), tirer_carte(deck)]
         croupier_main = [tirer_carte(deck), tirer_carte(deck)]
 
-        print(f"Votre main : {joueur_main}, total : {calculer_total(joueur_main)}")
-        print(f"Main du croupier : [{croupier_main[0]}, 'Carte cachée']")
+        while True:
+            print(f"\nVotre main : {joueur_main}, total : {calculer_total(joueur_main)}")
+            print(f"Main du croupier : [{croupier_main[0]}, 'Carte cachée']")
+
+            if calculer_total(joueur_main) > 21:
+                print("Vous avez dépassé 21 ! Vous avez perdu.")
+                break
+
+            choix = input("Voulez-vous 'tirer' ou 'rester' ? ")
+            if choix.lower() == 'tirer':
+                joueur_main.append(tirer_carte(deck))
+            elif choix.lower() == 'rester':
+                break
+            else:
+                print("Choix invalide.")
 
         rejouer = input("\nVoulez-vous rejouer ? (oui/non) ")
         if rejouer.lower() != 'oui':
