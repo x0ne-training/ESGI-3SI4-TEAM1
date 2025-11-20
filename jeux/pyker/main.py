@@ -44,6 +44,24 @@ def evaluer_main(main):
     if counts[0] == 2: return (2, "Paire", valeurs_uniques)
     return (1, "Carte Haute", valeurs_uniques)
 
+def determiner_gagnant(main_joueur, main_croupier):
+    """Determine le gagnant entre deux mains."""
+    score_joueur, nom_main_joueur, valeurs_joueur = evaluer_main(main_joueur)
+    score_croupier, nom_main_croupier, valeurs_croupier = evaluer_main(main_croupier)
+
+    print(f"\nVous avez : {nom_main_joueur}")
+    print(f"Le croupier a : {nom_main_croupier}")
+
+    if score_joueur > score_croupier:
+        return "joueur"
+    if score_croupier > score_joueur:
+        return "croupier"
+    # En cas d'egalite, on compare les valeurs des cartes
+    for v_j, v_c in zip(valeurs_joueur, valeurs_croupier):
+        if v_j > v_c: return "joueur"
+        if v_c > v_j: return "croupier"
+    return "egalite"
+
 def main():
     """
     Fonction principale du jeu.
@@ -53,14 +71,8 @@ def main():
 
     while argent_joueur > 0:
         print(f"\nVous avez {argent_joueur} jetons.")
-        mise = 0
-        while True:
-            try:
-                mise = int(input(f"Entrez votre mise (1-{argent_joueur}): "))
-                if 1 <= mise <= argent_joueur:
-                    break
-            except ValueError:
-                print("Veuillez entrer un nombre.")
+        mise = int(input(f"Entrez votre mise (1-{argent_joueur}): "))
+        if not 1 <= mise <= argent_joueur: continue
 
         argent_joueur -= mise
         pot = mise * 2
@@ -71,14 +83,21 @@ def main():
         main_croupier = distribuer_cartes(paquet, 5)
 
         afficher_main(main_joueur, "Joueur")
-        score_joueur, nom_main_joueur, _ = evaluer_main(main_joueur)
-        print(f"Vous avez : {nom_main_joueur}")
-
         afficher_main(main_croupier, "Croupier")
-        score_croupier, nom_main_croupier, _ = evaluer_main(main_croupier)
-        print(f"Le croupier a : {nom_main_croupier}")
 
-        # La logique du gagnant sera ajoutée ici
+        gagnant = determiner_gagnant(main_joueur, main_croupier)
+        if gagnant == "joueur":
+            print("Vous gagnez !")
+            argent_joueur += pot
+        elif gagnant == "croupier":
+            print("Le croupier gagne.")
+        else:
+            print("Egalite.")
+            argent_joueur += mise
+
+        if argent_joueur == 0:
+            print("Vous n'avez plus de jetons.")
+            break
 
         continuer = input("Jouer un autre tour? (o/n): ").lower()
         if continuer != 'o':
