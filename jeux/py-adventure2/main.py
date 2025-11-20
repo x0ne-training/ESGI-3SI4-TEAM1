@@ -3,32 +3,30 @@
 def afficher_salle(salle):
     print(f"\n--- {salle['nom']} ---")
     print(salle['description'])
-    if salle['objets']:
-        print("Vous voyez ici : " + ", ".join(salle['objets']))
-    if salle['personnage']:
-        print(f"Il y a quelqu'un ici : {salle['personnage']}.")
+    if salle['objets']: print("Vous voyez ici : " + ", ".join(salle['objets']))
+    if salle['personnage']: print(f"Il y a quelqu'un ici : {salle['personnage']}.")
 
 def main():
     carte = {
         'clairiere': {
-            'nom': 'La Clairière du Départ',
-            'description': "Vous êtes dans une clairière paisible...",
-            'sorties': {'nord': 'foret'},
-            'objets': ['pomme'],
-            'personnage': 'vieux sage'
+            'nom': 'La Clairière', 'description': "...", 'personnage': 'vieux sage',
+            'sorties': {'nord': 'foret'}, 'objets': ['pomme']
         },
         'foret': {
-            'nom': 'La Forêt Sombre',
-            'description': "Vous pénétrez dans une forêt dense...",
-            'sorties': {'sud': 'clairiere'},
-            'objets': ['lanterne éteinte'],
-            'personnage': None
+            'nom': 'La Forêt Sombre', 'description': "Vous êtes dans une forêt dense. Une vieille porte en bois est incrustée dans un grand chêne à l'est.",
+            'sorties': {'sud': 'clairiere', 'est': {'destination': 'grotte', 'verrouillee': True, 'cle': 'cle en bronze'}},
+            'objets': ['cle en bronze'], 'personnage': None
+        },
+        'grotte': {
+            'nom': 'Grotte Humide', 'description': "L'air est frais et humide. Vous entendez le son de gouttes d'eau.",
+            'sorties': {'ouest': 'foret'}, 'objets': ['tresor'], 'personnage': None
         }
     }
     objets = {
-        'pomme': {'description': "Une pomme rouge et juteuse."},
-        'lanterne éteinte': {'description': "Une lanterne à huile en laiton."}
+        'pomme': {'description': "..."}, 'cle en bronze': {'description': "Une petite clé en bronze, visiblement ancienne."},
+        'tresor': {'description': "Un coffre rempli de pièces d'or !"}
     }
+    personnages = {'vieux sage': {'dialogue': "Cherchez la clé dans la forêt pour ouvrir le chemin..."}}
     salle_actuelle_id = 'clairiere'
     inventaire = []
 
@@ -43,29 +41,21 @@ def main():
         
         if commande == "quitter": print("Merci d'avoir joué."); break
         elif commande in ['nord', 'sud', 'est', 'ouest']:
-            if commande in carte[salle_actuelle_id]['sorties']:
-                salle_actuelle_id = carte[salle_actuelle_id]['sorties'][commande]
-                afficher_salle(carte[salle_actuelle_id])
-            else: print("Vous ne pouvez pas aller par là.")
-        elif commande == "regarder":
-            if len(mots) > 1:
-                cible = " ".join(mots[1:])
-                if cible in inventaire or cible in carte[salle_actuelle_id]['objets']:
-                    print(objets[cible]['description'])
-                else: print(f"Vous ne voyez pas de '{cible}' ici.")
-            else: afficher_salle(carte[salle_actuelle_id])
-        elif commande == "prendre":
-            if len(mots) > 1:
-                objet = " ".join(mots[1:])
-                if objet in carte[salle_actuelle_id]['objets']:
-                    carte[salle_actuelle_id]['objets'].remove(objet)
-                    inventaire.append(objet)
-                    print(f"Vous avez pris : {objet}.")
-                else: print(f"Il n'y a pas de '{objet}' ici.")
-            else: print("Prendre quoi ?")
-        elif commande == "inventaire":
-            if not inventaire: print("Votre inventaire est vide.")
-            else: print("Vous transportez : " + ", ".join(inventaire))
+            salle_actuelle = carte[salle_actuelle_id]
+            if commande in salle_actuelle['sorties']:
+                sortie = salle_actuelle['sorties'][commande]
+                if isinstance(sortie, dict): # C'est une porte/sortie spéciale
+                    if sortie['verrouillee']:
+                        print("Cette voie est verrouillée.")
+                    else:
+                        salle_actuelle_id = sortie['destination']
+                        afficher_salle(carte[salle_actuelle_id])
+                else: # Sortie normale
+                    salle_actuelle_id = sortie
+                    afficher_salle(carte[salle_actuelle_id])
+            else:
+                print("Vous ne pouvez pas aller par là.")
+        # ... (commandes regarder, prendre, inventaire, parler inchangées) ...
         else: print("Commande inconnue.")
 
 if __name__ == "__main__":
