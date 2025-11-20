@@ -26,41 +26,76 @@ def valeur_carte(carte):
     valeur_str = carte.split(' ')[0]
     return valeurs[valeur_str]
 
-def jouer_tour(joueur1, joueur2):
-    """Joue un tour de la bataille."""
-    if not joueur1 or not joueur2:
-        return None, None, None
-
-    carte_joueur1 = joueur1.pop(0)
-    carte_joueur2 = joueur2.pop(0)
-
-    print(f"Joueur 1 joue : {carte_joueur1}")
-    print(f"Joueur 2 joue : {carte_joueur2}")
-
-    valeur1 = valeur_carte(carte_joueur1)
-    valeur2 = valeur_carte(carte_joueur2)
-
-    if valeur1 > valeur2:
-        print("Joueur 1 gagne le tour.")
-        joueur1.extend([carte_joueur1, carte_joueur2])
-    elif valeur2 > valeur1:
-        print("Joueur 2 gagne le tour.")
-        joueur2.extend([carte_joueur1, carte_joueur2])
-    else:
-        print("Bataille !")
-
-    return joueur1, joueur2
-
-def main():
-    """Fonction principale du jeu."""
+def jouer_partie():
+    """Fonction principale du jeu de la bataille."""
     paquet = creer_paquet()
     melanger_paquet(paquet)
     joueur1, joueur2 = distribuer_cartes(paquet)
+    tour = 0
 
-    joueur1, joueur2 = jouer_tour(joueur1, joueur2)
+    while joueur1 and joueur2:
+        tour += 1
+        print(f"\n--- Tour {tour} ---")
+        print(f"Joueur 1 a {len(joueur1)} cartes, Joueur 2 a {len(joueur2)} cartes.")
 
-    print(f"\nJoueur 1 a {len(joueur1)} cartes.")
-    print(f"Joueur 2 a {len(joueur2)} cartes.")
+        carte_joueur1 = joueur1.pop(0)
+        carte_joueur2 = joueur2.pop(0)
+
+        print(f"Joueur 1 joue : {carte_joueur1}")
+        print(f"Joueur 2 joue : {carte_joueur2}")
+
+        valeur1 = valeur_carte(carte_joueur1)
+        valeur2 = valeur_carte(carte_joueur2)
+
+        cartes_en_jeu = [carte_joueur1, carte_joueur2]
+
+        if valeur1 > valeur2:
+            print("Joueur 1 gagne le tour.")
+            joueur1.extend(cartes_en_jeu)
+        elif valeur2 > valeur1:
+            print("Joueur 2 gagne le tour.")
+            joueur2.extend(cartes_en_jeu)
+        else:
+            print("Bataille !")
+            while valeur1 == valeur2:
+                if len(joueur1) < 2 or len(joueur2) < 2:
+                    if len(joueur1) > len(joueur2):
+                        joueur1.extend(cartes_en_jeu)
+                        joueur1.extend(joueur2)
+                        joueur2.clear()
+                    else:
+                        joueur2.extend(cartes_en_jeu)
+                        joueur2.extend(joueur1)
+                        joueur1.clear()
+                    break
+
+                cartes_en_jeu.append(joueur1.pop(0))
+                cartes_en_jeu.append(joueur2.pop(0))
+
+                carte_joueur1 = joueur1.pop(0)
+                carte_joueur2 = joueur2.pop(0)
+
+                cartes_en_jeu.extend([carte_joueur1, carte_joueur2])
+
+                print(f"Joueur 1 joue : {carte_joueur1}")
+                print(f"Joueur 2 joue : {carte_joueur2}")
+
+                valeur1 = valeur_carte(carte_joueur1)
+                valeur2 = valeur_carte(carte_joueur2)
+
+                if valeur1 > valeur2:
+                    print("Joueur 1 gagne la bataille.")
+                    joueur1.extend(cartes_en_jeu)
+                    break
+                elif valeur2 > valeur1:
+                    print("Joueur 2 gagne la bataille.")
+                    joueur2.extend(cartes_en_jeu)
+                    break
+
+    if not joueur1:
+        print("\nJoueur 2 a gagné la partie !")
+    else:
+        print("\nJoueur 1 a gagné la partie !")
 
 if __name__ == "__main__":
-    main()
+    jouer_partie()
