@@ -48,7 +48,7 @@ def print_board(board, game_objects):
 def main():
     """Main function to run the game."""
     board = create_board()
-    game_objects = [Plant(1, 2)] # Start with one plant for testing
+    game_objects = [Plant(1, 2)]
     game_turn = 0
 
     while True:
@@ -65,6 +65,8 @@ def main():
         for obj in game_objects:
             if isinstance(obj, Zombie):
                 obj.x -= 1
+            if isinstance(obj, Pea):
+                obj.x += 1
 
         print_board(board, game_objects)
 
