@@ -36,7 +36,7 @@ def afficher_mains(joueur_main, croupier_main, fin_de_partie):
         print(f"Votre main : {' '.join(joueur_main)} (Total: {calculer_total(joueur_main)})")
         print(f"Main du croupier : {' '.join(croupier_main)} (Total: {calculer_total(croupier_main)})")
     else:
-        print(f"Votre main : {' '.join(joueur_main)} (Total: {calculer_total(joueur_main)})")
+        print(f"\nVotre main : {' '.join(joueur_main)} (Total: {calculer_total(joueur_main)})")
         print(f"Main du croupier : {croupier_main[0]} [?]")
 
 def determiner_gagnant(total_joueur, total_croupier, joueur_blackjack, croupier_blackjack):
@@ -54,7 +54,7 @@ def determiner_gagnant(total_joueur, total_croupier, joueur_blackjack, croupier_
     elif total_croupier > total_joueur:
         return "Le croupier gagne."
     else:
-        return "Égalité."
+        return "Push (Égalité)."
 
 def tour_joueur(deck, joueur_main):
     """Gère le tour du joueur."""
