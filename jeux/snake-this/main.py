@@ -71,5 +71,13 @@ def move():
 # Boucle principale du jeu
 while True:
     wn.update()
+
+    # Vérifier la collision avec la nourriture
+    if head.distance(food) < 20:
+        # Déplacer la nourriture à un endroit aléatoire
+        x = random.randint(-290, 290)
+        y = random.randint(-290, 290)
+        food.goto(x,y)
+
     move()
     time.sleep(0.1)
