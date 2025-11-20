@@ -17,16 +17,11 @@ def distribuer_cartes(paquet, nombre):
     """Distribue un certain nombre de cartes."""
     return [paquet.pop() for _ in range(nombre)]
 
-def afficher_main(main, nom_joueur, cacher=False):
+def afficher_main(main, nom_joueur):
     """Affiche la main d'un joueur."""
     print(f"\nMain de {nom_joueur}:")
-    if cacher:
-        print("  [Carte cachee]")
-        for i in range(1, len(main)):
-            print(f"  {main[i][0]} de {main[i][1]}")
-    else:
-        for i, (valeur, couleur) in enumerate(main):
-            print(f"  {i+1}) {valeur} de {couleur}")
+    for i, (valeur, couleur) in enumerate(main):
+        print(f"  {i+1}) {valeur} de {couleur}")
 
 def evaluer_main(main):
     """Evalue la force d'une main de poker."""
@@ -54,8 +49,8 @@ def determiner_gagnant(main_joueur, main_croupier):
     score_joueur, nom_main_joueur, valeurs_joueur = evaluer_main(main_joueur)
     score_croupier, nom_main_croupier, valeurs_croupier = evaluer_main(main_croupier)
 
-    print(f"\nVotre main: {nom_main_joueur}")
-    print(f"Main du croupier: {nom_main_croupier}")
+    print(f"\nVotre main finale: {nom_main_joueur}")
+    print(f"Main finale du croupier: {nom_main_croupier}")
 
     if score_joueur > score_croupier: return "joueur"
     if score_croupier > score_joueur: return "croupier"
@@ -65,24 +60,32 @@ def determiner_gagnant(main_joueur, main_croupier):
         if v_c > v_j: return "croupier"
     return "egalite"
 
+def echanger_cartes(main, paquet):
+    """Permet au joueur d'echanger des cartes."""
+    while True:
+        choix = input("Quelles cartes echanger (ex: 1 3, ou 0 pour ne rien echanger) ? ")
+        try:
+            indices = [int(i) - 1 for i in choix.split()]
+            if not indices or (len(indices) == 1 and indices[0] == -1):
+                return
+            
+            nouvelles_cartes = distribuer_cartes(paquet, len(indices))
+            for i, idx in enumerate(sorted(indices, reverse=True)):
+                main[idx] = nouvelles_cartes[i]
+            break
+        except (ValueError, IndexError):
+            print("Entree invalide.")
+
 def boucle_de_jeu():
     """La boucle principale du jeu."""
     argent_joueur = 100
     while argent_joueur > 0:
         print("-" * 20)
         print(f"Vous avez {argent_joueur} jetons.")
-        mise = 0
-        while True:
-            try:
-                mise = int(input(f"Votre mise (1-{argent_joueur}, 0 pour quitter): "))
-                if 0 <= mise <= argent_joueur:
-                    break
-            except ValueError:
-                print("Entree invalide.")
+        mise = int(input(f"Votre mise (1-{argent_joueur}, 0 pour quitter): "))
+        if mise == 0: break
+        if not 1 <= mise <= argent_joueur: continue
         
-        if mise == 0:
-            break
-
         argent_joueur -= mise
         pot = mise * 2
 
@@ -92,18 +95,17 @@ def boucle_de_jeu():
         main_croupier = distribuer_cartes(paquet, 5)
 
         afficher_main(main_joueur, "Joueur")
-        # La logique d'échange de cartes viendra ici
-
+        echanger_cartes(main_joueur, paquet)
+        afficher_main(main_joueur, "Votre nouvelle main")
+        
         afficher_main(main_croupier, "Croupier")
         
         gagnant = determiner_gagnant(main_joueur, main_croupier)
         if gagnant == "joueur":
-            print("\nVous remportez la manche !")
             argent_joueur += pot
         elif gagnant == "croupier":
-            print("\nLe croupier remporte la manche.")
+            pass
         else:
-            print("\nEgalite. Vous recuperez votre mise.")
             argent_joueur += mise
 
     print("\nMerci d'avoir joue !")
