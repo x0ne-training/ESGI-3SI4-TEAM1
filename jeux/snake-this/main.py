@@ -17,6 +17,30 @@ head.penup()
 head.goto(0,0)
 head.direction = "stop"
 
+# Fonctions de changement de direction
+def go_up():
+    if head.direction != "down":
+        head.direction = "up"
+
+def go_down():
+    if head.direction != "up":
+        head.direction = "down"
+
+def go_left():
+    if head.direction != "right":
+        head.direction = "left"
+
+def go_right():
+    if head.direction != "left":
+        head.direction = "right"
+
+# Raccourcis clavier
+wn.listen()
+wn.onkeypress(go_up, "Up")
+wn.onkeypress(go_down, "Down")
+wn.onkeypress(go_left, "Left")
+wn.onkeypress(go_right, "Right")
+
 # Fonction de mouvement
 def move():
     if head.direction == "up":
