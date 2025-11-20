@@ -20,16 +20,26 @@ def distribuer_cartes(paquet):
     joueur2 = paquet[26:]
     return joueur1, joueur2
 
+def jouer_tour(joueur1, joueur2):
+    """Joue un tour de la bataille."""
+    if not joueur1 or not joueur2:
+        return None, None
+
+    carte_joueur1 = joueur1.pop(0)
+    carte_joueur2 = joueur2.pop(0)
+
+    print(f"Joueur 1 joue : {carte_joueur1}")
+    print(f"Joueur 2 joue : {carte_joueur2}")
+
+    return carte_joueur1, carte_joueur2
+
 def main():
     """Fonction principale du jeu."""
     paquet = creer_paquet()
     melanger_paquet(paquet)
     joueur1, joueur2 = distribuer_cartes(paquet)
 
-    print("Cartes du joueur 1:")
-    print(joueur1)
-    print("\nCartes du joueur 2:")
-    print(joueur2)
+    jouer_tour(joueur1, joueur2)
 
 if __name__ == "__main__":
     main()
