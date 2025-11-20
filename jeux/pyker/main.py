@@ -19,9 +19,9 @@ def distribuer_cartes(paquet, nombre):
 
 def afficher_main(main, nom_joueur):
     """Affiche la main d'un joueur."""
-    print(f"Main de {nom_joueur}:")
-    for valeur, couleur in main:
-        print(f"  {valeur} de {couleur}")
+    print(f"\nMain de {nom_joueur}:")
+    for i, (valeur, couleur) in enumerate(main):
+        print(f"  {i+1}) {valeur} de {couleur}")
 
 def evaluer_main(main):
     """Evalue la force d'une main de poker."""
@@ -59,10 +59,11 @@ def main():
                 mise = int(input(f"Entrez votre mise (1-{argent_joueur}): "))
                 if 1 <= mise <= argent_joueur:
                     break
-                else:
-                    print("Mise invalide.")
             except ValueError:
                 print("Veuillez entrer un nombre.")
+
+        argent_joueur -= mise
+        pot = mise * 2
 
         paquet = creer_paquet()
         melanger_paquet(paquet)
@@ -70,8 +71,20 @@ def main():
         main_croupier = distribuer_cartes(paquet, 5)
 
         afficher_main(main_joueur, "Joueur")
-        # Le reste de la logique du tour viendra ici
-        break # Pour l'instant, on ne fait qu'un tour
+        score_joueur, nom_main_joueur, _ = evaluer_main(main_joueur)
+        print(f"Vous avez : {nom_main_joueur}")
+
+        afficher_main(main_croupier, "Croupier")
+        score_croupier, nom_main_croupier, _ = evaluer_main(main_croupier)
+        print(f"Le croupier a : {nom_main_croupier}")
+
+        # La logique du gagnant sera ajoutée ici
+
+        continuer = input("Jouer un autre tour? (o/n): ").lower()
+        if continuer != 'o':
+            break
+
+    print("Merci d'avoir joue !")
 
 if __name__ == "__main__":
     main()
