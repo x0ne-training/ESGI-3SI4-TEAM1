@@ -16,6 +16,13 @@ def melanger_paquet(paquet):
     """Melange le paquet de cartes."""
     random.shuffle(paquet)
 
+def distribuer_cartes(paquet, nombre):
+    """Distribue un certain nombre de cartes."""
+    cartes = []
+    for _ in range(nombre):
+        cartes.append(paquet.pop())
+    return cartes
+
 def main():
     """
     Fonction principale du jeu.
@@ -23,7 +30,12 @@ def main():
     print("Bienvenue au jeu de Poker !")
     paquet = creer_paquet()
     melanger_paquet(paquet)
-    print("Le paquet a ete melange.")
+
+    main_joueur = distribuer_cartes(paquet, 5)
+    main_croupier = distribuer_cartes(paquet, 5)
+
+    print(f"Votre main: {main_joueur}")
+    print(f"Main du croupier: {main_croupier}")
 
 if __name__ == "__main__":
     main()
