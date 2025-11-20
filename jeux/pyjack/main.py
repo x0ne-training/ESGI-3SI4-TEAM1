@@ -2,12 +2,12 @@ import random
 
 def creer_deck():
     """Crée et retourne un paquet de 52 cartes."""
-    couleurs = ['Coeur', 'Carreau', 'Pique', 'Trèfle']
-    valeurs = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Valet', 'Dame', 'Roi', 'As']
+    couleurs = ['\u2665', '\u2666', '\u2660', '\u2663'] # Coeur, Carreau, Pique, Trèfle
+    valeurs = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'V', 'D', 'R', 'A']
     deck = []
     for couleur in couleurs:
         for valeur in valeurs:
-            deck.append(f"{valeur} de {couleur}")
+            deck.append(f"{valeur}{couleur}")
     return deck
 
 def melanger_deck(deck):
@@ -22,17 +22,13 @@ def calculer_total(main):
     """Calcule et retourne le total des points d'une main."""
     total = 0
     nombre_as = 0
+    valeurs_cartes = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'V': 10, 'D': 10, 'R': 10, 'A': 11}
     for carte in main:
-        valeur = carte.split()[0]
-        if valeur.isdigit():
-            total += int(valeur)
-        elif valeur in ['Valet', 'Dame', 'Roi']:
-            total += 10
-        elif valeur == 'As':
+        valeur = carte[:-1]
+        total += valeurs_cartes[valeur]
+        if valeur == 'A':
             nombre_as += 1
-            total += 11
 
-    # Gère les As comme 1 si le total dépasse 21
     while total > 21 and nombre_as > 0:
         total -= 10
         nombre_as -= 1
@@ -41,12 +37,11 @@ def calculer_total(main):
 def afficher_mains(joueur_main, croupier_main, fin_de_partie):
     """Affiche les mains du joueur et du croupier."""
     if fin_de_partie:
-        print(f"Votre main : {joueur_main}, total : {calculer_total(joueur_main)}")
-        print(f"Main du croupier : {croupier_main}, total : {calculer_total(croupier_main)}")
+        print(f"Votre main : {' '.join(joueur_main)}, total : {calculer_total(joueur_main)}")
+        print(f"Main du croupier : {' '.join(croupier_main)}, total : {calculer_total(croupier_main)}")
     else:
-        print(f"Votre main : {joueur_main}, total : {calculer_total(joueur_main)}")
-        print(f"Main du croupier : [{croupier_main[0]}, 'Carte cachée']")
-
+        print(f"Votre main : {' '.join(joueur_main)}, total : {calculer_total(joueur_main)}")
+        print(f"Main du croupier : {croupier_main[0]} [?]")
 
 def determiner_gagnant(total_joueur, total_croupier, joueur_blackjack, croupier_blackjack):
     """Détermine et retourne le message du gagnant."""
@@ -73,7 +68,7 @@ def tour_joueur(deck, joueur_main):
         choix = input("Voulez-vous 'tirer' ou 'rester' ? ")
         if choix.lower() == 'tirer':
             joueur_main.append(tirer_carte(deck))
-            print(f"Votre main : {joueur_main}, total : {calculer_total(joueur_main)}")
+            print(f"Votre main : {' '.join(joueur_main)}, total : {calculer_total(joueur_main)}")
         elif choix.lower() == 'rester':
             break
         else:
@@ -105,6 +100,7 @@ def jouer_partie():
         if calculer_total(joueur_main) <= 21:
             tour_croupier(deck, croupier_main)
 
+    print("\n--- RÉSULTATS ---")
     afficher_mains(joueur_main, croupier_main, True)
 
     total_joueur = calculer_total(joueur_main)
