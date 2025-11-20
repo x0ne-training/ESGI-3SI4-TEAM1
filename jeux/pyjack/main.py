@@ -1,4 +1,9 @@
 import random
+import os
+
+def effacer_ecran():
+    """Efface l'écran de la console."""
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 def creer_deck():
     """Crée et retourne un paquet de 52 cartes."""
@@ -32,11 +37,13 @@ def calculer_total(main):
 
 def afficher_mains(joueur_main, croupier_main, fin_de_partie):
     """Affiche les mains du joueur et du croupier."""
+    effacer_ecran()
+    print("=== BLACKJACK ===\n")
     if fin_de_partie:
         print(f"Votre main : {' '.join(joueur_main)} (Total: {calculer_total(joueur_main)})")
         print(f"Main du croupier : {' '.join(croupier_main)} (Total: {calculer_total(croupier_main)})")
     else:
-        print(f"\nVotre main : {' '.join(joueur_main)} (Total: {calculer_total(joueur_main)})")
+        print(f"Votre main : {' '.join(joueur_main)} (Total: {calculer_total(joueur_main)})")
         print(f"Main du croupier : {croupier_main[0]} [?]")
 
 def determiner_gagnant(total_joueur, total_croupier, joueur_blackjack, croupier_blackjack):
@@ -56,13 +63,13 @@ def determiner_gagnant(total_joueur, total_croupier, joueur_blackjack, croupier_
     else:
         return "Push (Égalité)."
 
-def tour_joueur(deck, joueur_main):
+def tour_joueur(deck, joueur_main, croupier_main):
     """Gère le tour du joueur."""
     while calculer_total(joueur_main) <= 21:
-        choix = input("Voulez-vous 'tirer' ou 'rester' ? ")
+        choix = input("\nVoulez-vous 'tirer' ou 'rester' ? ")
         if choix.lower() == 'tirer':
             joueur_main.append(tirer_carte(deck))
-            print(f"Votre main : {' '.join(joueur_main)} (Total: {calculer_total(joueur_main)})")
+            afficher_mains(joueur_main, croupier_main, False)
         elif choix.lower() == 'rester':
             break
         else:
@@ -90,13 +97,12 @@ def jouer_partie():
     afficher_mains(joueur_main, croupier_main, False)
 
     if not (joueur_blackjack or croupier_blackjack):
-        tour_joueur(deck, joueur_main)
+        tour_joueur(deck, joueur_main, croupier_main)
         if calculer_total(joueur_main) <= 21:
             tour_croupier(deck, croupier_main)
 
-    print("\n--- RÉSULTATS ---")
     afficher_mains(joueur_main, croupier_main, True)
-
+    print("\n--- RÉSULTATS ---")
     total_joueur = calculer_total(joueur_main)
     total_croupier = calculer_total(croupier_main)
     print(determiner_gagnant(total_joueur, total_croupier, joueur_blackjack, croupier_blackjack))
@@ -104,7 +110,6 @@ def jouer_partie():
 
 def main():
     """Fonction principale pour lancer le jeu."""
-    print("Bienvenue au Blackjack !")
     while True:
         jouer_partie()
         rejouer = input("\nVoulez-vous rejouer ? (oui/non) ")
