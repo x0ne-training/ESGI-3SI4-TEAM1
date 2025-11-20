@@ -74,6 +74,19 @@ def move():
 while True:
     wn.update()
 
+    # Vérifier la collision avec les murs
+    if head.xcor()>290 or head.xcor()<-290 or head.ycor()>290 or head.ycor()<-290:
+        time.sleep(1)
+        head.goto(0,0)
+        head.direction = "stop"
+
+        # Cacher les segments
+        for segment in segments:
+            segment.goto(1000, 1000)
+        
+        # Vider la liste des segments
+        segments.clear()
+
     # Vérifier la collision avec la nourriture
     if head.distance(food) < 20:
         # Déplacer la nourriture à un endroit aléatoire
