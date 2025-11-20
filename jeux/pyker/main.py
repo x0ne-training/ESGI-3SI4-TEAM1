@@ -25,19 +25,34 @@ def afficher_main(main, nom_joueur):
 
 def evaluer_main(main):
     """Evalue la force d'une main de poker."""
-    valeurs = sorted([VALEURS_RANG[carte[0]] for carte in main])
-    couleurs = [carte[1] for carte in main]
+    valeurs = sorted([VALEURS_RANG[c[0]] for c in main], reverse=True)
+    couleurs = [c[1] for c in main]
     valeur_counts = Counter(valeurs)
-    valeurs_uniques = sorted(valeur_counts.keys())
+    counts = sorted(valeur_counts.values(), reverse=True)
+    valeurs_uniques = sorted(list(set(valeurs)), reverse=True)
 
     is_flush = len(set(couleurs)) == 1
-    is_straight = len(valeurs_uniques) == 5 and (valeurs_uniques[-1] - valeurs_uniques[0] == 4)
+    is_straight = len(valeurs_uniques) == 5 and (valeurs_uniques[0] - valeurs_uniques[4] == 4)
 
-    if is_straight and is_flush and valeurs_uniques[-1] == 14:
-        return (10, "Quinte Flush Royale")
-    # Plus d'évaluations à venir
-
-    return (0, "Carte la plus haute")
+    if is_straight and is_flush and valeurs_uniques[0] == 14:
+        return (10, "Quinte Flush Royale", valeurs_uniques)
+    if is_straight and is_flush:
+        return (9, "Quinte Flush", valeurs_uniques)
+    if counts[0] == 4:
+        return (8, "Carre", valeurs_uniques)
+    if counts == [3, 2]:
+        return (7, "Full", valeurs_uniques)
+    if is_flush:
+        return (6, "Couleur", valeurs_uniques)
+    if is_straight:
+        return (5, "Quinte", valeurs_uniques)
+    if counts[0] == 3:
+        return (4, "Brelan", valeurs_uniques)
+    if counts == [2, 2, 1]:
+        return (3, "Double Paire", valeurs_uniques)
+    if counts[0] == 2:
+        return (2, "Paire", valeurs_uniques)
+    return (1, "Carte Haute", valeurs_uniques)
 
 def main():
     """
@@ -51,11 +66,12 @@ def main():
     main_croupier = distribuer_cartes(paquet, 5)
 
     afficher_main(main_joueur, "Joueur")
+    score_joueur, nom_main_joueur, _ = evaluer_main(main_joueur)
+    print(f"Vous avez : {nom_main_joueur}\n")
+
     afficher_main(main_croupier, "Croupier")
-
-    score_joueur, nom_main_joueur = evaluer_main(main_joueur)
-    print(f"Vous avez : {nom_main_joueur}")
-
+    score_croupier, nom_main_croupier, _ = evaluer_main(main_croupier)
+    print(f"Le croupier a : {nom_main_croupier}")
 
 if __name__ == "__main__":
     main()
