@@ -1,6 +1,7 @@
 import random
 
 def creer_deck():
+    """Crée et retourne un paquet de 52 cartes."""
     couleurs = ['Coeur', 'Carreau', 'Pique', 'Trèfle']
     valeurs = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Valet', 'Dame', 'Roi', 'As']
     deck = []
@@ -10,12 +11,15 @@ def creer_deck():
     return deck
 
 def melanger_deck(deck):
+    """Mélange le paquet de cartes."""
     random.shuffle(deck)
 
 def tirer_carte(deck):
+    """Tire la dernière carte du paquet."""
     return deck.pop()
 
 def calculer_total(main):
+    """Calcule et retourne le total des points d'une main."""
     total = 0
     nombre_as = 0
     for carte in main:
@@ -28,12 +32,14 @@ def calculer_total(main):
             nombre_as += 1
             total += 11
 
+    # Gère les As comme 1 si le total dépasse 21
     while total > 21 and nombre_as > 0:
         total -= 10
         nombre_as -= 1
     return total
 
 def afficher_mains(joueur_main, croupier_main, fin_de_partie):
+    """Affiche les mains du joueur et du croupier."""
     if fin_de_partie:
         print(f"Votre main : {joueur_main}, total : {calculer_total(joueur_main)}")
         print(f"Main du croupier : {croupier_main}, total : {calculer_total(croupier_main)}")
@@ -43,6 +49,7 @@ def afficher_mains(joueur_main, croupier_main, fin_de_partie):
 
 
 def determiner_gagnant(total_joueur, total_croupier, joueur_blackjack, croupier_blackjack):
+    """Détermine et retourne le message du gagnant."""
     if joueur_blackjack and not croupier_blackjack:
         return "Blackjack ! Vous gagnez !"
     elif not joueur_blackjack and croupier_blackjack:
@@ -59,6 +66,7 @@ def determiner_gagnant(total_joueur, total_croupier, joueur_blackjack, croupier_
         return "Égalité."
 
 def tour_joueur(deck, joueur_main):
+    """Gère le tour du joueur."""
     while True:
         if calculer_total(joueur_main) > 21:
             break
@@ -72,10 +80,12 @@ def tour_joueur(deck, joueur_main):
             print("Choix invalide.")
 
 def tour_croupier(deck, croupier_main):
+    """Gère le tour du croupier."""
     while calculer_total(croupier_main) < 17:
         croupier_main.append(tirer_carte(deck))
 
 def jouer_partie():
+    """Exécute une partie de Blackjack."""
     deck = creer_deck()
     melanger_deck(deck)
 
@@ -103,6 +113,7 @@ def jouer_partie():
 
 
 def main():
+    """Fonction principale pour lancer le jeu."""
     print("Bienvenue au Blackjack !")
 
     while True:
