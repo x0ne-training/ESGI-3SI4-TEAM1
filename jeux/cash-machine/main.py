@@ -1,5 +1,13 @@
 import random
 
+SYMBOLS = {
+    'Cerise': 2,
+    'Orange': 3,
+    'Citron': 4,
+    'Bar': 5,
+    'Sept': 10
+}
+
 def spin_reels():
     """
     Effectue un tirage des trois rouleaux de la machine a sous.
@@ -7,8 +15,7 @@ def spin_reels():
     Retourne:
         list: Une liste de trois symboles representant le resultat du tirage.
     """
-    symbols = ['Cerise', 'Orange', 'Citron', 'Bar', 'Sept']
-    return [random.choice(symbols) for _ in range(3)]
+    return [random.choice(list(SYMBOLS.keys())) for _ in range(3)]
 
 def calculate_winnings(reels, bet):
     """
@@ -22,7 +29,8 @@ def calculate_winnings(reels, bet):
         int: Le montant des gains.
     """
     if reels[0] == reels[1] == reels[2]:
-        return bet * 5
+        symbol = reels[0]
+        return bet * SYMBOLS[symbol]
     return 0
 
 def main():
@@ -51,6 +59,8 @@ def main():
         if winnings > 0:
             print(f"Felicitations ! Vous avez gagne {winnings} !")
             balance += winnings
+        else:
+            print("Dommage, vous avez perdu.")
 
         print(f"Votre nouveau solde est de {balance}.")
 
