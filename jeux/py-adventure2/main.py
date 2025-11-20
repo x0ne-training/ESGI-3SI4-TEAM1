@@ -4,25 +4,26 @@ def afficher_salle(salle):
     """
     Affiche les informations de la salle actuelle.
     """
-    print(f"Vous êtes dans : {salle['nom']}")
+    print(f"\n--- {salle['nom']} ---")
+    print(salle['description'])
 
 def main():
     """
     Fonction principale du jeu.
     """
-    # Définition de la carte du jeu
     carte = {
         'clairiere': {
-            'nom': 'une clairière ensoleillée',
-            'sorties': {'nord': 'foret_sombre'}
+            'nom': 'La Clairière du Départ',
+            'description': "Vous êtes dans une clairière paisible. La lumière du soleil filtre à travers les arbres. Un chemin mène vers le nord.",
+            'sorties': {'nord': 'foret'}
         },
-        'foret_sombre': {
-            'nom': 'une forêt sombre et dense',
+        'foret': {
+            'nom': 'La Forêt Sombre',
+            'description': "Vous pénétrez dans une forêt dense. Les arbres sont hauts et bloquent la lumière. Un frisson parcourt votre échine. Le chemin du retour est au sud.",
             'sorties': {'sud': 'clairiere'}
         }
     }
 
-    # Position initiale du joueur
     salle_actuelle = 'clairiere'
 
     print("Bienvenue dans Py-Adventure !")
@@ -37,8 +38,6 @@ def main():
         if commande == "quitter":
             print("Merci d'avoir joué. À bientôt !")
             break
-
-        # Logique de déplacement
         elif commande in ['nord', 'sud', 'est', 'ouest']:
             if commande in carte[salle_actuelle]['sorties']:
                 salle_actuelle = carte[salle_actuelle]['sorties'][commande]
